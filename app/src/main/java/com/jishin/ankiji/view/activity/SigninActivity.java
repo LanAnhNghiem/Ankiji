@@ -1,5 +1,6 @@
-package com.jishin.ankiji;
+package com.jishin.ankiji.view.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -9,7 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class LoginActivity extends AppCompatActivity {
+import com.jishin.ankiji.R;
+
+public class SigninActivity extends AppCompatActivity {
 
     
     private EditText edtUsername;
@@ -20,14 +23,14 @@ public class LoginActivity extends AppCompatActivity {
     private TextView txtCreateAcount;
     private TextView txtForgotPass;
     
-    public static final String TAG = LoginActivity.class.getSimpleName();
+    public static final String TAG = SigninActivity.class.getSimpleName();
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_signin);
 
         getControls();
         setEvents();
@@ -49,8 +52,8 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Toast.makeText(LoginActivity.this, "LAN ANH ne!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(SigninActivity.this, MainActivity.class);
+                startActivity(intent);
                 
             }
         });
@@ -59,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         imgFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(LoginActivity.this, "Thanh Hoai ne!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SigninActivity.this, "Thanh Hoai ne!", Toast.LENGTH_SHORT).show();
             }
         });
         
@@ -67,14 +70,15 @@ public class LoginActivity extends AppCompatActivity {
         imgGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(LoginActivity.this, "Huu Duc ne!", Toast.LENGTH_SHORT).show();   
+                Toast.makeText(SigninActivity.this, "Huu Duc ne!", Toast.LENGTH_SHORT).show();
             }
         });
         
         txtCreateAcount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(LoginActivity.this, "Creat an account. TRUNG", Toast.LENGTH_SHORT).show();   
+                Intent intent = new Intent(SigninActivity.this, SignupActivity.class);
+                startActivity(intent);
             }
         });
         
@@ -82,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
         txtForgotPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(LoginActivity.this, "Forgotpass.TRUNG", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SigninActivity.this, "Forgotpass.TRUNG", Toast.LENGTH_SHORT).show();
             }
         });
     }

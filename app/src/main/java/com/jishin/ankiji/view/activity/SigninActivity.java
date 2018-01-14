@@ -127,7 +127,6 @@ public class SigninActivity extends AppCompatActivity {
             FirebaseUser currentUser = mAuth.getCurrentUser();
             if (currentUser != null) {
                 Log.d(TAG, "onStart:currentUser");
-                logoutButton.setVisibility(View.VISIBLE);
             }
         }
     }

@@ -10,16 +10,35 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+<<<<<<< HEAD
         <activity android:name=".MainActivity" />
         <activity android:name=".GoogleSignInActivity">
 
         </activity>
         <activity android:name=".WriteData">
+=======
+        <activity
+            android:name=".view.activity.SigninActivity"
+            android:screenOrientation="portrait">
+
+>>>>>>> b7a791f8c9fb2fc00aa592fa6804d9f356e3a1ad
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+        </activity>
+        <activity
+            android:name=".view.activity.SignupActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
+
+        <activity
+            android:name=".view.activity.MainActivity"
+            android:screenOrientation="portrait">
+
         </activity>
     </application>
 

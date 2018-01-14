@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "949735400434",
+    "firebase_url": "https://ankiji-cca11.firebaseio.com",
+    "project_id": "ankiji-cca11",
+    "storage_bucket": "ankiji-cca11.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:949735400434:android:bed391f399985de7",
+        "android_client_info": {
+          "package_name": "com.jishin.ankiji"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "949735400434-vbridrrlsu8r10p3m80npn0kfcbnn009.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqi65HcxsnJqlKpV1R3YzGYrNmyHw5zFg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

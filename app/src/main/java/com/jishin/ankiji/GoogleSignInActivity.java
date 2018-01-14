@@ -49,9 +49,9 @@ public class GoogleSignInActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 //                Log.d("getCurrentUser" , firebaseAuth.getCurrentUser().toString());
-                if (firebaseAuth.getCurrentUser() != null){
-                    startActivity(new Intent(GoogleSignInActivity.this, AccountActivity.class));
-                }
+//                if (firebaseAuth.getCurrentUser() != null){
+//                    startActivity(new Intent(GoogleSignInActivity.this, AccountActivity.class));
+//                }
             }
         };
 

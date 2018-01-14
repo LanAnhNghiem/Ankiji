@@ -13,5 +13,7 @@
     <string name="sign_up">Sign Up</string>
     <string name="marugoto_title">まるごと A2.1</string>
     <string name="item_count">30 items</string>
+    <string name="ns_menu_open">1</string>
+    <string name="ns_menu_close">0</string>
 
 </resources>

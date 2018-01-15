@@ -57,53 +57,30 @@
         </android.support.v4.view.ViewPager>
     </android.support.constraint.ConstraintLayout>
     <!--Navigation Drawer-->
-    <RelativeLayout
-        android:id="@+id/drawerPane"
-        android:layout_width="280dp"
+    <android.support.design.widget.NavigationView
+        app:headerLayout="@layout/menu_header"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="start">
-        <!--Profile box-->
-        <RelativeLayout
-            android:id="@+id/profileBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:padding="10dp">
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/imgAvatar"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/user_default"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/imgAvatar"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="15dp"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/txtUsername"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Username"
-                    android:textColor="@android:color/white"
-                    android:layout_marginTop="10dp"
-                    android:textSize="16sp"/>
-                <TextView
-                    android:id="@+id/txtEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="username@gmail.com"
-                    android:textColor="@android:color/white"
-                    />
-            </LinearLayout>
-        </RelativeLayout>
-        <!--List of Actions-->
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rvMenuItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/profileBox">
-        </android.support.v7.widget.RecyclerView>
-    </RelativeLayout>
+        android:background="@android:color/white"
+        app:itemTextColor="@color/light_gray"
+        app:itemIconTint="@color/light_gray"
+        app:menu="@menu/drawer_menu"
+        android:layout_gravity="start">
+
+    </android.support.design.widget.NavigationView>
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/drawerPane"-->
+        <!--android:layout_width="280dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:gravity="start">-->
+        <!--&lt;!&ndash;Profile box&ndash;&gt;-->
+
+        <!--&lt;!&ndash;List of Actions&ndash;&gt;-->
+        <!--<android.support.v7.widget.RecyclerView-->
+            <!--android:id="@+id/rvMenuItem"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/profileBox">-->
+        <!--</android.support.v7.widget.RecyclerView>-->
+    <!--</RelativeLayout>-->
 </android.support.v4.widget.DrawerLayout>

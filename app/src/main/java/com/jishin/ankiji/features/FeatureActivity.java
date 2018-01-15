@@ -40,14 +40,14 @@ public class FeatureActivity extends AppCompatActivity{
     private void getControls() {
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
-        drawerLayout = findViewById(R.id.drawerLayout);
-        drawerPane = findViewById(R.id.drawerPane);
-        rvMenuItem = findViewById(R.id.rvMenuItem);
-        layoutManager = new LinearLayoutManager(getBaseContext());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        rvMenuItem.setLayoutManager(layoutManager);
-        menuItemAdapter = new MenuItemAdapter(createData(), createIcon(), getBaseContext());
-        rvMenuItem.setAdapter(menuItemAdapter);
+//        drawerLayout = findViewById(R.id.drawerLayout);
+//        drawerPane = findViewById(R.id.drawerPane);
+//        rvMenuItem = findViewById(R.id.rvMenuItem);
+//        layoutManager = new LinearLayoutManager(getBaseContext());
+//        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//        rvMenuItem.setLayoutManager(layoutManager);
+//        menuItemAdapter = new MenuItemAdapter(createData(), createIcon(), getBaseContext());
+//        rvMenuItem.setAdapter(menuItemAdapter);
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setAdapter(new FragmentAdapter(getSupportFragmentManager()));
 
@@ -67,40 +67,39 @@ public class FeatureActivity extends AppCompatActivity{
 
             }
         });
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,R.string.ns_menu_open,R.string.ns_menu_close){
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu();
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                invalidateOptionsMenu();
-            }
-        };
-        drawerLayout.addDrawerListener(drawerToggle);
-    }
+//        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,R.string.ns_menu_open,R.string.ns_menu_close){
+//            @Override
+//            public void onDrawerOpened(View drawerView) {
+//                super.onDrawerOpened(drawerView);
+//                invalidateOptionsMenu();
+//            }
+//
+//            @Override
+//            public void onDrawerClosed(View drawerView) {
+//                super.onDrawerClosed(drawerView);
+//                invalidateOptionsMenu();
+//            }
+//        };
+//        drawerLayout.addDrawerListener(drawerToggle);
+//    }
 //    public boolean onPrepareOptionsMenu(Menu menu) {
 //        // If the nav drawer is open, hide action items related to the content view
 //        boolean drawerOpen = drawerLayout.isDrawerOpen(rvMenuItem);
 //        //menu.findItem(R.id.action_search).setVisible(!drawerOpen);
 //        return super.onPrepareOptionsMenu(menu);
 //    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        if(drawerToggle.onOptionsItemSelected(item)){
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        drawerToggle.syncState();
+    //@Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//
+//        if(drawerToggle.onOptionsItemSelected(item)){
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
+//    @Override
+//    protected void onPostCreate(Bundle savedInstanceState) {
+//        super.onPostCreate(savedInstanceState);
+//        drawerToggle.syncState();
     }
 
     private ArrayList<String> createData(){

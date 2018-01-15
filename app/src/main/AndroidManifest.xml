@@ -15,25 +15,18 @@
         <activity
             android:name=".view.activity.SigninActivity"
             android:screenOrientation="portrait">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".view.activity.SignupActivity"
-            android:screenOrientation="portrait">
-
-        </activity>
-
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".view.activity.MainActivity"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait"></activity>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -43,10 +36,12 @@
             android:name="com.facebook.FacebookContentProvider"
             android:authorities="com.facebook.app.FacebookContentProvider929227390576555"
             android:exported="true" />
+
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
+        <activity android:name=".view.activity.FacebookSigninActivity"></activity>
     </application>
 
 </manifest>

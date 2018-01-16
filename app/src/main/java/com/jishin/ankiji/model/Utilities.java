@@ -6,4 +6,5 @@ package com.jishin.ankiji.model;
 
 public class Utilities {
     public static final String DATA_KANJI_REFERENCE = "Data_Kanji";
+    public static final String USER_REFERENCE = "User";
 }

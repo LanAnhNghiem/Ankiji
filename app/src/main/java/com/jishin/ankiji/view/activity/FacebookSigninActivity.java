@@ -39,6 +39,16 @@ public class FacebookSigninActivity extends AppCompatActivity {
         mCallbackManager = CallbackManager.Factory.create();
         FacebookSignin();
     }
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (mAuth.getCurrentUser() != null) {
+//            Toast.makeText(SigninActivity.this, "Welcome " + mAuth.getCurrentUser().getEmail(), Toast.LENGTH_LONG).show();
+            startActivity(new Intent(FacebookSigninActivity.this, MainActivity.class));
+            finish();
+        }
+    }
 
     private void FacebookSignin() {
         LoginManager.getInstance().logInWithReadPermissions(FacebookSigninActivity.this, Arrays.asList("email", "public_profile"));

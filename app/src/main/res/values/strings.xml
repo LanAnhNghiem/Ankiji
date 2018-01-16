@@ -5,7 +5,7 @@
     <string name="create_an_account"><u>Create an account?</u></string>
     <string name="forgot_passowrd"><u>Forgot passowrd?</u>></string>
     <string name="login">SIGN IN</string>
-    <string name="username">Username</string>
+    <string name="username">Email</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm password</string>
@@ -16,4 +16,15 @@
     <string name="facebook_app_id">929227390576555</string>
     <string name="fb_login_protocol_scheme">fb929227390576555</string>
 
+    <string name="invalid_username">Invalid Username.Username must has from 6 to 20 characters.</string>
+    <string name="invalid_email">Invalid Email.</string>
+    <string name="invalid_password">Invalid Password. Password must has greater than or equal 6 characters.</string>
+    <string name="pass_not_matching">Confirm password does not match</string>
+    <string name="sign_up_successful">Sign Up Successful</string>
+    <string name="sign_up_failed">Sign Up Failed</string>
+    <string name="connection_failed">Connection Failed</string>
+    <string name="sign_in_failed">Sign In Failed</string>
+    <string name="sign_in_successful">Sign In Successful</string>
+    <item name="visible" type="id" />
+    <item name="masked" type="id" />
 </resources>

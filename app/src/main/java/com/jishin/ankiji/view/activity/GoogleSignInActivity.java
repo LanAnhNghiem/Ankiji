@@ -34,6 +34,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,8 +44,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null){
-                    //startActivity(new Intent(GoogleSignInActivity.this, AccountActivity.class));
-                    // TODO : change activity when login success
+                    startActivity(new Intent(GoogleSignInActivity.this, MainActivity.class));
                     Toast.makeText(GoogleSignInActivity.this,
                             "Login by Google success, going to next Activity",
                             Toast.LENGTH_LONG).show();
@@ -72,14 +72,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         signIn();
-//        mGoogleBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
     }
-
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -95,6 +88,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
+                String email = account.getEmail();
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately

@@ -1,4 +1,4 @@
-package com.jishin.ankiji;
+package com.jishin.ankiji.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +24,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.jishin.ankiji.R;
 
 public class GoogleSignInActivity extends AppCompatActivity {
 
@@ -41,17 +42,20 @@ public class GoogleSignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        mGoogleBtn = (SignInButton) findViewById(R.id.btnSignIn);
+        mGoogleBtn = findViewById(R.id.btnSignIn);
         mGoogleBtn.setSize(SignInButton.SIZE_STANDARD);
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-//                Log.d("getCurrentUser" , firebaseAuth.getCurrentUser().toString());
-//                if (firebaseAuth.getCurrentUser() != null){
-//                    startActivity(new Intent(GoogleSignInActivity.this, AccountActivity.class));
-//                }
+                if (firebaseAuth.getCurrentUser() != null){
+                    //startActivity(new Intent(GoogleSignInActivity.this, AccountActivity.class));
+                    // TODO : change activity when login success
+                    Toast.makeText(GoogleSignInActivity.this,
+                            "Login by Google success, going to next Activity",
+                            Toast.LENGTH_LONG).show();
+                }
             }
         };
 

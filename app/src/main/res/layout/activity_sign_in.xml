@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.jishin.ankiji.GoogleSignInActivity">
+    tools:context="com.jishin.ankiji.view.activity.GoogleSignInActivity">
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/btnSignIn"

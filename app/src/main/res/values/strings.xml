@@ -13,5 +13,7 @@
     <string name="sign_up">Sign Up</string>
     <string name="marugoto_title">まるごと A2.1</string>
     <string name="item_count">30 items</string>
+    <string name="facebook_app_id">929227390576555</string>
+    <string name="fb_login_protocol_scheme">fb929227390576555</string>
 
 </resources>

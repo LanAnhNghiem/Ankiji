@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.jishin.ankiji">
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -10,36 +13,47 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-<<<<<<< HEAD
-        <activity android:name=".MainActivity" />
-        <activity android:name=".GoogleSignInActivity">
+
+        <activity android:name=".view.activity.GoogleSignInActivity">
 
         </activity>
         <activity android:name=".WriteData">
-=======
+
+        </activity>
+
         <activity
             android:name=".view.activity.SigninActivity"
             android:screenOrientation="portrait">
-
->>>>>>> b7a791f8c9fb2fc00aa592fa6804d9f356e3a1ad
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
+
         <activity
             android:name=".view.activity.SignupActivity"
             android:screenOrientation="portrait">
-
         </activity>
 
         <activity
             android:name=".view.activity.MainActivity"
             android:screenOrientation="portrait">
-
         </activity>
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+        <provider
+            android:name="com.facebook.FacebookContentProvider"
+            android:authorities="com.facebook.app.FacebookContentProvider929227390576555"
+            android:exported="true" />
+
+        <activity
+            android:name=".view.activity.FacebookSigninActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
     </application>
 
 </manifest>

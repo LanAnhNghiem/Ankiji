@@ -17,9 +17,6 @@
         <activity android:name=".view.activity.GoogleSignInActivity">
 
         </activity>
-        <activity android:name=".WriteData">
-
-        </activity>
 
         <activity
             android:name=".view.activity.SigninActivity"

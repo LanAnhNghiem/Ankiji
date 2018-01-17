@@ -21,15 +21,18 @@
         <activity
             android:name=".features.FeatureActivity"
             android:screenOrientation="portrait">
+
+        </activity>
+
+        <activity android:name=".explores.MojiExploresActivity" />
+        <activity android:name=".explores.KanjiExploresActivity" />
+        <activity android:name=".userlist.CreateVocabActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".explores.MojiExploresActivity" />
-        <activity android:name=".explores.KanjiExploresActivity" />
-        <activity android:name=".userlist.CreateVocabActivity"></activity>
     </application>
 
 </manifest>

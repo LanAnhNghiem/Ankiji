@@ -28,7 +28,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".explores.MojiExploresActivity" />
-        <activity android:name=".explores.KanjiExploresActivity"></activity>
+        <activity android:name=".explores.KanjiExploresActivity" />
+        <activity android:name=".userlist.CreateVocabActivity"></activity>
     </application>
 
 </manifest>

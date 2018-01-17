@@ -18,10 +18,9 @@ public class LearnActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private Button btnChange;
     private ProgressBar mProgressBar;
-
     private ArrayList<Item> contentList;
     private CardFragmentPagerAdapter mPagerAdapter;
-    private static boolean isFont = true;
+    private static boolean isFront = true;
 
     private final static String TAG = LearnActivity.class.getSimpleName();
     @Override
@@ -37,11 +36,11 @@ public class LearnActivity extends AppCompatActivity {
 
 
     public static boolean isFont() {
-        return isFont;
+        return isFront;
     }
 
     private void dummyData() {
-        for (int i = 0; i < 10; i++){
+        for (int i = 0; i < 50; i++){
             contentList.add(new Item("FontItem " + i, "BackItem " + i));
         }
 
@@ -50,7 +49,7 @@ public class LearnActivity extends AppCompatActivity {
     private void initControls() {
         btnChange = findViewById(R.id.btn_change);
         mProgressBar = findViewById(R.id.progress_bar);
-        mProgressBar.setProgress(30);
+        mProgressBar.setProgress(100/contentList.size());
         mViewPager = findViewById(R.id.viewPager);
         mPagerAdapter = new CardFragmentPagerAdapter(getSupportFragmentManager(), contentList);
         mViewPager.setAdapter(mPagerAdapter);
@@ -65,7 +64,8 @@ public class LearnActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-
+                int progressValue = ((position+1) * 100)/contentList.size();
+                mProgressBar.setProgress(progressValue);
             }
 
             @Override
@@ -77,8 +77,8 @@ public class LearnActivity extends AppCompatActivity {
         btnChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                isFont = !isFont;
-                if(isFont){
+                isFront = !isFront;
+                if(isFront){
                     btnChange.setText("Back");
                 }
                 else{

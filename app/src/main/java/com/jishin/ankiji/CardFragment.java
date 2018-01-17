@@ -1,10 +1,10 @@
 package com.jishin.ankiji;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +17,6 @@ import com.wajahatkarim3.easyflipview.EasyFlipView;
 /**
  * Created by trungnguyeen on 1/14/18.
  */
-@SuppressLint("ValidFragment")
 public class CardFragment extends Fragment{
 
     private Item mItem;
@@ -29,11 +28,7 @@ public class CardFragment extends Fragment{
     private float mCardElevationValue;
 
     private final static String TAG = CardFragment.class.getSimpleName();
-    @SuppressLint("ValidFragment")
-    public CardFragment(Item item) {
-        this.mItem = item;
-    }
-
+    private int INDEX;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -41,7 +36,16 @@ public class CardFragment extends Fragment{
 
         initControls(view);
         setEvents();
+        Log.i(TAG, "onCreateView: " + INDEX);
         return view;
+    }
+
+    public void setItem(Item mItem) {
+        this.mItem = mItem;
+    }
+
+    public void setINDEX(int INDEX) {
+        this.INDEX = INDEX;
     }
 
     public void initControls(View view) {
@@ -104,5 +108,11 @@ public class CardFragment extends Fragment{
             this.mBackViewText.setText(this.mItem.getmBackText());
             this.mFontViewText.setText(this.mItem.getmFontText());
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "onDestroy: " + INDEX);
     }
 }

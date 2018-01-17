@@ -16,13 +16,15 @@ public class CardFragmentPagerAdapter extends FragmentViewPagerAdapter {
 
     private List<CardFragment> mFragments = new ArrayList<>();;
     private ArrayList<Item> mItemList;
-
     public CardFragmentPagerAdapter(FragmentManager fm, ArrayList<Item> itemList) {
         super(fm);
         this.mItemList = itemList;
 
         for(int i = 0; i< this.mItemList.size(); i++){
-            addCardFragment(new CardFragment(this.mItemList.get(i)));
+            CardFragment cardFrag = new CardFragment();
+            cardFrag.setItem(this.mItemList.get(i));
+            cardFrag.setINDEX(i + 1);
+            addCardFragment(cardFrag);
         }
     }
 

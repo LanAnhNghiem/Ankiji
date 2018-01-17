@@ -1,6 +1,8 @@
 package com.jishin.ankiji.features;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Matrix;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
@@ -17,7 +19,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.GenericTransitionOptions;
@@ -75,7 +79,25 @@ public class MojiFragment extends Fragment {
         mFABCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+                final View dialogView = layoutInflater.inflate(R.layout.dialog_create_list, null);
+                final TextView txtTitle = dialogView.findViewById(R.id.txtTitle);
+                final EditText edtSetName = dialogView.findViewById(R.id.edtSetName);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setView(dialogView);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                final AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
         mFABAdd.setOnClickListener(new View.OnClickListener() {

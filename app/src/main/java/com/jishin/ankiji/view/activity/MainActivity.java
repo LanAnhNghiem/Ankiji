@@ -6,7 +6,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.jishin.ankiji.R;
-import com.jishin.ankiji.adapter.FragmentAdapter;
+import com.jishin.ankiji.adapter.FragmentViewPagerAdapter;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity{
         viewPager = (ViewPager) findViewById(R.id.viewPager);
 
         tabLayout.setupWithViewPager(viewPager);
-        viewPager.setAdapter(new FragmentAdapter(getSupportFragmentManager()));
+        viewPager.setAdapter(new FragmentViewPagerAdapter(getSupportFragmentManager()));
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

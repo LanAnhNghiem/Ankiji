@@ -2,7 +2,6 @@ package com.jishin.ankiji.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 
 import com.jishin.ankiji.view.fragment.KanjiFragment;
 import com.jishin.ankiji.view.fragment.MojiFragment;
@@ -12,11 +11,11 @@ import com.jishin.ankiji.view.fragment.RecentlyFragment;
  * Created by trungnguyeen on 12/27/17.
  */
 
-public class FragmentAdapter extends FragmentPagerAdapter{
+public class FragmentViewPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
 
     public final static int FRAGMENT_COUNT = 3;
 
-    public FragmentAdapter(FragmentManager fm) {
+    public FragmentViewPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 

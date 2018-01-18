@@ -16,11 +16,7 @@
         <activity
             android:name=".view.activity.MainActivity"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".view.activity.SignupActivity"
@@ -28,7 +24,13 @@
         <activity
             android:name=".explores.TopicMojiActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".features.FeatureActivity" />
+        <activity android:name=".features.FeatureActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".explores.MojiExploresActivity" />
         <activity android:name=".explores.KanjiExploresActivity" />
         <activity android:name=".explores.TopicKanjiActivity" />

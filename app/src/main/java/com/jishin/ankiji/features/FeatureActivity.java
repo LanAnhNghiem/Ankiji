@@ -9,20 +9,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.RelativeLayout;
-
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.FragmentAdapter;
 
-import java.util.ArrayList;
-
-import static android.support.v4.view.GravityCompat.*;
 
 public class FeatureActivity extends AppCompatActivity{
     private static final String TAG = FeatureActivity.class.getSimpleName();
@@ -87,7 +78,7 @@ public class FeatureActivity extends AppCompatActivity{
 
         switch (item.getItemId()) {
             case android.R.id.home:
-                drawerLayout.openDrawer(GravityCompat.START);  // OPEN DRAWER
+                //drawerLayout.openDrawer(GravityCompat.START);  // OPEN DRAWER
                 return true;
 
         }

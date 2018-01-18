@@ -17,6 +17,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
 import com.jishin.ankiji.explores.TopicKanjiActivity;
+import com.jishin.ankiji.userlist.CreateVocabActivity;
 
 /**
  * Created by trungnguyeen on 12/27/17.
@@ -66,7 +67,8 @@ public class KanjiFragment extends Fragment {
         mFABCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(getContext(), CreateVocabActivity.class);
+                startActivity(intent);
             }
         });
         mFABAdd.setOnClickListener(new View.OnClickListener() {

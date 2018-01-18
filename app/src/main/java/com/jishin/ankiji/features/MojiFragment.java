@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
 import com.jishin.ankiji.explores.TopicMojiActivity;
+import com.jishin.ankiji.userlist.CreateVocabActivity;
 
 /**
  * Created by trungnguyeen on 12/27/17.
@@ -85,7 +86,8 @@ public class MojiFragment extends Fragment {
                 builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        Intent intent = new Intent(getContext(), CreateVocabActivity.class);
+                        startActivity(intent);
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override

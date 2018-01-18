@@ -16,7 +16,7 @@ public class Moji {
         CachDocHira = cachDocHira;
         NghiaTiengViet = nghiaTiengViet;
         TuTiengNhat = tuTiengNhat;
-
+    }
     public Moji() {
 
     }

@@ -1,11 +1,11 @@
 package com.jishin.ankiji.explores;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,12 +22,10 @@ public class KanjiExploresActivity extends AppCompatActivity {
 
     public static final String TAG = KanjiExploresActivity.class.getSimpleName();
 
-    public static final String KEY = "N5";
-
     Toolbar mToolbar;
     ArrayList<Kanji> kanjiList = new ArrayList<Kanji>();
 
-    RecyclerView mKanjiRecycler, mTopicRecycler;
+    RecyclerView mKanjiRecycler;
     String Topic;
 
 
@@ -40,12 +38,13 @@ public class KanjiExploresActivity extends AppCompatActivity {
         setContentView(R.layout.activity_kanji_explores);
 
         mKanjiRecycler = (RecyclerView) findViewById(R.id.kanjiRecyclerView);
-        mTopicRecycler = findViewById(R.id.kanji_topic_recycler);
 
         //Declare database references
         mDatabase = FirebaseDatabase.getInstance();
         mKanjiRef = mDatabase.getReference().child("data_kanji");
-        setTopic(KEY);
+        Intent intent = getIntent();
+        Topic = intent.getStringExtra("Kanji_Key");
+
         setReference(Topic);
         addControl();
         getKanji();
@@ -57,7 +56,7 @@ public class KanjiExploresActivity extends AppCompatActivity {
     }
 
     private void setReference(String Topic) {
-        mKanjiRef = mKanjiRef.child(Topic);
+        mKanjiRef =mDatabase.getReference().child("data_kanji").child(Topic);
     }
 
     public void getKanji() {
@@ -73,25 +72,6 @@ public class KanjiExploresActivity extends AppCompatActivity {
             }
         });
     }
-
-//    private void getTopic() {
-//       mKanjiRef.addValueEventListener(new ValueEventListener() {
-//           @Override
-//           public void onDataChange(DataSnapshot dataSnapshot) {
-//               topicList.add(dataSnapshot.getKey());
-//                Log.d(TAG,"getTopic"+topicList);
-//               TopicAdapter topicAdapter = new TopicAdapter("Kanji");
-//               topicAdapter.setTopic(topicList);
-//
-//           }
-//
-//           @Override
-//           public void onCancelled(DatabaseError databaseError) {
-//
-//           }
-//       });
-//
-//    }
 
     private void showData(DataSnapshot dataSnapshot) {
 
@@ -110,14 +90,7 @@ public class KanjiExploresActivity extends AppCompatActivity {
             linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             mKanjiRecycler.setLayoutManager(linearLayoutManager);
             mKanjiRecycler.setAdapter(kanjiAdapter);
-            Log.d(TAG, "showData: amHan: " + kanji.getAmhan());
-            Log.d(TAG, "showData: tuVung: " + kanji.getTuvung());
-            Log.d(TAG, "showData: Kanji: " + kanji.getKanji());
         }
-    }
-
-    public void setTopic(String topic){
-        Topic = topic;
     }
 
 }

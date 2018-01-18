@@ -1,15 +1,13 @@
 package com.jishin.ankiji.features;
 
 import android.annotation.SuppressLint;
-import android.graphics.Matrix;
-import android.graphics.drawable.AnimationDrawable;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,15 +15,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.bumptech.glide.GenericTransitionOptions;
-import com.bumptech.glide.TransitionOptions;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
-import com.jishin.ankiji.utilities.GlideApp;
+import com.jishin.ankiji.explores.TopicMojiActivity;
 
 /**
  * Created by trungnguyeen on 12/27/17.
@@ -81,7 +74,8 @@ public class MojiFragment extends Fragment {
         mFABAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(getContext(), TopicMojiActivity.class);
+                startActivity(intent);
             }
         });
     }

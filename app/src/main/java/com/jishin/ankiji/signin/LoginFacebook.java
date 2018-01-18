@@ -53,8 +53,8 @@ public class LoginFacebook {
     }
 
     public void loginFacebook (){
-        String [] permission = {"public_profile", "email", "user_friends"};
-        loginManager.logInWithReadPermissions(mActivity, Arrays.asList(permission));
+//        String [] permission = {"public_profile", "email", "user_friends"};
+        loginManager.logInWithReadPermissions(mActivity, Arrays.asList("email", "public_profile", "user_friends"));
         loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -76,13 +76,13 @@ public class LoginFacebook {
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
-        showProgress();
+        //showProgress();
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-                    hideProgress();
+                    //hideProgress();
                     Toast.makeText(mActivity, R.string.login_success, Toast.LENGTH_SHORT).show();
 //                    email = task.getResult().getUser().getEmail();
 //                    userName = task.getResult().getUser().getDisplayName();
@@ -94,14 +94,14 @@ public class LoginFacebook {
                     mActivity.startActivity(intent);
                 }
                 else {
-                    hideProgress();
+                    //hideProgress();
                     Toast.makeText(mActivity, R.string.login_failed, Toast.LENGTH_SHORT).show();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                hideProgress();
+                //hideProgress();
                 Log.d("UNSUCCESSFUL", "SignInError");
                 Toast.makeText(mActivity, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
             }

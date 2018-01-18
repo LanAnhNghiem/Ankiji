@@ -68,8 +68,10 @@ public class LoginGoogle {
                             Toast.makeText(mActivity, R.string.login_success, Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(mActivity, MainActivity.class);
                             mActivity.startActivity(intent);
-                            mActivity.finish();
-
+                            if(progressDialog.isShowing()){
+                                hideProgress();
+                                mActivity.finish();
+                            }
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -88,10 +90,11 @@ public class LoginGoogle {
 //    }
     // [END signin]
     private static void showProgress(){
-        progressDialog.setCancelable(false);
+        //progressDialog.setCancelable(false);
         progressDialog.show();
     }
     private static void hideProgress(){
+        progressDialog.dismiss();
         progressDialog.hide();
     }
 }

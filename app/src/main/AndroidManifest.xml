@@ -33,6 +33,7 @@
         <activity android:name=".explores.KanjiExploresActivity" />
         <activity android:name=".explores.TopicKanjiActivity" />
         <activity android:name=".view.activity.SigninActivity"></activity>
+        <activity android:name=".userlist.CreateVocabActivity"></activity>
     </application>
 
 </manifest>

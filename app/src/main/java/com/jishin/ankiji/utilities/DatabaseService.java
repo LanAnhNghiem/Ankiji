@@ -45,6 +45,9 @@ public class DatabaseService {
     public static DatabaseReference createDatabase(String databaseName){
         return mDatabase.getInstance().getReference(databaseName);
     }
+    public static DatabaseReference getDatabase(){
+        return mDatabase.getInstance().getReference();
+    }
     public static boolean isSignIn(){
         if(mUser == null)
             return false;

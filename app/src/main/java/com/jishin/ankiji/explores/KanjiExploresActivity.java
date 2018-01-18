@@ -18,6 +18,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.KanjiAdapter;
 import com.jishin.ankiji.model.Kanji;
+import com.jishin.ankiji.utilities.Constants;
+import com.jishin.ankiji.utilities.DatabaseService;
 
 import java.util.ArrayList;
 
@@ -25,31 +27,25 @@ public class KanjiExploresActivity extends AppCompatActivity {
 
     public static final String TAG = KanjiExploresActivity.class.getSimpleName();
 
-    Toolbar mToolbar;
-    ArrayList<Kanji> kanjiList = new ArrayList<Kanji>();
-
-    RecyclerView mKanjiRecycler;
-    String Topic;
-
-
-    private FirebaseDatabase mDatabase;
+    private Toolbar mToolbar;
+    private ArrayList<Kanji> kanjiList = new ArrayList<Kanji>();
+    private KanjiAdapter kanjiAdapter;
+    private RecyclerView mKanjiRecycler;
+    private String Topic;
     private DatabaseReference mKanjiRef;
+    private DatabaseService mData = DatabaseService.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kanji_explores);
         addControl();
-        mKanjiRecycler = (RecyclerView) findViewById(R.id.kanjiRecyclerView);
 
         //Declare database references
-        mDatabase = FirebaseDatabase.getInstance();
-        mKanjiRef = mDatabase.getReference().child("data_kanji");
         Intent intent = getIntent();
         Topic = intent.getStringExtra("Kanji_Key");
-
         setReference(Topic);
-
+        //Load data
         new LoadDataTask().execute();
     }
 
@@ -57,6 +53,13 @@ public class KanjiExploresActivity extends AppCompatActivity {
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mKanjiRecycler = (RecyclerView) findViewById(R.id.kanjiRecyclerView);
+        kanjiAdapter = new KanjiAdapter();
+        kanjiAdapter.setmKanjiList(kanjiList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mKanjiRecycler.setLayoutManager(linearLayoutManager);
+        mKanjiRecycler.setAdapter(kanjiAdapter);
     }
     @Override
     public boolean onSupportNavigateUp() {
@@ -72,7 +75,7 @@ public class KanjiExploresActivity extends AppCompatActivity {
 
 
     private void setReference(String Topic) {
-        mKanjiRef =mDatabase.getReference().child("data_kanji").child(Topic);
+        mKanjiRef =mData.getDatabase().child(Constants.KANJI_NODE).child(Topic);
     }
     public class LoadDataTask extends AsyncTask<Void, Void, Void>{
 
@@ -87,6 +90,7 @@ public class KanjiExploresActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 showData(dataSnapshot);
+
             }
 
             @Override
@@ -97,23 +101,12 @@ public class KanjiExploresActivity extends AppCompatActivity {
     }
 
     private void showData(DataSnapshot dataSnapshot) {
-
         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-            Kanji kanji = new Kanji();
-            //               Log.d(TAG, "showData: ds = " + ds);
-            kanji.setAmhan(ds.getValue(Kanji.class).getAmhan());
-            kanji.setTuvung(ds.getValue(Kanji.class).getTuvung());
-            kanji.setKanji(ds.getValue(Kanji.class).getKanji());
-
+            Kanji kanji = ds.getValue(Kanji.class);
             kanjiList.add(kanji);
-
-            KanjiAdapter kanjiAdapter = new KanjiAdapter();
-            kanjiAdapter.setmKanjiList(kanjiList);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            mKanjiRecycler.setLayoutManager(linearLayoutManager);
-            mKanjiRecycler.setAdapter(kanjiAdapter);
         }
+        if(kanjiList.size() > 0)
+            kanjiAdapter.notifyDataSetChanged();
     }
 
 }

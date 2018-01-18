@@ -3,7 +3,7 @@
     <string name="btn_login">Go</string>
     <string name="login_with">Sign in with</string>
     <string name="create_an_account"><u>Create an account?</u></string>
-    <string name="forgot_passowrd"><u>Forgot passoword?</u>></string>
+    <string name="forgot_passowrd"><u>Forgot password?</u></string>
     <string name="login">SIGN IN</string>
     <string name="username">Username</string>
     <string name="email">Email</string>

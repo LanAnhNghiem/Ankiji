@@ -19,9 +19,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.jishin.ankiji.R;
+import com.jishin.ankiji.features.FeatureActivity;
 import com.jishin.ankiji.utilities.DatabaseService;
-import com.jishin.ankiji.view.activity.MainActivity;
-import com.jishin.ankiji.view.activity.SigninActivity;
 
 /**
  * Created by lana on 18/01/2018.
@@ -66,7 +65,7 @@ public class LoginGoogle {
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(mActivity, R.string.login_success, Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(mActivity, MainActivity.class);
+                            Intent intent = new Intent(mActivity, FeatureActivity.class);
                             mActivity.startActivity(intent);
                             if(progressDialog.isShowing()){
                                 hideProgress();

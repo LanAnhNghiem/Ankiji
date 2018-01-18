@@ -1,15 +1,11 @@
-package com.jishin.ankiji.view.activity;
+package com.jishin.ankiji.signin;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -31,9 +27,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.jishin.ankiji.R;
-import com.jishin.ankiji.signin.LoginFacebook;
-import com.jishin.ankiji.signin.LoginGoogle;
+import com.jishin.ankiji.features.FeatureActivity;
 import com.jishin.ankiji.utilities.DatabaseService;
+import com.jishin.ankiji.signup.SignupActivity;
 
 public class SigninActivity extends AppCompatActivity {
 
@@ -68,7 +64,7 @@ public class SigninActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         if(mData.isSignIn()){
-            Intent intent = new Intent(SigninActivity.this, MainActivity.class);
+            Intent intent = new Intent(SigninActivity.this, FeatureActivity.class);
             startActivity(intent);
             finish();
         }
@@ -104,7 +100,7 @@ public class SigninActivity extends AppCompatActivity {
                 requestSignIn(username, password);
                 btnLogin.setEnabled(false);
                 btnLogin.setBackgroundColor(ContextCompat.getColor(getBaseContext(), R.color.colorDisable));
-                Intent intent = new Intent(SigninActivity.this, MainActivity.class);
+                Intent intent = new Intent(SigninActivity.this, FeatureActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -173,7 +169,7 @@ public class SigninActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     Toast.makeText(SigninActivity.this, R.string.login_success, Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(SigninActivity.this, MainActivity.class));
+                    startActivity(new Intent(SigninActivity.this, FeatureActivity.class));
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {

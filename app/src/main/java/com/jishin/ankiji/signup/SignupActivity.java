@@ -1,4 +1,4 @@
-package com.jishin.ankiji.view.activity;
+package com.jishin.ankiji.signup;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -30,6 +31,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.model.User;
+import com.jishin.ankiji.signin.SigninActivity;
 import com.jishin.ankiji.utilities.DatabaseService;
 import com.jishin.ankiji.utilities.Utilities;
 
@@ -37,7 +39,7 @@ import java.util.regex.Pattern;
 
 public class SignupActivity extends AppCompatActivity {
     public static String TAG = SignupActivity.class.getSimpleName();
-
+    private Toolbar toolbar;
     TextInputEditText mUsername, mEmail, mPassword, mConfirmPass;
     Button mBtnSignUp;
     TextView txtUsername, txtEmail, txtPass, txtConfirmPass;
@@ -48,7 +50,9 @@ public class SignupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mUsername = findViewById(R.id.edt_username);
         mEmail = findViewById(R.id.edt_email);
         mPassword = findViewById(R.id.edt_password);
@@ -85,7 +89,17 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
     }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
     private void textChangeListener() {
         mUsername.addTextChangedListener(new TextWatcher() {
             @Override

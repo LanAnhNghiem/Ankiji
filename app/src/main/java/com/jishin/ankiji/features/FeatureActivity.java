@@ -1,5 +1,6 @@
 package com.jishin.ankiji.features;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -11,8 +12,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
+
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.FragmentAdapter;
+import com.jishin.ankiji.utilities.DatabaseService;
+import com.jishin.ankiji.signin.SigninActivity;
 
 
 public class FeatureActivity extends AppCompatActivity{
@@ -22,13 +27,15 @@ public class FeatureActivity extends AppCompatActivity{
     private ViewPager viewPager;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
+    private DatabaseService mData = DatabaseService.getInstance();
+    private NavigationView nav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_features);
         getControls();
-
+        setEvents();
     }
 
     private void getControls() {
@@ -41,6 +48,15 @@ public class FeatureActivity extends AppCompatActivity{
         drawerLayout = findViewById(R.id.drawerLayout);
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setAdapter(new FragmentAdapter(getSupportFragmentManager()));
+
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,R.string.ns_menu_open,R.string.ns_menu_close);
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        nav = (NavigationView) findViewById(R.id.navigationBar);
+
+    }
+    private void setEvents(){
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -57,16 +73,27 @@ public class FeatureActivity extends AppCompatActivity{
 
             }
         });
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,R.string.ns_menu_open,R.string.ns_menu_close);
-        drawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        NavigationView n = (NavigationView) findViewById(R.id.navigationBar);
-        n.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        nav.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
+                switch(menuItem.getItemId()){
 
+                    case R.id.item_profile:
+                        Toast.makeText(FeatureActivity.this, "Profile", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.item_setting:
+                        Toast.makeText(FeatureActivity.this, "Setting", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.item_use:
+                        Toast.makeText(FeatureActivity.this, "How to use", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.log_out:
+                        Toast.makeText(FeatureActivity.this, "Signed out", Toast.LENGTH_SHORT).show();
+                        mData.getFirebaseAuth().signOut();
+                        Intent intent = new Intent(FeatureActivity.this, SigninActivity.class);
+                        startActivity(intent);
+                        finish();
+                        break;
                 }
                 drawerLayout.closeDrawers();  // CLOSE DRAWER
                 return true;
@@ -78,9 +105,8 @@ public class FeatureActivity extends AppCompatActivity{
 
         switch (item.getItemId()) {
             case android.R.id.home:
-                //drawerLayout.openDrawer(GravityCompat.START);  // OPEN DRAWER
+                drawerLayout.openDrawer(GravityCompat.START);  // OPEN DRAWER
                 return true;
-
         }
         return super.onOptionsItemSelected(item);
     }

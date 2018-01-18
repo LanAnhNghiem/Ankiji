@@ -14,6 +14,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.TopicAdapter;
+import com.jishin.ankiji.utilities.Constants;
+import com.jishin.ankiji.utilities.DatabaseService;
 
 import java.util.ArrayList;
 
@@ -22,11 +24,11 @@ public class TopicMojiActivity extends AppCompatActivity {
     public static final String TAG = TopicKanjiActivity.class.getSimpleName();
 
     private Toolbar mToolbar;
-    ArrayList<String> mojiTopicList = new ArrayList<>();
-    RecyclerView mRv_MojiTopic;
-
-    FirebaseDatabase mDatabase;
-    DatabaseReference mMojiTopicRef;
+    private ArrayList<String> mojiTopicList = new ArrayList<>();
+    private RecyclerView mRv_MojiTopic;
+    private TopicAdapter topicAdapter;
+    private DatabaseReference mMojiTopicRef;
+    private DatabaseService mData = DatabaseService.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +43,13 @@ public class TopicMojiActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mRv_MojiTopic = findViewById(R.id.rv_TopicMoji);
-        mDatabase = FirebaseDatabase.getInstance();
-        mMojiTopicRef = mDatabase.getReference().child("moji").child("Soumatome");
+        topicAdapter = new TopicAdapter("MOJI");
+        topicAdapter.setTopic(mojiTopicList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRv_MojiTopic.setLayoutManager(linearLayoutManager);
+        mRv_MojiTopic.setAdapter(topicAdapter);
+        mMojiTopicRef = mData.getDatabase().child(Constants.MOJI_NODE).child("Soumatome");
     }
     @Override
     public boolean onSupportNavigateUp() {
@@ -81,15 +88,8 @@ public class TopicMojiActivity extends AppCompatActivity {
     private void showData(DataSnapshot dataSnapshot) {
 
         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-
             mojiTopicList.add(ds.getKey());
-
-            TopicAdapter topicAdapter = new TopicAdapter("MOJI");
-            topicAdapter.setTopic(mojiTopicList);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            mRv_MojiTopic.setLayoutManager(linearLayoutManager);
-            mRv_MojiTopic.setAdapter(topicAdapter);
         }
+        topicAdapter.notifyDataSetChanged();
     }
 }

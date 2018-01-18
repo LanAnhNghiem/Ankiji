@@ -17,6 +17,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.MojiAdater;
 import com.jishin.ankiji.model.Moji;
+import com.jishin.ankiji.utilities.Constants;
+import com.jishin.ankiji.utilities.DatabaseService;
 
 import java.util.ArrayList;
 
@@ -26,25 +28,20 @@ public class MojiExploresActivity extends AppCompatActivity {
 
     public static final String MOJI_SOUMATOME_KEY = "Soumatome";
 
-    Toolbar mToolbar;
-    String mTopic;
+    private Toolbar mToolbar;
+    private String mTopic;
     private ArrayList<Moji> mojiList = new ArrayList<Moji>();
-    RecyclerView mMojiRecycler;
-
-    private FirebaseDatabase mFirebaseDatabase;
+    private RecyclerView mMojiRecycler;
+    private MojiAdater mojiAdater;
     private DatabaseReference mMojiRef;
-
+    private DatabaseService mData = DatabaseService.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_moji_explores);
 
-        mMojiRecycler = findViewById(R.id.mojiRecyclerView);
-
         //Declare database reference
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mMojiRef = mFirebaseDatabase.getReference().child("moji").child(MOJI_SOUMATOME_KEY);
         Intent intent = getIntent();
         mTopic = intent.getStringExtra("Moji_Key");
         addControl();
@@ -56,6 +53,13 @@ public class MojiExploresActivity extends AppCompatActivity {
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mMojiRecycler = findViewById(R.id.mojiRecyclerView);
+        mojiAdater = new MojiAdater();
+        mojiAdater.setmMojiList(mojiList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mMojiRecycler.setLayoutManager(linearLayoutManager);
+        mMojiRecycler.setAdapter(mojiAdater);
     }
     @Override
     public boolean onSupportNavigateUp() {
@@ -96,27 +100,14 @@ public class MojiExploresActivity extends AppCompatActivity {
     private void showData(DataSnapshot dataSnapshot) {
         for (DataSnapshot ds : dataSnapshot.getChildren()) {
 
-            Moji moji = new Moji();
-            moji.setAmHan(ds.getValue(Moji.class).getAmHan());
-            moji.setCachDocHira(ds.getValue(Moji.class).getCachDocHira());
-            moji.setNghiaTiengViet(ds.getValue(Moji.class).getNghiaTiengViet());
-            moji.setTuTiengNhat(ds.getValue(Moji.class).getTuTiengNhat());
-
+            Moji moji = ds.getValue(Moji.class);
             mojiList.add(moji);
-
-            MojiAdater mojiAdater = new MojiAdater();
-            mojiAdater.setmMojiList(mojiList);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            mMojiRecycler.setLayoutManager(linearLayoutManager);
-            mMojiRecycler.setAdapter(mojiAdater);
-
         }
-
+        mojiAdater.notifyDataSetChanged();
     }
 
     private void setReference(String topic) {
-        mMojiRef = mFirebaseDatabase.getReference().child("moji").child(MOJI_SOUMATOME_KEY).child(topic);
+        mMojiRef = mData.getDatabase().child(Constants.MOJI_NODE).child(MOJI_SOUMATOME_KEY).child(topic);
         Log.d(TAG, "setReference: " + mMojiRef);
     }
 

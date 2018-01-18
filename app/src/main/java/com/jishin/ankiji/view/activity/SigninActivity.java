@@ -150,6 +150,7 @@ public class SigninActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        loginFacebook.callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
@@ -174,11 +175,6 @@ public class SigninActivity extends AppCompatActivity {
                     Toast.makeText(SigninActivity.this, R.string.login_success, Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(SigninActivity.this, MainActivity.class));
                 }
-//                else {
-//                    Log.d("EmailPassword", "signInWithEmail:failure", task.getException());
-//                    Toast.makeText(SigninActivity.this, "Authentication failed.",
-//                            Toast.LENGTH_SHORT).show();
-//                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

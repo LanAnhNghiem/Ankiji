@@ -34,7 +34,7 @@ import java.util.Arrays;
 
 public class LoginFacebook {
     private LoginManager loginManager;
-    private CallbackManager callbackManager;
+    public CallbackManager callbackManager;
     private Activity mActivity;
     private FirebaseAuth mAuth;
     //private DatabaseReference mData;

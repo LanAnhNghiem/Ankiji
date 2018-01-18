@@ -2,7 +2,7 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="10dp"
+    app:cardCornerRadius="5dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginBottom="10dp"
     android:layout_marginStart="10dp"
@@ -25,6 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Kanji (front)"
+                android:textSize="15sp"
                 android:inputType="text"/>
         </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
@@ -41,6 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Âm Hán (back)"
+                android:textSize="15sp"
                 android:inputType="text"/>
         </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
@@ -58,8 +60,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Từ vựng (back)"
+                android:textSize="15sp"
                 android:inputType="text"/>
         </android.support.design.widget.TextInputLayout>
     </android.support.constraint.ConstraintLayout>
-
 </android.support.v7.widget.CardView>

@@ -5,4 +5,7 @@ package com.jishin.ankiji.utilities;
  */
 
 public class Constants {
+    public static final int KANJI = 0;
+    public static final int AMHAN = 1;
+    public static final int TUVUNG = 2;
 }

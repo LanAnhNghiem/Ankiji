@@ -1,55 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawerLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.jishin.ankiji.view.activity.MainActivity">
-
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <!--Main content-->
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:elevation="10dp"
-        android:paddingBottom="0dp">
-
-        <ImageView
-            android:id="@+id/img_menu"
-            android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/menu"
-            android:tint="@android:color/white"/>
+            android:background="@color/colorPrimary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:elevation="10dp"
+            android:paddingBottom="0dp">
 
-    </android.support.v7.widget.Toolbar>
+            <ImageView
+                android:id="@+id/img_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/menu"
+                android:tint="@android:color/white"/>
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tabLayout"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:background="@android:color/white"
-        app:tabIndicatorColor="@color/colorPrimary"
-        app:tabTextColor="@android:color/darker_gray"
-        app:tabSelectedTextColor="@color/colorPrimary"
-        android:elevation="8dp">
-    </android.support.design.widget.TabLayout>
+        </android.support.v7.widget.Toolbar>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewPager"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/tabLayout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@android:color/white"
+            app:tabIndicatorColor="@color/colorPrimary"
+            app:tabTextColor="@android:color/darker_gray"
+            app:tabSelectedTextColor="@color/colorPrimary"
+            android:elevation="8dp">
+        </android.support.design.widget.TabLayout>
 
-    </android.support.v4.view.ViewPager>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/tabLayout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-</android.support.constraint.ConstraintLayout>
+        </android.support.v4.view.ViewPager>
+    </android.support.constraint.ConstraintLayout>
+    <!--Navigation Drawer-->
+    <RelativeLayout
+        android:id="@+id/drawerPane"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:gravity="start">
+        <!--Profile box-->
+        <RelativeLayout
+            android:id="@+id/profileBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:padding="10dp">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgAvatar"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/user_default"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/imgAvatar"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/txtUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Username"
+                    android:textColor="@android:color/white"
+                    android:layout_marginTop="10dp"
+                    android:textSize="16sp"/>
+                <TextView
+                    android:id="@+id/txtEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="username@gmail.com"
+                    android:textColor="@android:color/white"
+                    />
+            </LinearLayout>
+        </RelativeLayout>
+        <!--List of Actions-->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvMenuItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/profileBox">
+        </android.support.v7.widget.RecyclerView>
+    </RelativeLayout>
+</android.support.v4.widget.DrawerLayout>

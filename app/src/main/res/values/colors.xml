@@ -3,7 +3,9 @@
     <color name="colorPrimary">#7A1EA1</color>
     <color name="colorPrimaryDark">#691A99</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorLightPink">#ff79b0</color>
     <color name="startBackground">#FFFFFF</color>
     <color name="endBackground">#7A1EA1</color>
     <color name="colorDisable">#E0E0E0</color>
+    <color name="light_gray">#616161</color>
 </resources>

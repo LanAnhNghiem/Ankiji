@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    tools:context="com.jishin.ankiji.adapter.KanjiAdapter">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackground"
+        app:cardPreventCornerOverlap="false"
+        app:contentPadding="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        card_view:cardElevation="2dp"
+        card_view:cardMaxElevation="3dp"
+        card_view:cardUseCompatPadding="true">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp">
+            <LinearLayout
+                android:id="@+id/layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/txt_moji_tu"
+                app:layout_constraintTop_toTopOf="parent"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/txt_moji_amHan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Am Han"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"/>
+
+                <TextView
+                    android:id="@+id/txt_moji_Hira"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hira"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"/>
+
+                <TextView
+                    android:id="@+id/txt_moji_nghiaTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Nghia Tieng Viet"
+                    android:paddingBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingTop="5dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txt_moji_tu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@id/layout"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:text="Từ vựng"
+                android:textSize="20sp"/>
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
+</android.support.constraint.ConstraintLayout>

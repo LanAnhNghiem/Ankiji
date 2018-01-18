@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "949735400434",
+    "firebase_url": "https://ankiji-cca11.firebaseio.com",
+    "project_id": "ankiji-cca11",
+    "storage_bucket": "ankiji-cca11.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:949735400434:android:bed391f399985de7",
+        "android_client_info": {
+          "package_name": "com.jishin.ankiji"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "949735400434-rijmt6ilq6qbib7drmuv8cbsmp0ofmmb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jishin.ankiji",
+            "certificate_hash": "5a45c616462f418ef4a02e44370065ee33a2dec7"
+          }
+        },
+        {
+          "client_id": "949735400434-dldu4jv7ap6letg5af4vmloqhfcuo7tb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jishin.ankiji",
+            "certificate_hash": "09c6940c16623dcdf3f498fcce10b78e0a9d7563"
+          }
+        },
+        {
+          "client_id": "949735400434-vbridrrlsu8r10p3m80npn0kfcbnn009.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqi65HcxsnJqlKpV1R3YzGYrNmyHw5zFg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "949735400434-vbridrrlsu8r10p3m80npn0kfcbnn009.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

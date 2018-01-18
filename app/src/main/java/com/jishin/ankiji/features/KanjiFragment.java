@@ -1,6 +1,7 @@
 package com.jishin.ankiji.features;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +16,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
+import com.jishin.ankiji.explores.TopicKanjiActivity;
 
 /**
  * Created by trungnguyeen on 12/27/17.
@@ -70,7 +72,8 @@ public class KanjiFragment extends Fragment {
         mFABAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(getContext(), TopicKanjiActivity.class);
+                startActivity(intent);
             }
         });
     }

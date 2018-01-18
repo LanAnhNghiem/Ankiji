@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jishin.ankiji">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,16 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".view.activity.SigninActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".view.activity.SignupActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".view.activity.MainActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".features.FeatureActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,8 +22,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".view.activity.SignupActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".explores.TopicMojiActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".features.FeatureActivity" />
         <activity android:name=".explores.MojiExploresActivity" />
         <activity android:name=".explores.KanjiExploresActivity" />
+        <activity android:name=".explores.TopicKanjiActivity" />
+        <activity android:name=".view.activity.SigninActivity"></activity>
         <activity android:name=".userlist.CreateVocabActivity"></activity>
     </application>
 

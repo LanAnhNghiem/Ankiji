@@ -1,11 +1,12 @@
 package com.jishin.ankiji.explores;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.widget.Toolbar;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,15 +34,37 @@ public class TopicKanjiActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic_kanji);
         initializeParam();
-        getKanjiTopic();
+        new LoadDataTask().execute();
     }
 
     private void initializeParam() {
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mRv_KanjiTopic = findViewById(R.id.rv_TopicKanji);
         mDatabase = FirebaseDatabase.getInstance();
         mKanjiTopicRef = mDatabase.getReference().child("data_kanji");
     }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    private class LoadDataTask extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            getKanjiTopic();
+            return null;
+        }
+    }
     private void getKanjiTopic(){
         mKanjiTopicRef.addValueEventListener(new ValueEventListener() {
             @Override

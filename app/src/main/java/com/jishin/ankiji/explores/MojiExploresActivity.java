@@ -1,6 +1,7 @@
 package com.jishin.ankiji.explores;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -48,14 +49,34 @@ public class MojiExploresActivity extends AppCompatActivity {
         mTopic = intent.getStringExtra("Moji_Key");
         addControl();
         setReference(mTopic);
-        getMoji();
+        new LoadDataTask().execute();
     }
 
     private void addControl() {
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    public class LoadDataTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            getMoji();
+            return null;
+        }
+    }
 
     private void getMoji() {
         mMojiRef.addValueEventListener(new ValueEventListener() {

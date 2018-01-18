@@ -1,7 +1,10 @@
 package com.jishin.ankiji.explores;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,7 +39,7 @@ public class KanjiExploresActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kanji_explores);
-
+        addControl();
         mKanjiRecycler = (RecyclerView) findViewById(R.id.kanjiRecyclerView);
 
         //Declare database references
@@ -46,19 +49,39 @@ public class KanjiExploresActivity extends AppCompatActivity {
         Topic = intent.getStringExtra("Kanji_Key");
 
         setReference(Topic);
-        addControl();
-        getKanji();
+
+        new LoadDataTask().execute();
     }
 
     private void addControl() {
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
 
     private void setReference(String Topic) {
         mKanjiRef =mDatabase.getReference().child("data_kanji").child(Topic);
     }
+    public class LoadDataTask extends AsyncTask<Void, Void, Void>{
 
+        @Override
+        protected Void doInBackground(Void... voids) {
+            getKanji();
+            return null;
+        }
+    }
     public void getKanji() {
         mKanjiRef.addValueEventListener(new ValueEventListener() {
             @Override

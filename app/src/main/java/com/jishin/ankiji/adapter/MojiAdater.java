@@ -52,9 +52,9 @@ public class MojiAdater extends RecyclerView.Adapter<MojiAdater.RecyclerViewHold
         public RecyclerViewHolder(View itemView) {
             super(itemView);
             txtAmHan = itemView.findViewById(R.id.txt_moji_amHan);
-            txtHira = itemView.findViewById(R.id.txt__moji_Hira);
+            txtHira = itemView.findViewById(R.id.txt_moji_Hira);
             txtNghiaTV = itemView.findViewById(R.id.txt_moji_nghiaTV);
-            txtTuTN = itemView.findViewById(R.id.txt_moji_tuTN);
+            txtTuTN = itemView.findViewById(R.id.txt_moji_tu);
         }
     }
 }

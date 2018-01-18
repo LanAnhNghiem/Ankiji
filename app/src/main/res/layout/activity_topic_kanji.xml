@@ -10,7 +10,9 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="@color/colorPrimaryDark"></android.support.v7.widget.Toolbar>
+        android:background="@color/colorPrimaryDark"
+        app:titleTextColor="@android:color/white"
+        android:theme="@style/ToolBarTheme.ToolBarStyle"></android.support.v7.widget.Toolbar>
 
 
     <android.support.v7.widget.RecyclerView

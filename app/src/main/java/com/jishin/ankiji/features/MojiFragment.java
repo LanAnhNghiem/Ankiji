@@ -82,7 +82,7 @@ public class MojiFragment extends Fragment {
                 final EditText edtSetName = dialogView.findViewById(R.id.edtSetName);
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setView(dialogView);
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 

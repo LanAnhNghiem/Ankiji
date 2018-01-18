@@ -16,7 +16,6 @@
         <activity
             android:name=".view.activity.MainActivity"
             android:screenOrientation="portrait">
-
         </activity>
         <activity
             android:name=".view.activity.SignupActivity"
@@ -24,6 +23,11 @@
         <activity
             android:name=".explores.TopicMojiActivity"
             android:screenOrientation="portrait" />
+
+        <activity android:name=".explores.MojiExploresActivity" />
+        <activity android:name=".explores.KanjiExploresActivity" />
+        <activity android:name=".userlist.CreateVocabActivity">
+
         <activity android:name=".features.FeatureActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

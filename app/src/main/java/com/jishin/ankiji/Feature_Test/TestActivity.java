@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageButton;
@@ -31,19 +32,19 @@ import java.util.Random;
 
 public class TestActivity extends AppCompatActivity implements View.OnClickListener{
 
-    public static boolean check;
+    public boolean check;
     public static final String BOOK = "Soumatome";
-    public static final String REFRENCE = "moji";
+    public static final String REFERENCE = "moji";
 
 //    public static final int NUMBER_OF_QUESTION = 50;
 
-    private static int number_of_right_answer = 0;
+    private int number_of_right_answer = 0;
 
-    private static ArrayList<Moji> mojiList;
-    private static ArrayList<String> answerList;
-    private static ArrayList<QuestionAnswer> QAList;
+    private ArrayList<Moji> mojiList;
+    private ArrayList<String> answerList;
+    private ArrayList<QuestionAnswer> QAList;
 
-    private ImageButton btnBack;
+    private Toolbar toolbar;
     private ProgressBar progressBar;
     private TextView txtRightCount, txtQuestion, txtAnswerA, txtAnswerB, txtAnswerC, txtAnswerD;
 
@@ -53,54 +54,28 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_kanji_test);
-
+        setContentView(R.layout.activity_moji_test);
         addControls();
         database = FirebaseDatabase.getInstance();
-        mReference = database.getReference(REFRENCE).child(BOOK).child("Bai_1");
-
-        mReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Moji moji = snapshot.getValue(Moji.class);
-
-                    mojiList.add(moji);
-                    answerList.add(moji.getCachDocHira());
-                    QAList.add(new QuestionAnswer(moji.getTuTiengNhat(), moji.getCachDocHira()));
-                }
-
-//                progressBarTask task = new progressBarTask();
-//                task.execute(NUMBER_OF_QUESTION);
-
-                updateQuestion(mojiList, answerList);
-                txtAnswerA.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(TestActivity.this, "clicked", Toast.LENGTH_LONG).show();
-                    }
-                });
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
+        mReference = database.getReference(REFERENCE).child(BOOK).child("Bai_1");
+        new LoadDataTask().execute();
         addEvents();
 
     }
 
     private void addEvents() {
-
+        txtAnswerA.setOnClickListener(this);
+        txtAnswerB.setOnClickListener(this);
+        txtAnswerC.setOnClickListener(this);
+        txtAnswerD.setOnClickListener(this);
     }
+
 
     private void addControls() {
         check = false;
-
-        btnBack = findViewById(R.id.btnBack);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         progressBar = findViewById(R.id.determinateBar);
         txtRightCount = findViewById(R.id.txtRightCount);
         txtQuestion = findViewById(R.id.txtQuestion);
@@ -108,8 +83,6 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         txtAnswerB = findViewById(R.id.txtAnswerB);
         txtAnswerC = findViewById(R.id.txtAnswerC);
         txtAnswerD = findViewById(R.id.txtAnswerD);
-
-
         mojiList = new ArrayList<>();
         answerList = new ArrayList<>();
         QAList = new ArrayList<>();
@@ -118,10 +91,21 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
     public void updateQuestion (ArrayList<Moji> listMoji, ArrayList<String> listAnswer) {
 
         int index_moji = new Random().nextInt(listMoji.size());
-
         int index_one;
         int index_two;
         int index_three;
@@ -226,11 +210,11 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         Dialog settingsDialog = new Dialog(this);
         settingsDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         if (check){
-            settingsDialog.setContentView(getLayoutInflater().inflate(R.layout.image_right
-                    , null));
+            settingsDialog.setContentView(getLayoutInflater()
+                    .inflate(R.layout.image_right, null));
         }else{
-            settingsDialog.setContentView(getLayoutInflater().inflate(R.layout.image_wrong
-                    , null));
+            settingsDialog.setContentView(getLayoutInflater()
+                    .inflate(R.layout.image_wrong, null));
         }
         settingsDialog.show();
     }
@@ -259,8 +243,10 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.txtAnswerB:
+                Toast.makeText(TestActivity.this, "TXTB_CLICKED", Toast.LENGTH_LONG).show();
+
                 txtAnswerB.setBackgroundColor(Color.HSVToColor(new float[] {0, 0, 83}));
-                answer = txtAnswerA.getText().toString();
+                answer = txtAnswerB.getText().toString();
                 for (QuestionAnswer item : QAList){
                     if (item.getQuestion().equalsIgnoreCase(question)){
                         if (item.getAnswer().equalsIgnoreCase(answer)){
@@ -274,8 +260,9 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.txtAnswerC:
+                Toast.makeText(TestActivity.this, "TXTC_CLIKED", Toast.LENGTH_LONG).show();
                 txtAnswerC.setBackgroundColor(Color.HSVToColor(new float[] {0, 0, 83}));
-                answer = txtAnswerA.getText().toString();
+                answer = txtAnswerC.getText().toString();
                 for (QuestionAnswer item : QAList){
                     if (item.getQuestion().equalsIgnoreCase(question)){
                         if (item.getAnswer().equalsIgnoreCase(answer)){
@@ -289,8 +276,10 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.txtAnswerD:
+                Toast.makeText(TestActivity.this, "TXTD_CLIKED", Toast.LENGTH_LONG).show();
+
                 txtAnswerD.setBackgroundColor(Color.HSVToColor(new float[] {0, 0, 83}));
-                answer = txtAnswerA.getText().toString();
+                answer = txtAnswerD.getText().toString();
                 for (QuestionAnswer item : QAList){
                     if (item.getQuestion().equalsIgnoreCase(question)){
                         if (item.getAnswer().equalsIgnoreCase(answer)){
@@ -303,10 +292,41 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
                 break;
+        }
+    }
+    class LoadDataTask extends AsyncTask<Void, Void, Void>{
 
-            case R.id.btnBack:
-                // TODO : Back to other Activity
-                break;
+        @Override
+        protected Void doInBackground(Void... voids) {
+            mReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                        Moji moji = snapshot.getValue(Moji.class);
+                        mojiList.add(moji);
+                        answerList.add(moji.getCachDocHira());
+                        QAList.add(new QuestionAnswer(moji.getTuTiengNhat(), moji.getCachDocHira()));
+                    }
+
+//                progressBarTask task = new progressBarTask();
+//                task.execute(NUMBER_OF_QUESTION);
+
+                    updateQuestion(mojiList, answerList);
+//                    txtAnswerA.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            Toast.makeText(TestActivity.this, "clicked", Toast.LENGTH_LONG).show();
+//                        }
+//                    });
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            return null;
         }
     }
 

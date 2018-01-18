@@ -15,5 +15,10 @@
     <string name="item_count">30 items</string>
     <string name="ns_menu_open">1</string>
     <string name="ns_menu_close">0</string>
+    <string name="test_moji">作文</string>
+    <string name="answerA">A: きょうし</string>
+    <string name="answerB">B: がくせい</string>
+    <string name="answerC">C: だいがく</string>
+    <string name="answerD">D: さくぶん</string>
 
 </resources>

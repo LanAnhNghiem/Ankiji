@@ -7,4 +7,5 @@
     <color name="startBackground">#FFFFFF</color>
     <color name="endBackground">#7A1EA1</color>
     <color name="light_gray">#616161</color>
+    <color name="click_textview">#d6d4d4</color>
 </resources>

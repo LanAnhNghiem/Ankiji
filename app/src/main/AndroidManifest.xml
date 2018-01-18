@@ -21,14 +21,19 @@
         <activity
             android:name=".features.FeatureActivity"
             android:screenOrientation="portrait">
+
+        </activity>
+        <activity android:name=".explores.MojiExploresActivity" />
+        <activity android:name=".explores.KanjiExploresActivity">
+
+        </activity>
+        <activity android:name=".Feature_Test.TestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".explores.MojiExploresActivity" />
-        <activity android:name=".explores.KanjiExploresActivity"></activity>
     </application>
 
 </manifest>

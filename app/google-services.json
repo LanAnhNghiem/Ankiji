@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "949735400434-h92t55rr3ajastsmip3rb900dgo0ksik.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jishin.ankiji",
+            "certificate_hash": "f85ec171e32202db32a97428a6364eac6c182f6e"
+          }
+        },
+        {
           "client_id": "949735400434-rijmt6ilq6qbib7drmuv8cbsmp0ofmmb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

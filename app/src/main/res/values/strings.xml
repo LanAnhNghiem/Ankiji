@@ -20,5 +20,8 @@
     <string name="answerB">B: がくせい</string>
     <string name="answerC">C: だいがく</string>
     <string name="answerD">D: さくぶん</string>
+    <string name="main">MAIN</string>
+    <string name="retry">RETRY</string>
+    <string name="notification">Do you want to retry?</string>
 
 </resources>

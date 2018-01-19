@@ -1,18 +1,19 @@
 package com.jishin.ankiji.Feature_Test;
 
 import android.app.Dialog;
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.QuestionAnswer;
+import com.jishin.ankiji.view.activity.MainActivity;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -36,9 +38,10 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     public static final String BOOK = "Soumatome";
     public static final String REFERENCE = "moji";
 
-//    public static final int NUMBER_OF_QUESTION = 50;
+    public static int NUMBER_OF_QUESTION = 0;
 
     private int number_of_right_answer = 0;
+    private int index_question = 0;
 
     private ArrayList<Moji> mojiList;
     private ArrayList<String> answerList;
@@ -47,10 +50,19 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     private Toolbar toolbar;
     private ProgressBar progressBar;
     private TextView txtRightCount, txtQuestion, txtAnswerA, txtAnswerB, txtAnswerC, txtAnswerD;
+    private TextView txtNumberQuestion;
+    private ConstraintLayout layout;
+
+    private TextView txtNotification;
+    private Button btnMain;
+    private Button btnRetry;
+
 
     public FirebaseDatabase database;
     public DatabaseReference mReference;
 
+
+    Dialog settingsDialog = null;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +80,9 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         txtAnswerB.setOnClickListener(this);
         txtAnswerC.setOnClickListener(this);
         txtAnswerD.setOnClickListener(this);
+
+        btnMain.setOnClickListener(this);
+        btnRetry.setOnClickListener(this);
     }
 
 
@@ -83,12 +98,23 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         txtAnswerB = findViewById(R.id.txtAnswerB);
         txtAnswerC = findViewById(R.id.txtAnswerC);
         txtAnswerD = findViewById(R.id.txtAnswerD);
+        txtNumberQuestion = findViewById(R.id.txtNumberOfQuestion);
+
         mojiList = new ArrayList<>();
         answerList = new ArrayList<>();
         QAList = new ArrayList<>();
 
+        layout = findViewById(R.id.layoutTest);
+        
+        btnMain = findViewById(R.id.btnMain);
+        btnRetry = findViewById(R.id.btnRetry);
+        txtNotification = findViewById(R.id.txtNotification);
 
+        progressBar.setProgress(0);
 
+        btnMain.setVisibility(View.INVISIBLE);
+        btnRetry.setVisibility(View.INVISIBLE);
+        txtNotification.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -104,41 +130,59 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void updateQuestion (ArrayList<Moji> listMoji, ArrayList<String> listAnswer) {
+        index_question++;
+        progressBar.setProgress(index_question * 100 / NUMBER_OF_QUESTION);
+        txtNumberQuestion.setText("Question: " + index_question + "/" + NUMBER_OF_QUESTION);
+        txtRightCount.setText("Correct: " + number_of_right_answer + " / " + NUMBER_OF_QUESTION);
+        Log.d("MOJI_SIZE", String.valueOf(mojiList.size()));
+        Log.d("ANSWER_SIZE", String.valueOf(listAnswer.size()));
+        int index_moji = 0;
+        index_moji = new Random().nextInt(listMoji.size());
 
-        int index_moji = new Random().nextInt(listMoji.size());
+        Log.d("INDEX_MOJI", String.valueOf(index_moji));
         int index_one;
         int index_two;
         int index_three;
 
+        String answer_mojiRemove = "";
         String answerRemove_1 = "";
         String answerRemove_2 = "";
 
         txtQuestion.setText(listMoji.get(index_moji).getTuTiengNhat());
 
+
         int index_one_location = new Random().nextInt(4);
         switch (index_one_location){
             case 0:
+                // set dap an vao cau A
                 txtAnswerA.setText(listMoji.get(index_moji).getCachDocHira());
-                listMoji.remove(listMoji.get(index_moji));
-                listAnswer.remove(listMoji.get(index_moji).getCachDocHira());
+                // đánh dấu câu trả lời đúng của câu hỏi
+                answer_mojiRemove = listMoji.get(index_moji).getCachDocHira();
+                // remove khỏi list answer
+                listAnswer.remove(answer_mojiRemove);
+
 
                 index_one = new Random().nextInt(listAnswer.size());
                 answerRemove_1 = listAnswer.get(index_one);
                 txtAnswerB.setText(answerRemove_1);
                 listAnswer.remove(answerRemove_1);
-                
                 index_two = new Random().nextInt(listAnswer.size());
                 answerRemove_2 = listAnswer.get(index_two);
+
                 txtAnswerC.setText(answerRemove_2);
                 listAnswer.remove(answerRemove_2);
-                
                 index_three = new Random().nextInt(listAnswer.size());
                 txtAnswerD.setText(listAnswer.get(index_three));
-                
+
+                Log.d("INDEX_ONE", String.valueOf(index_one));
+                Log.d("INDEX_TWO", String.valueOf(index_two));
+                Log.d("INDEX_THREE", String.valueOf(index_three));
+
                 break;
             case 1:
                 txtAnswerB.setText(listMoji.get(index_moji).getCachDocHira());
-                listMoji.remove(listMoji.get(index_moji));
+                answer_mojiRemove = listMoji.get(index_moji).getCachDocHira();
+                listAnswer.remove(answer_mojiRemove);
                 listAnswer.remove(listMoji.get(index_moji).getCachDocHira());
 
                 index_one = new Random().nextInt(listAnswer.size());
@@ -154,10 +198,14 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 index_three = new Random().nextInt(listAnswer.size());
                 txtAnswerD.setText(listAnswer.get(index_three));
 
+                Log.d("INDEX_ONE", String.valueOf(index_one));
+                Log.d("INDEX_TWO", String.valueOf(index_two));
+                Log.d("INDEX_THREE", String.valueOf(index_three));
                 break;
             case 2:
                 txtAnswerC.setText(listMoji.get(index_moji).getCachDocHira());
-                listMoji.remove(listMoji.get(index_moji));
+                answer_mojiRemove = listMoji.get(index_moji).getCachDocHira();
+                listAnswer.remove(answer_mojiRemove);
                 listAnswer.remove(listMoji.get(index_moji).getCachDocHira());
 
                 index_one = new Random().nextInt(listAnswer.size());
@@ -172,12 +220,15 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
                 index_three = new Random().nextInt(listAnswer.size());
                 txtAnswerD.setText(listAnswer.get(index_three));
-
+                Log.d("INDEX_ONE", String.valueOf(index_one));
+                Log.d("INDEX_TWO", String.valueOf(index_two));
+                Log.d("INDEX_THREE", String.valueOf(index_three));
 
                 break;
             case 3:
                 txtAnswerD.setText(listMoji.get(index_moji).getCachDocHira());
-                listMoji.remove(listMoji.get(index_moji));
+                answer_mojiRemove = listMoji.get(index_moji).getCachDocHira();
+                listAnswer.remove(answer_mojiRemove);
                 listAnswer.remove(listMoji.get(index_moji).getCachDocHira());
 
                 index_one = new Random().nextInt(listAnswer.size());
@@ -192,22 +243,26 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
                 index_three = new Random().nextInt(listAnswer.size());
                 txtAnswerC.setText(listAnswer.get(index_three));
-
+                Log.d("INDEX_ONE", String.valueOf(index_one));
+                Log.d("INDEX_TWO", String.valueOf(index_two));
+                Log.d("INDEX_THREE", String.valueOf(index_three));
                 break;
         }
 
+        listMoji.remove(listMoji.get(index_moji));
         // RE ADD answer To ListAnswer
+        listAnswer.add(answer_mojiRemove);
         listAnswer.add(answerRemove_1);
         listAnswer.add(answerRemove_2);
 
-    }
 
+    }
     public void updateNumberOfRightAnswer () {
-        txtRightCount.setText(number_of_right_answer + " / " + mojiList.size());
+        txtRightCount.setText("Correct: " + number_of_right_answer + " / " + NUMBER_OF_QUESTION);
     }
 
     public void showDialog(boolean check) {
-        Dialog settingsDialog = new Dialog(this);
+        settingsDialog = new Dialog(this);
         settingsDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         if (check){
             settingsDialog.setContentView(getLayoutInflater()
@@ -217,6 +272,44 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                     .inflate(R.layout.image_wrong, null));
         }
         settingsDialog.show();
+
+//        settingsDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//            @Override
+//            public void onDismiss(DialogInterface dialogInterface) {
+//                updateQuestion(mojiList, answerList);
+//            }
+//        });
+
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        if (settingsDialog != null) {
+            settingsDialog.dismiss();
+        }
+    }
+
+    public void showResult () {
+        if (settingsDialog != null) {
+            settingsDialog.dismiss();
+        }
+        layout.removeView(txtAnswerA);
+        layout.removeView(txtAnswerB);
+        layout.removeView(txtAnswerC);
+        layout.removeView(txtAnswerD);
+        layout.removeView(progressBar);
+        layout.removeView(txtRightCount);
+        layout.removeView(txtNumberQuestion);
+
+        txtQuestion.setTextSize(30f);
+
+        txtQuestion.setText("RESULT: " + number_of_right_answer +"/" + NUMBER_OF_QUESTION+ " CORRECT");
+
+        txtNotification.setVisibility(View.VISIBLE);
+        btnMain.setVisibility(View.VISIBLE);
+        btnRetry.setVisibility(View.VISIBLE);
+
     }
 
     @Override
@@ -226,74 +319,102 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
         switch (view.getId()){
             case R.id.txtAnswerA:
-                Toast.makeText(TestActivity.this, "TXTA_CLIKED", Toast.LENGTH_LONG).show();
-                txtAnswerA.setBackgroundColor(Color.HSVToColor(new float[] {0, 0, 83}));
                 answer = txtAnswerA.getText().toString();
                 for (QuestionAnswer item : QAList){
                     if (item.getQuestion().equalsIgnoreCase(question)){
                         if (item.getAnswer().equalsIgnoreCase(answer)){
                             check = true;
                             number_of_right_answer++;
-                            showDialog(check);
-                            updateQuestion(mojiList, answerList);
-                            updateNumberOfRightAnswer();
+                        }else{
+                            check = false;
                         }
                     }
                 }
-
+                showDialog(check);
+                if (mojiList.isEmpty()){
+                    Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
+                    updateNumberOfRightAnswer();
+                    showResult();
+                }else{
+                    updateQuestion(mojiList, answerList);
+                }
                 break;
             case R.id.txtAnswerB:
-                Toast.makeText(TestActivity.this, "TXTB_CLICKED", Toast.LENGTH_LONG).show();
 
-                txtAnswerB.setBackgroundColor(Color.HSVToColor(new float[] {0, 0, 83}));
                 answer = txtAnswerB.getText().toString();
                 for (QuestionAnswer item : QAList){
                     if (item.getQuestion().equalsIgnoreCase(question)){
                         if (item.getAnswer().equalsIgnoreCase(answer)){
                             check = true;
                             number_of_right_answer++;
-                            showDialog(check);
-                            updateQuestion(mojiList, answerList);
-                            updateNumberOfRightAnswer();
+                        }else{
+                            check = false;
                         }
                     }
                 }
+                showDialog(check);
+                if (mojiList.isEmpty()){
+                    Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
+                    updateNumberOfRightAnswer();
+                    showResult();
+                }else{
+                    updateQuestion(mojiList, answerList);
+                }
                 break;
             case R.id.txtAnswerC:
-                Toast.makeText(TestActivity.this, "TXTC_CLIKED", Toast.LENGTH_LONG).show();
-                txtAnswerC.setBackgroundColor(Color.HSVToColor(new float[] {0, 0, 83}));
                 answer = txtAnswerC.getText().toString();
                 for (QuestionAnswer item : QAList){
                     if (item.getQuestion().equalsIgnoreCase(question)){
                         if (item.getAnswer().equalsIgnoreCase(answer)){
                             check = true;
                             number_of_right_answer++;
-                            showDialog(check);
-                            updateQuestion(mojiList, answerList);
-                            updateNumberOfRightAnswer();
+                        }else{
+                            check = false;
                         }
                     }
                 }
+                showDialog(check);
+                if (mojiList.isEmpty()){
+                    Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
+                    updateNumberOfRightAnswer();
+                    showResult();
+                }else{
+                    updateQuestion(mojiList, answerList);
+                }
                 break;
             case R.id.txtAnswerD:
-                Toast.makeText(TestActivity.this, "TXTD_CLIKED", Toast.LENGTH_LONG).show();
-
-                txtAnswerD.setBackgroundColor(Color.HSVToColor(new float[] {0, 0, 83}));
                 answer = txtAnswerD.getText().toString();
                 for (QuestionAnswer item : QAList){
                     if (item.getQuestion().equalsIgnoreCase(question)){
                         if (item.getAnswer().equalsIgnoreCase(answer)){
                             check = true;
                             number_of_right_answer++;
-                            showDialog(check);
-                            updateQuestion(mojiList, answerList);
-                            updateNumberOfRightAnswer();
+                        }else{
+                            check = false;
                         }
                     }
                 }
+                showDialog(check);
+                if (mojiList.isEmpty()){
+                    Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
+                    updateNumberOfRightAnswer();
+                    showResult();
+                }else{
+                    updateQuestion(mojiList, answerList);
+                }
+                break;
+
+            case R.id.btnMain:
+                startActivity(new Intent(TestActivity.this, MainActivity.class));
+                break;
+
+            case R.id.btnRetry:
+                finish();
+                startActivity(getIntent());
                 break;
         }
     }
+
     class LoadDataTask extends AsyncTask<Void, Void, Void>{
 
         @Override
@@ -307,60 +428,60 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                         answerList.add(moji.getCachDocHira());
                         QAList.add(new QuestionAnswer(moji.getTuTiengNhat(), moji.getCachDocHira()));
                     }
-
-//                progressBarTask task = new progressBarTask();
-//                task.execute(NUMBER_OF_QUESTION);
+                    NUMBER_OF_QUESTION = mojiList.size();
 
                     updateQuestion(mojiList, answerList);
-//                    txtAnswerA.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            Toast.makeText(TestActivity.this, "clicked", Toast.LENGTH_LONG).show();
-//                        }
-//                    });
-
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
+                public void onCancelled(DatabaseError databaseError) {}
             });
             return null;
-        }
-    }
-
-    class progressBarTask extends AsyncTask<Integer, Integer, Void> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressBar.setProgress(0);
-            txtRightCount.setText("Correct: 0/" + mojiList.size());
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            progressBar.setProgress(100);
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            int percent = values[0];
-            progressBar.setProgress(percent);
-
-        }
-
-        @Override
-        protected Void doInBackground(Integer... integers) {
-            int question = integers[0];
-
-            for (int i = 0; i < question; i++){
-                int percent = i * 100 / question;
-                publishProgress(percent);
-            }
-            return null;
         }
     }
+
+//    class progressBarTask extends AsyncTask<Integer, Integer, Void> {
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            progressBar.setProgress(0);
+//            txtRightCount.setText("Correct: 0/" + NUMBER_OF_QUESTION);
+//            Log.d("PROGRESSBAR", String.valueOf(progressBar.getProgress()));
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            progressBar.setProgress(100);
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(Integer... values) {
+//            super.onProgressUpdate(values);
+//            int percent = values[0];
+//            progressBar.setProgress(percent);
+//            Log.d("PROGRESSBAR", String.valueOf(progressBar.getProgress()));
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Integer... integers) {
+//            int question = integers[0];
+//
+//            for (int i = 0; i < question; i++){
+//                int percent = i * 100 / question;
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                publishProgress(percent);
+//            }
+//            return null;
+//        }
+//    }
 }

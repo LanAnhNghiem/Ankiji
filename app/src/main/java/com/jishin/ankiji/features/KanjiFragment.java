@@ -119,11 +119,21 @@ public class KanjiFragment extends Fragment {
                 builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getContext(), "Click click", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(getContext(), CreateVocabActivity.class);
-                        intent.putExtra("create", Constants.CREATE_KANJI);
-                        intent.putExtra("name", edtSetName.getText().toString());
-                        startActivity(intent);
+                        String setName = edtSetName.getText().toString().trim();
+                        if(!setName.isEmpty()){
+                            Toast.makeText(getContext(), "Click click", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getContext(), CreateVocabActivity.class);
+                            intent.putExtra("create", Constants.CREATE_KANJI);
+                            intent.putExtra("name", setName);
+                            startActivity(intent);
+                        }else{
+                            Toast.makeText(getContext(), "Cannot create a new set.\nSet name field is required", Toast.LENGTH_SHORT).show();
+                        }
+                        mFABAdd.hide();
+                        mFABCreate.hide();
+                        mFABtn.setRotation(mFABtn.getRotation()+45F);
+                        isStable = true;
+
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override

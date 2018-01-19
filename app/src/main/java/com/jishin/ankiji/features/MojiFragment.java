@@ -82,15 +82,26 @@ public class MojiFragment extends Fragment {
                 final View dialogView = layoutInflater.inflate(R.layout.dialog_create_list, null);
                 final TextView txtTitle = dialogView.findViewById(R.id.txtTitle);
                 final EditText edtSetName = dialogView.findViewById(R.id.edtSetName);
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setView(dialogView);
                 builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(getContext(), CreateVocabActivity.class);
-                        intent.putExtra("create", Constants.CREATE_MOJI);
-                        intent.putExtra("name", edtSetName.getText().toString());
-                        startActivity(intent);
+                        String setName = edtSetName.getText().toString().trim();
+                        if(!setName.isEmpty()){
+                            Intent intent = new Intent(getContext(), CreateVocabActivity.class);
+                            intent.putExtra("create", Constants.CREATE_MOJI);
+                            intent.putExtra("name", setName);
+                            startActivity(intent);
+                        }
+                        else{
+                            Toast.makeText(getContext(), "Cannot create a new set.\nSet name field is required", Toast.LENGTH_SHORT).show();
+
+                        }
+                        mFABAdd.hide();
+                        mFABCreate.hide();
+                        mFABtn.setRotation(mFABtn.getRotation()+45F);
+                        isStable = true;
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override

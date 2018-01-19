@@ -1,7 +1,9 @@
 package com.jishin.ankiji.userlist;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -69,6 +71,52 @@ public class CreateVocabActivity extends AppCompatActivity{
         btnDone = findViewById(R.id.btn_done);
         btnAdd = findViewById(R.id.btn_add);
 
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        if (isKanji)
+        {
+            if(mKanjiList.size() > 0){
+                showAlertDialog();
+            }
+            else{
+                finish();
+            }
+        }
+        else{
+            if(mMojiList.size() > 0){
+                showAlertDialog();
+            }else{
+                finish();
+            }
+        }
+
+    }
+    //Warning if user hasn't saved vocab set.
+    private void showAlertDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Do you want to save your vocabulary set?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //TODO save vocab data
+                finish();
+            }
+            }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        builder.show();
     }
     private void setEvents(){
         btnDone.setOnClickListener(new View.OnClickListener() {

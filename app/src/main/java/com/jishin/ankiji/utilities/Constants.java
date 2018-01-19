@@ -10,4 +10,6 @@ public class Constants {
     public static final int TUVUNG = 2;
     public static final String MOJI_NODE = "moji";
     public static final String KANJI_NODE = "data_kanji";
+    public static final String CREATE_KANJI = "kanji";
+    public static final String CREATE_MOJI = "moji";
 }

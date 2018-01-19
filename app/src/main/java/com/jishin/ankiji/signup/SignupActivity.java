@@ -228,7 +228,7 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    User user = new User(task.getResult().getUser().getUid(), username, email, password, linkPhoto);
+                    User user = new User(task.getResult().getUser().getUid(), username, email, linkPhoto);
                     //setProgressBar();
                     addNewUserOnFirebase(user);
                 } else {

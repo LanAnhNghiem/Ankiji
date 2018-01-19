@@ -28,6 +28,7 @@ import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
 import com.jishin.ankiji.explores.TopicMojiActivity;
 import com.jishin.ankiji.userlist.CreateVocabActivity;
+import com.jishin.ankiji.utilities.Constants;
 
 /**
  * Created by trungnguyeen on 12/27/17.
@@ -87,6 +88,8 @@ public class MojiFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(getContext(), CreateVocabActivity.class);
+                        intent.putExtra("create", Constants.CREATE_MOJI);
+                        intent.putExtra("name", edtSetName.getText().toString());
                         startActivity(intent);
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

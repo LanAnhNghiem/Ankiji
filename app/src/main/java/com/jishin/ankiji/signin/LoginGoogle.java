@@ -18,8 +18,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.features.FeatureActivity;
+import com.jishin.ankiji.model.User;
 import com.jishin.ankiji.utilities.DatabaseService;
 
 /**
@@ -32,8 +37,12 @@ public class LoginGoogle {
     private static FirebaseAuth mAuth;
     private static Activity mActivity;
     private GoogleSignInClient mGoogleSignInClient;
-    private DatabaseService mData = DatabaseService.getInstance();
+    private static DatabaseService mData = DatabaseService.getInstance();
     private static ProgressDialog progressDialog;
+    private static String email = "";
+    private static String userName = "";
+    private static String avatar = "";
+    private static String idUser;
 
     public LoginGoogle(String defaultWebClientID, Activity activity){
         this.mActivity = activity;
@@ -63,7 +72,12 @@ public class LoginGoogle {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            email = task.getResult().getUser().getEmail();
+                            userName = task.getResult().getUser().getDisplayName();
+                            avatar = task.getResult().getUser().getPhotoUrl().toString();
+                            idUser = task.getResult().getUser().getUid();
+                            User user = new User(idUser, email, userName, avatar);
+                            createUserOnFireBase(user);
                             Toast.makeText(mActivity, R.string.login_success, Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(mActivity, FeatureActivity.class);
                             mActivity.startActivity(intent);
@@ -82,12 +96,29 @@ public class LoginGoogle {
                     }
                 });
     }
-    // [START signin]
-//    private void signIn() {
-//        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-//        startActivityForResult(signInIntent, RC_SIGN_IN);
-//    }
-    // [END signin]
+    private static void createUserOnFireBase(final User user){
+        final DatabaseReference userNode = mData.createDatabase("User").child(user.getId());
+        userNode.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() == null){
+                    userNode.setValue(user);
+                    Toast.makeText(mActivity, mActivity.getResources().getString(R.string.login_success), Toast.LENGTH_SHORT).show();
+//                    mActivity.startActivity(new Intent(mActivity, CustomMapsActivity.class));
+                }
+                else {
+                    hideProgress();
+                    Toast.makeText(mActivity, mActivity.getResources().getString(R.string.login_success), Toast.LENGTH_SHORT).show();
+//                    mActivity.startActivity(new Intent(mActivity, CustomMapsActivity.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
     private static void showProgress(){
         //progressDialog.setCancelable(false);
         progressDialog.show();

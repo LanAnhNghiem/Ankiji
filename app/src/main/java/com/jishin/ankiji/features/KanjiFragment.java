@@ -1,6 +1,8 @@
 package com.jishin.ankiji.features;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,11 +15,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
 import com.jishin.ankiji.explores.TopicKanjiActivity;
 import com.jishin.ankiji.userlist.CreateVocabActivity;
+import com.jishin.ankiji.utilities.Constants;
 
 /**
  * Created by trungnguyeen on 12/27/17.
@@ -41,48 +47,10 @@ public class KanjiFragment extends Fragment {
 
         return view;
     }
-    private void addControl(View view){
-        mFABtn = view.findViewById(R.id.fabKanji);
-        mFABAdd = view.findViewById(R.id.fabAdd);
-        mFABCreate = view.findViewById(R.id.fabCreate);
-        mFABtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!mFABCreate.isShown()){
-                    mFABAdd.show();
-                    mFABCreate.show();  //required
-                    float deg = mFABtn.getRotation() + 45F;
-                    mFABtn.animate().rotation(deg).setInterpolator(new AccelerateDecelerateInterpolator());
-                    isStable = false;
-                }
-                else{
-                    mFABAdd.hide();
-                    mFABCreate.hide();
-                    float deg = mFABtn.getRotation() + 45F;
-                    mFABtn.animate().rotation(deg).setInterpolator(new AccelerateDecelerateInterpolator());
-                    isStable = true;
-                }
-            }
-        });
-        mFABCreate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), CreateVocabActivity.class);
-                startActivity(intent);
-            }
-        });
-        mFABAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), TopicKanjiActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
     private void initRecycler(View view) {
         rvRecentlyList = (RecyclerView) view.findViewById(R.id.recycle_view);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvRecentlyList.setLayoutManager(layoutManager);
 
         mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG);
@@ -116,4 +84,64 @@ public class KanjiFragment extends Fragment {
             }
         });
     }
+    private void addControl(View view){
+        mFABtn = view.findViewById(R.id.fabKanji);
+        mFABAdd = view.findViewById(R.id.fabAdd);
+        mFABCreate = view.findViewById(R.id.fabCreate);
+        mFABtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!mFABCreate.isShown()){
+                    mFABAdd.show();
+                    mFABCreate.show();  //required
+                    float deg = mFABtn.getRotation() + 45F;
+                    mFABtn.animate().rotation(deg).setInterpolator(new AccelerateDecelerateInterpolator());
+                    isStable = false;
+                }
+                else{
+                    mFABAdd.hide();
+                    mFABCreate.hide();
+                    float deg = mFABtn.getRotation() + 45F;
+                    mFABtn.animate().rotation(deg).setInterpolator(new AccelerateDecelerateInterpolator());
+                    isStable = true;
+                }
+            }
+        });
+        mFABCreate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+                final View dialogView = layoutInflater.inflate(R.layout.dialog_create_list, null);
+                final TextView txtTitle = dialogView.findViewById(R.id.txtTitle);
+                final EditText edtSetName = dialogView.findViewById(R.id.edtSetName);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setView(dialogView);
+                builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getContext(), "Click click", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getContext(), CreateVocabActivity.class);
+                        intent.putExtra("create", Constants.CREATE_KANJI);
+                        intent.putExtra("name", edtSetName.getText().toString());
+                        startActivity(intent);
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                final AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+        mFABAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), TopicKanjiActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
 }
+

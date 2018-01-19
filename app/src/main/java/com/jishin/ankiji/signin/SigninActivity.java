@@ -97,12 +97,14 @@ public class SigninActivity extends AppCompatActivity {
                 String username = edtUsername.getText().toString().trim();
                 String password = edtPassword.getText().toString().trim();
                 hideKeyboard(view);
-                requestSignIn(username, password);
-                btnLogin.setEnabled(false);
-                btnLogin.setBackgroundColor(ContextCompat.getColor(getBaseContext(), R.color.colorDisable));
-                Intent intent = new Intent(SigninActivity.this, FeatureActivity.class);
-                startActivity(intent);
-                finish();
+                if(!username.isEmpty() && !password.isEmpty()){
+                    requestSignIn(username, password);
+
+                }else{
+                    Toast.makeText(SigninActivity.this, "Please fill in username and password", Toast.LENGTH_SHORT).show();
+
+                }
+
             }
         });
         
@@ -163,13 +165,16 @@ public class SigninActivity extends AppCompatActivity {
         }
     }
 
-    private void requestSignIn(String username, String pass){
-        mAuth.signInWithEmailAndPassword(username, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+    private void requestSignIn(String email, String pass){
+        mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
+                    btnLogin.setEnabled(false);
+                    btnLogin.setBackgroundColor(ContextCompat.getColor(getBaseContext(), R.color.colorDisable));
                     Toast.makeText(SigninActivity.this, R.string.login_success, Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(SigninActivity.this, FeatureActivity.class));
+                    finish();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {

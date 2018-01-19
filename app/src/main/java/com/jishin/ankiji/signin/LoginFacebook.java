@@ -20,8 +20,13 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.features.FeatureActivity;
+import com.jishin.ankiji.model.User;
 import com.jishin.ankiji.utilities.DatabaseService;
 
 import java.util.Arrays;
@@ -81,20 +86,20 @@ public class LoginFacebook {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
                     //hideProgress();
-                    Toast.makeText(mActivity, R.string.login_success, Toast.LENGTH_SHORT).show();
-//                    email = task.getResult().getUser().getEmail();
-//                    userName = task.getResult().getUser().getDisplayName();
-//                    avatar = task.getResult().getUser().getPhotoUrl().toString();
-//                    idUser = task.getResult().getUser().getUid();
-//                    User user = new User(idUser, email, userName, avatar);
-//                    createUserOnFireBase(user);
+                    //Toast.makeText(mActivity, R.string.login_success, Toast.LENGTH_SHORT).show();
+                    email = task.getResult().getUser().getEmail();
+                    userName = task.getResult().getUser().getDisplayName();
+                    avatar = task.getResult().getUser().getPhotoUrl().toString();
+                    idUser = task.getResult().getUser().getUid();
+                    User user = new User(idUser, email, userName, avatar);
+                    createUserOnFireBase(user);
                     Intent intent = new Intent(mActivity, FeatureActivity.class);
                     mActivity.startActivity(intent);
                     mActivity.finish();
                 }
                 else {
                     //hideProgress();
-                    Toast.makeText(mActivity, R.string.login_failed, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(mActivity, R.string.login_failed, Toast.LENGTH_SHORT).show();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -106,29 +111,29 @@ public class LoginFacebook {
             }
         });
     }
-//    private void createUserOnFireBase (final User user){
-//        final DatabaseReference userNode = mData.child(Constant.USER).child(user.getId());
-//        userNode.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                if (dataSnapshot.getValue() == null){
-//                    userNode.setValue(user);
-//                    Toast.makeText(mActivity, mActivity.getResources().getString(R.string.login_success), Toast.LENGTH_SHORT).show();
+    private void createUserOnFireBase (final User user){
+        final DatabaseReference userNode = mData.createDatabase("User").child(user.getId());
+        userNode.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() == null){
+                    userNode.setValue(user);
+                    Toast.makeText(mActivity, mActivity.getResources().getString(R.string.login_success), Toast.LENGTH_SHORT).show();
 //                    mActivity.startActivity(new Intent(mActivity, CustomMapsActivity.class));
-//                }
-//                else {
-//                    hideProgress();
-//                    Toast.makeText(mActivity, mActivity.getResources().getString(R.string.login_success), Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    hideProgress();
+                    Toast.makeText(mActivity, mActivity.getResources().getString(R.string.login_success), Toast.LENGTH_SHORT).show();
 //                    mActivity.startActivity(new Intent(mActivity, CustomMapsActivity.class));
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-//    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
 
     private void showProgress (){

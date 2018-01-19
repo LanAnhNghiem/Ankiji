@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.model.Kanji;
+import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.userlist.OnTextListener;
-import com.jishin.ankiji.utilities.Constants;
 
 import java.util.ArrayList;
 
@@ -20,37 +20,39 @@ import java.util.ArrayList;
  * Created by lana on 17/01/2018.
  */
 
-public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.KanjiItemHolder> {
-    public ArrayList<Kanji> mList = new ArrayList<>();
+public class MojiItemAdapter extends RecyclerView.Adapter<MojiItemAdapter.MojiItemHolder> {
+    public ArrayList<Moji> mList = new ArrayList<>();
     private Context mContext;
 
-    public KanjiItemAdapter(ArrayList<Kanji> list, Context context) {
+    public MojiItemAdapter(ArrayList<Moji> list, Context context) {
         this.mList = list;
         this.mContext = context;
+
     }
-    public KanjiItemAdapter(Context context){
+    public MojiItemAdapter(Context context){
         this.mContext = context;
     }
-    public KanjiItemAdapter(){}
+    public MojiItemAdapter(){}
 
     @Override
-    public KanjiItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_kanji, parent, false);
-        KanjiItemHolder holder = new KanjiItemHolder(view);
+    public MojiItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_moji, parent, false);
+        MojiItemHolder holder = new MojiItemHolder(view);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(KanjiItemHolder holder, int position) {
-        holder.edtKanji.setText(mList.get(position).getKanji());
-        holder.edtWord.setText(mList.get(position).getTuvung());
-        holder.edtMeaning.setText(mList.get(position).getAmhan());
+    public void onBindViewHolder(MojiItemHolder holder, int position) {
+        holder.edtHira.setText(mList.get(position).getCachDocHira());
+        holder.edtWord.setText(mList.get(position).getTuTiengNhat());
+        holder.edtMeaning.setText(mList.get(position).getNghiaTiengViet());
+        holder.edtOnyomi.setText(mList.get(position).getAmHan());
         addTextListener(holder, position);
-        holder.edtKanji.requestFocus();
+        holder.edtWord.requestFocus();
     }
-    public void addTextListener(KanjiItemHolder holder, final int position){
+    public void addTextListener(MojiItemHolder holder, final int position){
 
-        holder.edtKanji.addTextChangedListener(new TextWatcher() {
+        holder.edtWord.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -64,8 +66,8 @@ public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.Kanj
             @Override
             public void afterTextChanged(Editable s) {
                 if(position < mList.size()){
-                    mList.get(position).setKanji(s.toString());
-                    setOnTextListener(mList);
+                    mList.get(position).setTuTiengNhat(s.toString());
+
                 }
 
             }
@@ -84,8 +86,7 @@ public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.Kanj
             @Override
             public void afterTextChanged(Editable s) {
                 if(position < mList.size()){
-                    mList.get(position).setTuvung(s.toString());
-                    setOnTextListener(mList);
+                    mList.get(position).setTuTiengNhat(s.toString());
                 }
             }
         });
@@ -103,29 +104,46 @@ public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.Kanj
             @Override
             public void afterTextChanged(Editable s) {
                 if(position < mList.size()){
-                    mList.get(position).setAmhan(s.toString());
-                    setOnTextListener(mList);
+                    mList.get(position).setNghiaTiengViet(s.toString());
+
                 }
             }
         });
+        holder.edtOnyomi.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                 if(position < mList.size()){
+                     mList.get(position).setAmHan(s.toString());
+                 }
+            }
+        });
     }
-    public void setOnTextListener(ArrayList<Kanji> list){
-        //onTextListener.onTextListener(list);
-    }
+
     @Override
     public int getItemCount() {
         return mList.size();
     }
 
-    public class KanjiItemHolder extends RecyclerView.ViewHolder {
-        TextInputEditText edtKanji, edtMeaning, edtWord;
+    public class MojiItemHolder extends RecyclerView.ViewHolder {
+        TextInputEditText edtHira,edtOnyomi, edtMeaning, edtWord;
 
-        public KanjiItemHolder(View itemView) {
+        public MojiItemHolder(View itemView) {
             super(itemView);
 
-            edtKanji = itemView.findViewById(R.id.edt_kanji);
+            edtHira = itemView.findViewById(R.id.edt_hira);
             edtMeaning = itemView.findViewById(R.id.edt_meaning);
             edtWord = itemView.findViewById(R.id.edt_word);
+            edtOnyomi = itemView.findViewById(R.id.edt_onyomi);
 
         }
     }

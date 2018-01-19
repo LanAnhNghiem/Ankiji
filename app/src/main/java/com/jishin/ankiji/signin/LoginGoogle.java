@@ -76,7 +76,7 @@ public class LoginGoogle {
                             userName = task.getResult().getUser().getDisplayName();
                             avatar = task.getResult().getUser().getPhotoUrl().toString();
                             idUser = task.getResult().getUser().getUid();
-                            User user = new User(idUser, email, userName, avatar);
+                            User user = new User(idUser, userName, email,avatar);
                             createUserOnFireBase(user);
                             Toast.makeText(mActivity, R.string.login_success, Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(mActivity, FeatureActivity.class);

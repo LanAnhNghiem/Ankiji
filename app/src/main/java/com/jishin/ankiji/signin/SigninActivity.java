@@ -26,8 +26,13 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.features.FeatureActivity;
+import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.utilities.DatabaseService;
 import com.jishin.ankiji.signup.SignupActivity;
 
@@ -191,5 +196,12 @@ public class SigninActivity extends AppCompatActivity {
         InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
-
+//    private void createDatabase(){
+//        final DatabaseReference userNode = mData.createDatabase("data_kanji").child("N2");
+//        for(int i=0; i<100;i++){
+//            Kanji kanji = new Kanji("","","","");
+//            userNode.push().setValue(kanji);
+//        }
+//
+//    }
 }

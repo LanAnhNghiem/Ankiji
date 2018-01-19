@@ -1,6 +1,6 @@
 package com.jishin.ankiji.view.fragment;
 
-import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,16 +13,17 @@ import android.view.ViewGroup;
 
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
+import com.jishin.ankiji.view.activity.LearnActivity;
 
 /**
  * Created by trungnguyeen on 12/27/17.
  */
 
-@SuppressLint("ValidFragment")
 public class RecentlyFragment extends Fragment {
 
     private RecyclerView rvRecentlyList;
     private CardItemsAdapter mItemsAdapter;
+    private final static String TAG = RecentlyFragment.class.getSimpleName();
     public String FRAGMENT_TAG = "RECENTLY";
 
     @Nullable
@@ -35,16 +36,32 @@ public class RecentlyFragment extends Fragment {
         return view;
     }
 
-    private void initRecycler(View view) {
-        rvRecentlyList = (RecyclerView) view.findViewById(R.id.lv_recently);
 
+    private void initRecycler(View view) {
+        rvRecentlyList = view.findViewById(R.id.lv_recently);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         rvRecentlyList.setLayoutManager(layoutManager);
-
         mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG);
-
+        mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {
+            @Override
+            public void OnMenuItemClicked(int classIndex) {
+                switch (classIndex) {
+                    case 0:
+                        startActivity(new Intent(getContext(), LearnActivity.class));
+                        break;
+                    case 1:
+                        startActivity(new Intent(getContext(), LearnActivity.class));
+                        break;
+                    case 2:
+                        startActivity(new Intent(getContext(), LearnActivity.class));
+                        break;
+                    case 3:
+                        startActivity(new Intent(getContext(), LearnActivity.class));
+                        break;
+                }
+            }
+        });
         rvRecentlyList.setItemAnimator(new DefaultItemAnimator());
         rvRecentlyList.setAdapter(mItemsAdapter);
-
     }
 }

@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="startBackground">#FFFFFF</color>
     <color name="endBackground">#7A1EA1</color>
+    <color name="progressBarBackground">#CE93D8</color>
 </resources>

@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import com.jishin.ankiji.adapter.FragmentViewPagerAdapter;
-import com.jishin.ankiji.model.Item;
+import com.jishin.ankiji.model.Kanji;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,15 +15,14 @@ import java.util.List;
 public class CardFragmentPagerAdapter extends FragmentViewPagerAdapter {
 
     private List<CardFragment> mFragments = new ArrayList<>();;
-    private ArrayList<Item> mItemList;
-    public CardFragmentPagerAdapter(FragmentManager fm, ArrayList<Item> itemList) {
+    private ArrayList<Kanji> mKanjiList;
+    public CardFragmentPagerAdapter(FragmentManager fm, ArrayList<Kanji> kanjiList) {
         super(fm);
-        this.mItemList = itemList;
+        this.mKanjiList = kanjiList;
 
-        for(int i = 0; i< this.mItemList.size(); i++){
+        for(int i = 0; i< this.mKanjiList.size(); i++){
             CardFragment cardFrag = new CardFragment();
-            cardFrag.setItem(this.mItemList.get(i));
-            cardFrag.setINDEX(i + 1);
+            cardFrag.setItem(this.mKanjiList.get(i));
             addCardFragment(cardFrag);
         }
     }
@@ -40,11 +39,5 @@ public class CardFragmentPagerAdapter extends FragmentViewPagerAdapter {
 
     public void addCardFragment(CardFragment fragment) {
         mFragments.add(fragment);
-    }
-
-    public void swapData() {
-        for (CardFragment cardFrag: this.mFragments) {
-            cardFrag.swapContentCardView();
-        }
     }
 }

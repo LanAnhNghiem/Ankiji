@@ -13,8 +13,7 @@ import com.jishin.ankiji.view.fragment.RecentlyFragment;
 
 public class FragmentViewPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
 
-    public final static int FRAGMENT_COUNT = 3;
-
+    private final static int FRAGMENT_COUNT = 3;
     public FragmentViewPagerAdapter(FragmentManager fm) {
         super(fm);
     }

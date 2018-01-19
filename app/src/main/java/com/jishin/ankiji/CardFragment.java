@@ -4,14 +4,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.jishin.ankiji.model.Item;
-import com.jishin.ankiji.view.activity.LearnActivity;
+import com.jishin.ankiji.model.Kanji;
 import com.wajahatkarim3.easyflipview.EasyFlipView;
 
 /**
@@ -19,16 +17,17 @@ import com.wajahatkarim3.easyflipview.EasyFlipView;
  */
 public class CardFragment extends Fragment{
 
-    private Item mItem;
+    private Kanji mKanji;
     private CardView mFontCardView;
     private CardView mBackCardView;
     private EasyFlipView mEasyFlipView;
-    private TextView mFontViewText;
-    private TextView mBackViewText;
+
+    private TextView tvFrontCard;
+    private TextView tvTopBackCard;
+    private TextView tvBottomBackCard;
     private float mCardElevationValue;
 
     private final static String TAG = CardFragment.class.getSimpleName();
-    private int INDEX;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -36,35 +35,27 @@ public class CardFragment extends Fragment{
 
         initControls(view);
         setEvents();
-        Log.i(TAG, "onCreateView: " + INDEX);
         return view;
     }
 
-    public void setItem(Item mItem) {
-        this.mItem = mItem;
-    }
-
-    public void setINDEX(int INDEX) {
-        this.INDEX = INDEX;
+    public void setItem(Kanji mKanji) {
+        this.mKanji = mKanji;
     }
 
     public void initControls(View view) {
         mEasyFlipView = view.findViewById(R.id.flip_view);
         mFontCardView = view.findViewById(R.id.font_card_view);
         mBackCardView = view.findViewById(R.id.back_card_view);
+
         mCardElevationValue = mFontCardView.getCardElevation();
-        mFontViewText = view.findViewById(R.id.tv_font);
-        mBackViewText = view.findViewById(R.id.tv_back);
 
-        if (LearnActivity.isFont()){
-            mFontViewText.setText(this.mItem.getmFontText());
-            mBackViewText.setText(this.mItem.getmBackText());
-        }
-        else{
-            mFontViewText.setText(this.mItem.getmBackText());
-            mBackViewText.setText(this.mItem.getmFontText());
-        }
+        tvFrontCard = view.findViewById(R.id.tv_kanji);
+        tvTopBackCard = view.findViewById(R.id.tv_am_han);
+        tvBottomBackCard = view.findViewById(R.id.tv_tu_vung);
 
+        tvFrontCard.setText(this.mKanji.getKanji());
+        tvTopBackCard.setText(this.mKanji.getAmhan());
+        tvBottomBackCard.setText(this.mKanji.getTuvung());
 
     }
 
@@ -100,19 +91,4 @@ public class CardFragment extends Fragment{
         mEasyFlipView.flipTheView();
     }
 
-    public void swapContentCardView() {
-        if (LearnActivity.isFont()) {
-            this.mFontViewText.setText(this.mItem.getmBackText());
-            this.mBackViewText.setText(this.mItem.getmFontText());
-        } else {
-            this.mBackViewText.setText(this.mItem.getmBackText());
-            this.mFontViewText.setText(this.mItem.getmFontText());
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.i(TAG, "onDestroy: " + INDEX);
-    }
 }

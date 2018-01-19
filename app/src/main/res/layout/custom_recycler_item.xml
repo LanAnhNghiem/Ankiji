@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,18 +11,16 @@
     android:paddingTop="16dp">
 
     <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:contentPadding="5dp"
         card_view:cardUseCompatPadding="true"
         card_view:cardElevation="2dp"
         card_view:cardMaxElevation="3dp"
-        android:foreground="?attr/selectableItemBackground"
-        android:clickable="true"
         app:cardPreventCornerOverlap="false">
 
         <android.support.constraint.ConstraintLayout
@@ -29,15 +28,27 @@
             android:layout_height="match_parent"
             android:padding="10dp">
 
+            <com.nightonke.boommenu.BoomMenuButton
+                android:id="@+id/bmb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:bmb_buttonEnum="textOutsideCircle"
+                app:bmb_buttonPlaceEnum="buttonPlace_sc_4_1"
+                app:bmb_inList="true"
+                app:bmb_piecePlaceEnum="piecePlace_dot_4_2"
+                app:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintBottom_toBottomOf="parent"/>
+
 
             <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/bmb"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="7dp"
+                android:layout_marginTop="5dp"
                 android:text="@string/marugoto_title"
                 android:textStyle="bold"
                 android:textSize="26sp"/>
@@ -48,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/item_count"
                 app:layout_constraintTop_toBottomOf="@id/tv_title"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/bmb"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:textSize="14sp"/>
 
@@ -62,9 +73,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
-
         </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
-
 </android.support.constraint.ConstraintLayout>

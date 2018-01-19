@@ -117,11 +117,11 @@ public class CreateVocabActivity extends AppCompatActivity{
     //Warning if user hasn't saved vocab set.
     private void showAlertDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Do you want to save your vocabulary set?");
+        builder.setMessage(R.string.warning_unsave_data);
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //TODO save vocab data
+                saveDatabase();
                 finish();
             }
             }).setNegativeButton("No", new DialogInterface.OnClickListener() {

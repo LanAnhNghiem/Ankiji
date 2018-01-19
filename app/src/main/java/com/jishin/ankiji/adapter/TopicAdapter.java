@@ -93,7 +93,7 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.ItemViewHold
             tvTitle = itemView.findViewById(R.id.tv_title);
             tvItemCount = itemView.findViewById(R.id.tv_item_count);
             btnDeleteItem = itemView.findViewById(R.id.btn_delete_item);
-            cardView = itemView.findViewById(R.id.cardView);
+            cardView = itemView.findViewById(R.id.card_view);
             context = itemView.getContext();
         }
 

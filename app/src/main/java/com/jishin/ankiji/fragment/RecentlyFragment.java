@@ -1,4 +1,4 @@
-package com.jishin.ankiji.view.fragment;
+package com.jishin.ankiji.fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;

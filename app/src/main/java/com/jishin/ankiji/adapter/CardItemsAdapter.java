@@ -2,7 +2,6 @@ package com.jishin.ankiji.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 import com.jishin.ankiji.CardFragmentPagerAdapter;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.animation.BuilderManager;
+import com.jishin.ankiji.model.DataTypeEnum;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
 import com.nightonke.boommenu.BoomButtons.TextOutsideCircleButton;
 import com.nightonke.boommenu.BoomMenuButton;
@@ -50,19 +50,19 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
         if (FRAGMENT_TAG.equals("RECENTLY")) {
             holder.tvTitle.setText("MARUGOTO");
             holder.tvItemCount.setText("10 items");
-
+            holder.dataType = DataTypeEnum.Kanji;
         }
 
         if (FRAGMENT_TAG.equals("MOJI")) {
             holder.tvTitle.setText("MOJI");
             holder.tvItemCount.setText("20 items");
-
+            holder.dataType = DataTypeEnum.Moji;
         }
 
         if (FRAGMENT_TAG.equals("KANJI")) {
             holder.tvTitle.setText("KANJI");
             holder.tvItemCount.setText("3 items");
-
+            holder.dataType = DataTypeEnum.Kanji;
         }
 
         holder.bmb.clearBuilders();
@@ -95,21 +95,7 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
                 .listener(new OnBMClickListener() {
                     @Override
                     public void onBoomButtonClick(int index) {
-                        switch (index){
-                            case 0:
-                                Log.i(TAG, "onBoomButtonClick: learn");
-                                mListener.OnMenuItemClicked(index);
-                                break;
-                            case 1:
-                                Log.i(TAG, "onBoomButtonClick: test");
-                                break;
-                            case 2:
-                                Log.i(TAG, "onBoomButtonClick: chart");
-                                break;
-                            case 3:
-                                Log.i(TAG, "onBoomButtonClick: edit");
-                                break;
-                        }
+                        mListener.OnMenuItemClicked(index, viewHolder.dataType);
                     }
                 }));
     }
@@ -127,6 +113,8 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
     }
 
     static class ItemViewHolder extends RecyclerView.ViewHolder {
+
+        DataTypeEnum dataType;
         TextView tvTitle;
         TextView tvItemCount;
         ImageButton btnDeleteItem;
@@ -142,7 +130,7 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
     }
 
     public interface OnBoomMenuItemClicked{
-        void OnMenuItemClicked(int classIndex);
+        void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum);
     }
 }
 

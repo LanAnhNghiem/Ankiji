@@ -1,6 +1,6 @@
 package com.jishin.ankiji.view.fragment;
 
-import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,16 +13,19 @@ import android.view.ViewGroup;
 
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
+import com.jishin.ankiji.model.Constants;
+import com.jishin.ankiji.model.DataTypeEnum;
+import com.jishin.ankiji.view.activity.LearnActivity;
 
 /**
  * Created by trungnguyeen on 12/27/17.
  */
 
-@SuppressLint("ValidFragment")
 public class MojiFragment extends Fragment {
 
     private RecyclerView rvRecentlyList;
     private CardItemsAdapter mItemsAdapter;
+
     public String FRAGMENT_TAG = "MOJI";
 
     @Nullable
@@ -42,7 +45,27 @@ public class MojiFragment extends Fragment {
         rvRecentlyList.setLayoutManager(layoutManager);
 
         mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG);
-
+        mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {
+            @Override
+            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum) {
+                switch (classIndex) {
+                    case 0:
+                        Intent intent = new Intent(getContext(), LearnActivity.class);
+                        intent.putExtra(Constants.DATA_TYPE, dataTypeEnum);
+                        startActivity(intent);
+                        break;
+                    case 1:
+                        //Todo startActivity Test
+                        break;
+                    case 2:
+                        //Todo startActivity Chart
+                        break;
+                    case 3:
+                        //Todo startActivity Edit
+                        break;
+                }
+            }
+        });
         rvRecentlyList.setItemAnimator(new DefaultItemAnimator());
         rvRecentlyList.setAdapter(mItemsAdapter);
 

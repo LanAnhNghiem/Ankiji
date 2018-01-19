@@ -4,7 +4,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import com.jishin.ankiji.adapter.FragmentViewPagerAdapter;
+import com.jishin.ankiji.model.DataTypeEnum;
 import com.jishin.ankiji.model.Kanji;
+import com.jishin.ankiji.model.Moji;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,17 +16,15 @@ import java.util.List;
  */
 public class CardFragmentPagerAdapter extends FragmentViewPagerAdapter {
 
-    private List<CardFragment> mFragments = new ArrayList<>();;
-    private ArrayList<Kanji> mKanjiList;
-    public CardFragmentPagerAdapter(FragmentManager fm, ArrayList<Kanji> kanjiList) {
+    private List<?> mFragments = new ArrayList<>();
+    private ArrayList<?> contentList;
+    private DataTypeEnum dataTypeEnum;
+    public CardFragmentPagerAdapter(FragmentManager fm, ArrayList<?> contentList, DataTypeEnum dataTypeEnum) {
         super(fm);
-        this.mKanjiList = kanjiList;
+        this.contentList = contentList;
+        this.dataTypeEnum = dataTypeEnum;
 
-        for(int i = 0; i< this.mKanjiList.size(); i++){
-            CardFragment cardFrag = new CardFragment();
-            cardFrag.setItem(this.mKanjiList.get(i));
-            addCardFragment(cardFrag);
-        }
+        createCardList();
     }
 
     @Override
@@ -34,10 +34,28 @@ public class CardFragmentPagerAdapter extends FragmentViewPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return mFragments.get(position);
+        return (Fragment) mFragments.get(position);
     }
 
-    public void addCardFragment(CardFragment fragment) {
-        mFragments.add(fragment);
+    public void createCardList(){
+        if(dataTypeEnum == DataTypeEnum.Moji){
+            ArrayList<CardMojiFragment> fragments = new ArrayList<>();
+            for(int i = 0; i< this.contentList.size(); i++){
+                CardMojiFragment cardFrag = new CardMojiFragment();
+                cardFrag.setItem((Moji) this.contentList.get(i));
+                fragments.add(cardFrag);
+            }
+            this.mFragments = fragments;
+        }
+        else{
+            ArrayList<CardKanjiFragment> fragments = new ArrayList<>();
+            for(int i = 0; i< this.contentList.size(); i++){
+                CardKanjiFragment cardFrag = new CardKanjiFragment();
+                cardFrag.setItem((Kanji) this.contentList.get(i));
+                fragments.add(cardFrag);
+            }
+            this.mFragments = fragments;
+        }
+
     }
 }

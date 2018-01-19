@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
+import com.jishin.ankiji.model.Constants;
+import com.jishin.ankiji.model.DataTypeEnum;
 import com.jishin.ankiji.view.activity.LearnActivity;
 
 /**
@@ -44,19 +46,21 @@ public class RecentlyFragment extends Fragment {
         mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG);
         mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {
             @Override
-            public void OnMenuItemClicked(int classIndex) {
+            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum) {
                 switch (classIndex) {
                     case 0:
+                        Intent intent = new Intent(getContext(), LearnActivity.class);
+                        intent.putExtra(Constants.DATA_TYPE, dataTypeEnum);
                         startActivity(new Intent(getContext(), LearnActivity.class));
                         break;
                     case 1:
-                        startActivity(new Intent(getContext(), LearnActivity.class));
+
                         break;
                     case 2:
-                        startActivity(new Intent(getContext(), LearnActivity.class));
+
                         break;
                     case 3:
-                        startActivity(new Intent(getContext(), LearnActivity.class));
+
                         break;
                 }
             }

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.jishin.ankiji.R;
@@ -20,10 +21,11 @@ import java.util.ArrayList;
  * Created by trungnguyeen on 12/27/17.
  */
 
-public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.ItemViewHolder> {
+public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicHolder> {
 
     public static final String TAG = TopicAdapter.class.getSimpleName();
     public Context context;
+
 
     ArrayList<String> Topic = new ArrayList<String>();
 
@@ -35,15 +37,15 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.ItemViewHold
     }
 
     @Override
-    public TopicAdapter.ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public TopicHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        View itemView = LayoutInflater.from(context).inflate(R.layout.topic_recycler_item, parent, false);
-
-        return new ItemViewHolder(itemView);
+        View itemView = LayoutInflater.from(context)
+                .inflate(R.layout.topic_recycler_item, parent, false);
+        return new TopicHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(final TopicAdapter.ItemViewHolder holder, final int position) {
+    public void onBindViewHolder(final TopicHolder holder, final int position) {
         if (FRAGMENT_TAG == "KANJI") {
             holder.tvTitle.setText(Topic.get(position));
             holder.cardView.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +60,7 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.ItemViewHold
 
         } else if (FRAGMENT_TAG == "MOJI") {
             int topicNum = position+1;
-            holder.tvTitle.setText("Topic "+topicNum);
+            holder.tvTitle.setText("Topic "+ String.valueOf(topicNum));
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -82,13 +84,15 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.ItemViewHold
         return Topic;
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class TopicHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public TextView tvTitle;
-        public CardView cardView;
+        private TextView tvTitle;
+        private CardView cardView;
+        public TextView tvItemCount;
+        public ImageButton btnDeleteItem;
         private final Context context;
 
-        public ItemViewHolder(View itemView) {
+        public TopicHolder(View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tv_title);
             tvItemCount = itemView.findViewById(R.id.tv_item_count);

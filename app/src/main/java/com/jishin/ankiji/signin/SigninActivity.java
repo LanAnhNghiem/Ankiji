@@ -33,6 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.features.FeatureActivity;
 import com.jishin.ankiji.model.Kanji;
+import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
 import com.jishin.ankiji.signup.SignupActivity;
 
@@ -93,7 +94,6 @@ public class SigninActivity extends AppCompatActivity {
         mAuth = mData.getFirebaseAuth();
     }
 
-
     private void setEvents() {
         
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -107,21 +107,17 @@ public class SigninActivity extends AppCompatActivity {
 
                 }else{
                     Toast.makeText(SigninActivity.this, "Please fill in username and password", Toast.LENGTH_SHORT).show();
-
                 }
-
             }
         });
-        
-        
+
         imgFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 loginFacebook();
             }
         });
-        
-        
+
         imgGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -175,10 +171,13 @@ public class SigninActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
+                    Log.d(TAG+"user id", mData.getUserID());
                     btnLogin.setEnabled(false);
                     btnLogin.setBackgroundColor(ContextCompat.getColor(getBaseContext(), R.color.colorDisable));
                     Toast.makeText(SigninActivity.this, R.string.login_success, Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(SigninActivity.this, FeatureActivity.class));
+                    Intent intent = new Intent(SigninActivity.this, FeatureActivity.class);
+                    intent.putExtra(Constants.USER_ID, task.getResult().getUser().getUid());
+                    startActivity(intent);
                     finish();
                 }
             }

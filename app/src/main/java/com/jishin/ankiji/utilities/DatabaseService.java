@@ -54,6 +54,11 @@ public class DatabaseService {
         else
             return true;
     }
+    public void signOut(){
+        mUser = null;
+        mAuth.signOut();
+    }
+
     public static String getUserID(){
         if(!isSignIn())
             return "";

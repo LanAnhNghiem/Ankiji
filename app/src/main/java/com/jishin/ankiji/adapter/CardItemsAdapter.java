@@ -2,11 +2,13 @@ package com.jishin.ankiji.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.animation.BuilderManager;
@@ -63,19 +65,31 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
 
         if (FRAGMENT_TAG.equals("MOJI")) {
             if (this.mSetList.size() != 0){
-                Set item = this.mSetList.get(position);
+                final Set item = this.mSetList.get(position);
                 holder.tvTitle.setText(item.getName());
                 holder.tvItemCount.setText(item.getDatetime());
                 holder.dataType = DataTypeEnum.Moji;
+                holder.btnDeleteItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(TAG, "Moji delete"+ item.getName().toString());
+                    }
+                });
             }
         }
 
         if (FRAGMENT_TAG.equals("KANJI")) {
             if (this.mSetList.size() != 0){
-                Set item = this.mSetList.get(position);
+                final Set item = this.mSetList.get(position);
                 holder.tvTitle.setText(item.getName());
                 holder.tvItemCount.setText(item.getDatetime());
                 holder.dataType = DataTypeEnum.Kanji;
+                holder.btnDeleteItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(TAG, "Kanji delete"+ item.getName().toString());
+                    }
+                });
             }
         }
 

@@ -15,4 +15,5 @@ public class Constants {
     public static final String CREATE_KANJI = "kanji";
     public static final String CREATE_MOJI = "moji";
     public static final String DATA_TYPE = "DATA_TYPE";
+    public static final String USER_ID = "userID";
 }

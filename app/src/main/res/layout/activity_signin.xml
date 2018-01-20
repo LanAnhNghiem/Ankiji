@@ -5,7 +5,7 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.jishin.ankiji.view.activity.SigninActivity">
+    tools:context="com.jishin.ankiji.signin.SigninActivity">
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline_horizontal"
@@ -76,8 +76,8 @@
                         android:id="@+id/edt_username"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:hint="@string/username"
+                        android:inputType="textEmailAddress"
+                        android:hint="@string/email"
                         android:singleLine="true"/>
 
                 </android.support.design.widget.TextInputLayout>

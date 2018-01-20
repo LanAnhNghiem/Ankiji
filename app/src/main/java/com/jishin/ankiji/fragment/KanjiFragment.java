@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,9 +41,8 @@ import java.util.ArrayList;
  * Created by trungnguyeen on 12/27/17.
  */
 
-@SuppressLint("ValidFragment")
 public class KanjiFragment extends Fragment {
-
+    private static final String TAG = KanjiFragment.class.getSimpleName();
     private ArrayList<Set> mKanjiSetList = new ArrayList<>();
     private RecyclerView rvRecentlyList;
     private CardItemsAdapter mItemsAdapter;
@@ -51,6 +51,15 @@ public class KanjiFragment extends Fragment {
     private boolean isStable = true;
     private DatabaseReference mKanjiSetRef;
     private DatabaseService mData = DatabaseService.getInstance();
+    private String mUserID = "";
+    private boolean isScrollDown = false;
+    public String getmUserID() {
+        return mUserID;
+    }
+
+    public void setmUserID(String mUserID) {
+        this.mUserID = mUserID;
+    }
 
     @Nullable
     @Override
@@ -65,9 +74,16 @@ public class KanjiFragment extends Fragment {
     }
 
     private void initParam() {
-        mKanjiSetRef = mData.getDatabase()
-                .child(Constants.KANJI_SET_NODE)
-                .child(mData.getFirebaseAuth().getCurrentUser().getUid());
+        if(!mData.getUserID().isEmpty()){
+            mKanjiSetRef = mData.getDatabase()
+                    .child(Constants.KANJI_SET_NODE)
+                    .child(mData.getUserID());
+        }
+        else{
+            mKanjiSetRef = mData.getDatabase()
+                    .child(Constants.KANJI_SET_NODE)
+                    .child(getmUserID());
+        }
     }
     private void initRecycler(View view) {
         rvRecentlyList = (RecyclerView) view.findViewById(R.id.recycle_view);
@@ -102,7 +118,7 @@ public class KanjiFragment extends Fragment {
         rvRecentlyList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCROLL_STATE_IDLE){
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && isScrollDown == false){
                     mFABtn.show();
                     if(isStable == false && !mFABCreate.isShown()){
                         mFABtn.setRotation(mFABtn.getRotation()+45F);
@@ -122,6 +138,11 @@ public class KanjiFragment extends Fragment {
                         mFABCreate.hide();
                         isStable = true;
                     }
+                }
+                if(dy > 0){
+                    isScrollDown = true;
+                }else{
+                    isScrollDown = false;
                 }
             }
         });
@@ -167,6 +188,7 @@ public class KanjiFragment extends Fragment {
                             Intent intent = new Intent(getContext(), CreateVocabActivity.class);
                             intent.putExtra("create", Constants.CREATE_KANJI);
                             intent.putExtra("name", setName);
+                            intent.putExtra(Constants.USER_ID, mUserID);
                             startActivity(intent);
                         }else{
                             Toast.makeText(getContext(), "Cannot create a new set.\nSet name field is required", Toast.LENGTH_SHORT).show();
@@ -223,6 +245,7 @@ public class KanjiFragment extends Fragment {
         mKanjiSetList.clear();
         for (DataSnapshot ds : dataSnapshot.getChildren()) {
             mKanjiSetList.add(ds.getValue(Set.class));
+            Log.d(TAG, ds.getKey()+"/"+String.valueOf(ds.getValue()));
         }
         mItemsAdapter.notifyDataSetChanged();
     }

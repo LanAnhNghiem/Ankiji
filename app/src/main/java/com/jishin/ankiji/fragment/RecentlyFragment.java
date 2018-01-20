@@ -26,6 +26,14 @@ public class RecentlyFragment extends Fragment {
     private RecyclerView rvRecentlyList;
     private CardItemsAdapter mItemsAdapter;
     public String FRAGMENT_TAG = "RECENTLY";
+    private String mUserID = "";
+    public String getmUserID() {
+        return mUserID;
+    }
+
+    public void setmUserID(String mUserID) {
+        this.mUserID = mUserID;
+    }
 
     @Nullable
     @Override

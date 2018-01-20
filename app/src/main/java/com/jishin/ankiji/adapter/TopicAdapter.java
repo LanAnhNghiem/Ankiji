@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.jishin.ankiji.R;
@@ -38,33 +37,36 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.ItemViewHold
     @Override
     public TopicAdapter.ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        View itemView = LayoutInflater.from(context).inflate(R.layout.custom_recycler_item, parent, false);
+        View itemView = LayoutInflater.from(context).inflate(R.layout.topic_recycler_item, parent, false);
 
         return new ItemViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(final TopicAdapter.ItemViewHolder holder, final int position) {
-        holder.tvTitle.setText(Topic.get(position));
-        holder.tvItemCount.setText("");
         if (FRAGMENT_TAG == "KANJI") {
+            holder.tvTitle.setText(Topic.get(position));
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.d(TAG, "onClick: " + Topic.get(position));
                     Intent intent = new Intent(holder.context, KanjiExploresActivity.class);
-                    intent.putExtra("Kanji_Key",Topic.get(position));
+                    intent.putExtra("Kanji_Key", Topic.get(position));
                     holder.context.startActivity(intent);
                 }
             });
-        }
-        else if(FRAGMENT_TAG == "MOJI"){
+
+        } else if (FRAGMENT_TAG == "MOJI") {
+            int topicNum = position+1;
+            holder.tvTitle.setText("Topic "+topicNum);
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.d(TAG, "onClick: " + Topic.get(position));
                     Intent intent = new Intent(holder.context, MojiExploresActivity.class);
-                    intent.putExtra("Moji_Key",Topic.get(position));
+                    intent.putExtra("Moji_Key", Topic.get(position));
                     holder.context.startActivity(intent);
-                    Log.d(TAG,"onClick: "+ Topic.get(position));
+
                 }
             });
         }
@@ -80,21 +82,18 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.ItemViewHold
         return Topic;
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public static class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView tvTitle;
-        public TextView tvItemCount;
-        public ImageButton btnDeleteItem;
         public CardView cardView;
         private final Context context;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-            tvTitle = itemView.findViewById(R.id.tv_title);
-            tvItemCount = itemView.findViewById(R.id.tv_item_count);
-            btnDeleteItem = itemView.findViewById(R.id.btn_delete_item);
+            tvTitle = itemView.findViewById(R.id.txt_title);
             cardView = itemView.findViewById(R.id.cardView);
             context = itemView.getContext();
+
         }
 
         public void bindViewHolder() {
@@ -103,8 +102,9 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.ItemViewHold
 
         @Override
         public void onClick(View v) {
-            Log.d(TAG,"onClick(in): "+getAdapterPosition());
+            Log.d(TAG, "onClick(in): " + getAdapterPosition());
         }
     }
+
 
 }

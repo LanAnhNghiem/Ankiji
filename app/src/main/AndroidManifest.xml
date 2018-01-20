@@ -18,7 +18,7 @@
             android:name=".signup.SignupActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".explores.TopicMojiActivity"
+            android:name=".explores.TopicKanjiActivity"
             android:screenOrientation="portrait" />
 
         <activity android:name=".explores.MojiExploresActivity" />
@@ -35,7 +35,7 @@
             android:name="com.facebook.FacebookContentProvider"
             android:authorities="com.facebook.app.FacebookContentProvider929227390576555"
             android:exported="true" />
-        <activity android:name=".explores.TopicKanjiActivity" />
+        <activity android:name=".explores.TopicMojiActivity" />
         <activity android:name=".signin.SigninActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

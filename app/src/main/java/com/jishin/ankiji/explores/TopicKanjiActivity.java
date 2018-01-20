@@ -11,7 +11,6 @@ import android.util.Log;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.TopicAdapter;
@@ -19,6 +18,7 @@ import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
 
 import java.util.ArrayList;
+
 
 public class TopicKanjiActivity extends AppCompatActivity {
 
@@ -30,12 +30,14 @@ public class TopicKanjiActivity extends AppCompatActivity {
     private DatabaseReference mKanjiTopicRef;
     private DatabaseService mData = DatabaseService.getInstance();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic_kanji);
         initializeParam();
         new LoadDataTask().execute();
+
     }
 
     private void initializeParam() {
@@ -50,7 +52,9 @@ public class TopicKanjiActivity extends AppCompatActivity {
         topicAdapter.setTopic(kanjiTopicList);
         mRv_KanjiTopic.setAdapter(topicAdapter);
         mKanjiTopicRef = mData.getDatabase().child(Constants.KANJI_NODE);
+
     }
+
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
@@ -63,7 +67,7 @@ public class TopicKanjiActivity extends AppCompatActivity {
         finish();
     }
 
-    private class LoadDataTask extends AsyncTask<Void, Void, Void>{
+    private class LoadDataTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -71,7 +75,8 @@ public class TopicKanjiActivity extends AppCompatActivity {
             return null;
         }
     }
-    private void getKanjiTopic(){
+
+    private void getKanjiTopic() {
         mKanjiTopicRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -85,10 +90,10 @@ public class TopicKanjiActivity extends AppCompatActivity {
         });
     }
 
-    private void showData(DataSnapshot dataSnapshot){
-        for(DataSnapshot ds:dataSnapshot.getChildren()){
+    private void showData(DataSnapshot dataSnapshot) {
+        for (DataSnapshot ds : dataSnapshot.getChildren()) {
             kanjiTopicList.add(ds.getKey());
-            Log.d(TAG,"showData: kanjiTopicList: "+kanjiTopicList);
+            Log.d(TAG, "showData: kanjiTopicList: " + kanjiTopicList);
         }
         topicAdapter.notifyDataSetChanged();
     }

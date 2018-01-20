@@ -28,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
 import com.jishin.ankiji.explores.TopicKanjiActivity;
+import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.learn.LearnActivity;
 import com.jishin.ankiji.model.DataTypeEnum;
 import com.jishin.ankiji.model.Set;
@@ -42,8 +43,8 @@ import java.util.ArrayList;
  */
 
 @SuppressLint("ValidFragment")
-public class KanjiFragment extends Fragment {
 
+public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
     private static final String TAG = KanjiFragment.class.getSimpleName();
     private ArrayList<Set> mKanjiSetList = new ArrayList<>();
     private RecyclerView rvRecentlyList;
@@ -53,6 +54,16 @@ public class KanjiFragment extends Fragment {
     private boolean isStable = true;
     private DatabaseReference mKanjiSetRef;
     private DatabaseService mData = DatabaseService.getInstance();
+    private DatabaseReference mSetByUser;
+    private String mUserID = "";
+    private boolean isScrollDown = false;
+    public String getmUserID() {
+        return mUserID;
+    }
+
+    public void setmUserID(String mUserID) {
+        this.mUserID = mUserID;
+    }
 
     @Nullable
     @Override
@@ -67,18 +78,25 @@ public class KanjiFragment extends Fragment {
     }
 
     private void initParam() {
-        mKanjiSetRef = mData.getDatabase()
-                .child(Constants.KANJI_SET_NODE)
-                .child(mData.getUserID());
-        Log.d(TAG, "initParam: " + mKanjiSetList.toString());
-
+        if(!mData.getUserID().isEmpty()){
+            mKanjiSetRef = mData.getDatabase()
+                    .child(Constants.KANJI_SET_NODE)
+                    .child(mData.getUserID());
+            mSetByUser = mData.createDatabase(Constants.SET_BY_USER_NODE).child(mData.getUserID());
+        }
+        else{
+            mKanjiSetRef = mData.getDatabase()
+                    .child(Constants.KANJI_SET_NODE)
+                    .child(getmUserID());
+            mSetByUser = mData.createDatabase(Constants.SET_BY_USER_NODE).child(getmUserID());
+        }
     }
     private void initRecycler(View view) {
         rvRecentlyList = (RecyclerView) view.findViewById(R.id.recycle_view);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvRecentlyList.setLayoutManager(layoutManager);
-        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG);
+        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG, getContext(), this);
         mItemsAdapter.setSetList(this.mKanjiSetList);
         mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {
             @Override
@@ -107,7 +125,7 @@ public class KanjiFragment extends Fragment {
         rvRecentlyList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCROLL_STATE_IDLE){
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && isScrollDown == false){
                     mFABtn.show();
                     if(isStable == false && !mFABCreate.isShown()){
                         mFABtn.setRotation(mFABtn.getRotation()+45F);
@@ -127,6 +145,11 @@ public class KanjiFragment extends Fragment {
                         mFABCreate.hide();
                         isStable = true;
                     }
+                }
+                if(dy > 0){
+                    isScrollDown = true;
+                }else{
+                    isScrollDown = false;
                 }
             }
         });
@@ -172,6 +195,7 @@ public class KanjiFragment extends Fragment {
                             Intent intent = new Intent(getContext(), CreateVocabActivity.class);
                             intent.putExtra("create", Constants.CREATE_KANJI);
                             intent.putExtra("name", setName);
+                            intent.putExtra(Constants.USER_ID, mUserID);
                             startActivity(intent);
                         }else{
                             Toast.makeText(getContext(), "Cannot create a new set.\nSet name field is required", Toast.LENGTH_SHORT).show();
@@ -201,6 +225,14 @@ public class KanjiFragment extends Fragment {
         });
     }
 
+    @Override
+    public void removeData(String id, int position) {
+        mKanjiSetRef.child(id).removeValue();
+        mKanjiSetList.remove(position);
+        mSetByUser.child(id).removeValue();
+        mItemsAdapter.notifyDataSetChanged();
+    }
+
     public class LoadKanjiDataTask extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -228,6 +260,7 @@ public class KanjiFragment extends Fragment {
         mKanjiSetList.clear();
         for (DataSnapshot ds : dataSnapshot.getChildren()) {
             mKanjiSetList.add(ds.getValue(Set.class));
+            Log.d(TAG, ds.getKey()+"/"+String.valueOf(ds.getValue()));
         }
         mItemsAdapter.notifyDataSetChanged();
     }

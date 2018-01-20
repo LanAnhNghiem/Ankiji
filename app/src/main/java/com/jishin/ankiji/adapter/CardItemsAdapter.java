@@ -1,7 +1,10 @@
 package com.jishin.ankiji.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +13,7 @@ import android.widget.TextView;
 
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.animation.BuilderManager;
+import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.model.DataTypeEnum;
 import com.jishin.ankiji.model.Set;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
@@ -28,10 +32,13 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
     private ArrayList<Set> mSetList = new ArrayList<>();
     private String FRAGMENT_TAG;
     private OnBoomMenuItemClicked mListener;
+    private Context mContext;
+    private RemoveDataCommunicator communicator;
 
-
-    public CardItemsAdapter(String FRAGMENT_TAG) {
+    public CardItemsAdapter(String FRAGMENT_TAG, Context context, RemoveDataCommunicator communicator) {
         this.FRAGMENT_TAG = FRAGMENT_TAG;
+        this.mContext = context;
+        this.communicator = communicator;
     }
 
     public void setOnBoomMenuItemClick(OnBoomMenuItemClicked mListener) {
@@ -67,6 +74,13 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
                 holder.tvTitle.setText(holder.set.getName());
                 holder.tvItemCount.setText(holder.set.getDatetime());
                 holder.dataType = DataTypeEnum.Moji;
+                holder.btnDeleteItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(TAG, "Moji delete"+ item.getName().toString());
+                        showRemoveDialog(FRAGMENT_TAG, position);
+                    }
+                });
             }
         }
 
@@ -76,6 +90,13 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
                 holder.tvTitle.setText(holder.set.getName());
                 holder.tvItemCount.setText(holder.set.getDatetime());
                 holder.dataType = DataTypeEnum.Kanji;
+                holder.btnDeleteItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(TAG, "Kanji delete"+ item.getName().toString());
+                        showRemoveDialog(FRAGMENT_TAG, position);
+                    }
+                });
             }
         }
 
@@ -99,7 +120,27 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
             addBuilder(holder, stringIndex);
         }
     }
+    void showRemoveDialog(final String fragmentTag, final int position){
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setMessage(R.string.remove_warning);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(fragmentTag.equals("KANJI")){
+                    communicator.removeData(mSetList.get(position).getId(), position);
+                }
+                if(fragmentTag.equals("MOJI")){
+                    communicator.removeData(mSetList.get(position).getId(), position);
+                }
+            }
+        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
+            }
+        });
+        builder.show();
+    }
     void addBuilder(final ItemViewHolder viewHolder, int stringIndex) {
         viewHolder.bmb.addBuilder(new TextOutsideCircleButton.Builder()
                 .normalImageRes(BuilderManager.getImageResource())

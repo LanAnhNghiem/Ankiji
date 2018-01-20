@@ -29,6 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
 import com.jishin.ankiji.explores.TopicMojiActivity;
+import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.learn.LearnActivity;
 import com.jishin.ankiji.model.DataTypeEnum;
 import com.jishin.ankiji.model.Set;
@@ -42,7 +43,7 @@ import java.util.ArrayList;
  * Created by trungnguyeen on 12/27/17.
  */
 
-public class MojiFragment extends Fragment {
+public class MojiFragment extends Fragment implements RemoveDataCommunicator{
 
     private static final String TAG = MojiFragment.class.getSimpleName();
     private RecyclerView rvRecentlyList;
@@ -53,28 +54,46 @@ public class MojiFragment extends Fragment {
     private boolean isStable = true;
     private DatabaseReference mMojiSetRef;
     private DatabaseService mData = DatabaseService.getInstance();
+    private DatabaseReference mSetByUser;
+    private String mUserID = "";
+    private boolean isScrollDown = false;
+    public String getmUserID() {
+        return mUserID;
+    }
 
+    public void setmUserID(String mUserID) {
+        this.mUserID = mUserID;
+    }
 
-
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initParam();
+        new LoadMojiDataTask().execute();
+    }
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_moji, container, false);
-
-        initParam();
         addControl(view);
         initRecycler(view);
-        new LoadMojiDataTask().execute();
-
         return view;
     }
 
     private void initParam() {
-        mMojiSetRef = mData.getDatabase()
-                .child(Constants.MOJI_SET_NODE)
-                .child(mData.getUserID());
-        Log.d(TAG, "initParam: " + mMojiSetList.toString());
+        if(!mData.getUserID().isEmpty()){
+            mMojiSetRef = mData.getDatabase()
+                    .child(Constants.MOJI_SET_NODE)
+                    .child(mData.getUserID());
+            mSetByUser = mData.createDatabase(Constants.SET_BY_USER_NODE).child(mData.getUserID());
+        }
+        else{
+            mMojiSetRef = mData.getDatabase()
+                    .child(Constants.MOJI_SET_NODE)
+                    .child(getmUserID());
+            mSetByUser = mData.createDatabase(Constants.SET_BY_USER_NODE).child(getmUserID());
+        }
     }
 
     private void addControl(View view){
@@ -117,6 +136,7 @@ public class MojiFragment extends Fragment {
                             Intent intent = new Intent(getContext(), CreateVocabActivity.class);
                             intent.putExtra("create", Constants.CREATE_MOJI);
                             intent.putExtra("name", setName);
+                            intent.putExtra(Constants.USER_ID, mUserID);
                             startActivity(intent);
                         }
                         else{
@@ -155,7 +175,7 @@ public class MojiFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         rvRecentlyList.setLayoutManager(layoutManager);
 
-        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG);
+        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG, getContext(), this);
         mItemsAdapter.setSetList(this.mMojiSetList);
         rvRecentlyList.setItemAnimator(new DefaultItemAnimator());
         rvRecentlyList.setAdapter(mItemsAdapter);
@@ -184,7 +204,7 @@ public class MojiFragment extends Fragment {
         rvRecentlyList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCROLL_STATE_IDLE){
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && isScrollDown == false){
                     mFABtn.show();
                     if(isStable == false && !mFABCreate.isShown()){
                         mFABtn.setRotation(mFABtn.getRotation()+45F);
@@ -204,41 +224,52 @@ public class MojiFragment extends Fragment {
 
                     }
                     mFABtn.hide();
-
-
+                }
+                if(dy > 0){
+                    isScrollDown = true;
+                }else{
+                    isScrollDown = false;
                 }
             }
         });
     }
 
-    public class LoadMojiDataTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            getMojiSet();
-            return null;
-        }
-    }
-
-    private void getMojiSet() {
-        mMojiSetRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                showData(dataSnapshot);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void showData(DataSnapshot dataSnapshot) {
-        mMojiSetList.clear();
-        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-            mMojiSetList.add(ds.getValue(Set.class));
-        }
+    @Override
+    public void removeData(final String id, int position) {
+        mMojiSetRef.child(id).removeValue();
+        mMojiSetList.remove(position);
+        mSetByUser.child(id).removeValue();
         mItemsAdapter.notifyDataSetChanged();
     }
+
+    public class LoadMojiDataTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            mMojiSetRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    mMojiSetList.clear();
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        mMojiSetList.add(ds.getValue(Set.class));
+                        Log.d(TAG, ds.getKey()+"/"+String.valueOf(ds.getValue()));
+                    }
+                    publishProgress();
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            mItemsAdapter.notifyDataSetChanged();
+        }
+    }
+
 }

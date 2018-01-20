@@ -44,7 +44,7 @@ public class CreateVocabActivity extends AppCompatActivity{
     private ImageView btnAdd;
     private TextView txtWord;
     private boolean isKanji = true;
-    private String mSetName = "";
+    private String mSetName = "", mUserID = "";
     private DatabaseService mData = DatabaseService.getInstance();
     private DatabaseReference mMojiSet = mData.createDatabase("MojiSet");
     private DatabaseReference mKanjiSet = mData.createDatabase("KanjiSet");
@@ -59,7 +59,9 @@ public class CreateVocabActivity extends AppCompatActivity{
                 isKanji = false;
             }
             mSetName = intent.getStringExtra("name");
-
+            mUserID = intent.getStringExtra(Constants.USER_ID);
+            if(mUserID.isEmpty())
+                mUserID = mData.getUserID();
         }
         initControl();
         setupRecyclerView();
@@ -132,12 +134,14 @@ public class CreateVocabActivity extends AppCompatActivity{
         });
         builder.show();
     }
+
     private void setEvents(){
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(CreateVocabActivity.this, "Done", Toast.LENGTH_SHORT).show();
                 saveDatabase();
+                finish();
             }
         });
         btnAdd.setOnClickListener(new View.OnClickListener() {
@@ -219,18 +223,17 @@ public class CreateVocabActivity extends AppCompatActivity{
         }
     }
     private void saveDatabase(){
-        String userID = mData.getUserID();
         Date currentTime = Calendar.getInstance().getTime();
         if(!isKanji){
             String id = mMojiSet.push().getKey();
             Set set = new Set(id, mSetName, String.valueOf(currentTime));
-            mMojiSet.child(userID).child(id).setValue(set);
-            mSetByUser.child(userID).child(id).setValue(mMojiList);
+            mMojiSet.child(mUserID).child(id).setValue(set);
+            mSetByUser.child(mUserID).child(id).setValue(mMojiList);
         }else{
             String id = mKanjiSet.push().getKey();
             Set set = new Set(id, mSetName, String.valueOf(currentTime));
-            mKanjiSet.child(userID).child(id).setValue(set);
-            mSetByUser.child(userID).child(id).setValue(mKanjiList);
+            mKanjiSet.child(mUserID).child(id).setValue(set);
+            mSetByUser.child(mUserID).child(id).setValue(mKanjiList);
         }
     }
 }

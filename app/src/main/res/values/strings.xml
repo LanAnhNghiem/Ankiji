@@ -41,6 +41,7 @@
     <string name="text_outside_circle_button_text_normal">Text Outside Circle Button(Normal)</string>
 
     <string name="warning_unsave_data">Do you want to save your vocabulary set?</string>
+    <string name="remove_warning">Do you want to remove this set?</string>
 
 
 </resources>

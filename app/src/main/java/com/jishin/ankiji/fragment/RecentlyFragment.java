@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
+import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.learn.LearnActivity;
 import com.jishin.ankiji.model.DataTypeEnum;
 import com.jishin.ankiji.utilities.Constants;
@@ -20,7 +21,7 @@ import com.jishin.ankiji.utilities.Constants;
 /**
  * Created by trungnguyeen on 12/27/17.
  */
-public class RecentlyFragment extends Fragment {
+public class RecentlyFragment extends Fragment implements RemoveDataCommunicator{
 
     private final static String TAG = RecentlyFragment.class.getSimpleName();
     private RecyclerView rvRecentlyList;
@@ -49,7 +50,7 @@ public class RecentlyFragment extends Fragment {
         rvRecentlyList = (RecyclerView) view.findViewById(R.id.lv_recently);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         rvRecentlyList.setLayoutManager(layoutManager);
-        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG);
+        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG, getContext(), this);
         mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {
             @Override
             public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum) {
@@ -76,6 +77,11 @@ public class RecentlyFragment extends Fragment {
         rvRecentlyList.setItemAnimator(new DefaultItemAnimator());
         rvRecentlyList.setAdapter(mItemsAdapter);
 
+
+    }
+
+    @Override
+    public void removeData(String id, int position) {
 
     }
 }

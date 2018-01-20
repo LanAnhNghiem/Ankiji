@@ -28,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
 import com.jishin.ankiji.explores.TopicKanjiActivity;
+import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.learn.LearnActivity;
 import com.jishin.ankiji.model.DataTypeEnum;
 import com.jishin.ankiji.model.Set;
@@ -41,7 +42,7 @@ import java.util.ArrayList;
  * Created by trungnguyeen on 12/27/17.
  */
 
-public class KanjiFragment extends Fragment {
+public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
     private static final String TAG = KanjiFragment.class.getSimpleName();
     private ArrayList<Set> mKanjiSetList = new ArrayList<>();
     private RecyclerView rvRecentlyList;
@@ -51,6 +52,7 @@ public class KanjiFragment extends Fragment {
     private boolean isStable = true;
     private DatabaseReference mKanjiSetRef;
     private DatabaseService mData = DatabaseService.getInstance();
+    private DatabaseReference mSetByUser;
     private String mUserID = "";
     private boolean isScrollDown = false;
     public String getmUserID() {
@@ -78,11 +80,13 @@ public class KanjiFragment extends Fragment {
             mKanjiSetRef = mData.getDatabase()
                     .child(Constants.KANJI_SET_NODE)
                     .child(mData.getUserID());
+            mSetByUser = mData.createDatabase(Constants.SET_BY_USER_NODE).child(mData.getUserID());
         }
         else{
             mKanjiSetRef = mData.getDatabase()
                     .child(Constants.KANJI_SET_NODE)
                     .child(getmUserID());
+            mSetByUser = mData.createDatabase(Constants.SET_BY_USER_NODE).child(getmUserID());
         }
     }
     private void initRecycler(View view) {
@@ -90,7 +94,7 @@ public class KanjiFragment extends Fragment {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvRecentlyList.setLayoutManager(layoutManager);
-        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG);
+        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG, getContext(), this);
         mItemsAdapter.setSetList(this.mKanjiSetList);
         mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {
             @Override
@@ -216,6 +220,14 @@ public class KanjiFragment extends Fragment {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void removeData(String id, int position) {
+        mKanjiSetRef.child(id).removeValue();
+        mKanjiSetList.remove(position);
+        mSetByUser.child(id).removeValue();
+        mItemsAdapter.notifyDataSetChanged();
     }
 
     public class LoadKanjiDataTask extends AsyncTask<Void, Void, Void> {

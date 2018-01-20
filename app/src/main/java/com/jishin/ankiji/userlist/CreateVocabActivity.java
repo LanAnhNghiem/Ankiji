@@ -60,6 +60,8 @@ public class CreateVocabActivity extends AppCompatActivity{
             }
             mSetName = intent.getStringExtra("name");
             mUserID = intent.getStringExtra(Constants.USER_ID);
+            if(mUserID.isEmpty())
+                mUserID = mData.getUserID();
         }
         initControl();
         setupRecyclerView();

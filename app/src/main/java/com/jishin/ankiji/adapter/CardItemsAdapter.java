@@ -77,7 +77,6 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
                 holder.btnDeleteItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d(TAG, "Moji delete"+ item.getName().toString());
                         showRemoveDialog(FRAGMENT_TAG, position);
                     }
                 });
@@ -93,7 +92,6 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
                 holder.btnDeleteItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d(TAG, "Kanji delete"+ item.getName().toString());
                         showRemoveDialog(FRAGMENT_TAG, position);
                     }
                 });

@@ -4,9 +4,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.jishin.ankiji.features.KanjiFragment;
-import com.jishin.ankiji.features.MojiFragment;
-import com.jishin.ankiji.view.fragment.RecentlyFragment;
+import com.jishin.ankiji.fragment.KanjiFragment;
+import com.jishin.ankiji.fragment.MojiFragment;
+import com.jishin.ankiji.fragment.RecentlyFragment;
 
 /**
  * Created by trungnguyeen on 12/27/17.
@@ -15,20 +15,28 @@ import com.jishin.ankiji.view.fragment.RecentlyFragment;
 public class FragmentAdapter extends FragmentPagerAdapter{
 
     public final static int FRAGMENT_COUNT = 3;
+    private String mUserID = "";
 
-    public FragmentAdapter(FragmentManager fm) {
+    public FragmentAdapter(FragmentManager fm, String userID) {
         super(fm);
+        this.mUserID = userID;
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new RecentlyFragment();
+                RecentlyFragment recently = new RecentlyFragment();
+                recently.setmUserID(mUserID);
+                return recently;
             case 1:
-                return new MojiFragment();
+                MojiFragment moji = new MojiFragment();
+                moji.setmUserID(mUserID);
+                return moji;
             case 2:
-                return new KanjiFragment();
+                KanjiFragment kanji = new KanjiFragment();
+                kanji.setmUserID(mUserID);
+                return kanji;
             default:
                 return null;
         }

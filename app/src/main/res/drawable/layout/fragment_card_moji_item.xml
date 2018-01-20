@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="70dp"
+    android:paddingEnd="50dp"
+    android:paddingStart="50dp"
+    android:paddingTop="70dp">
+
+
+    <com.wajahatkarim3.easyflipview.EasyFlipView
+        android:id="@+id/flip_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:flipDuration="400"
+        app:flipEnabled="true"
+        app:flipOnTouch="true"
+        app:flipType="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/back_card_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardElevation="2dp"
+            app:cardPreventCornerOverlap="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            card_view:cardMaxElevation="3dp"
+            card_view:cardUseCompatPadding="true">
+
+
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="20dp">
+
+
+                <TextView
+                    android:id="@+id/tv_am_han"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Am Han"
+                    android:textAlignment="center"
+                    android:textSize="35sp"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/tv_hiragana"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="hiragana"
+                    android:textAlignment="center"
+                    android:textSize="24dp"
+                    android:gravity="center"
+                    android:layout_below="@id/tv_am_han"/>
+
+                <TextView
+                    android:id="@+id/tv_nghia"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Nghia Tieng Viet"
+                    android:textAlignment="center"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_below="@id/tv_hiragana"
+                    android:layout_marginTop="15dp"/>
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/font_card_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardPreventCornerOverlap="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:cardElevation="2dp"
+            card_view:cardMaxElevation="3dp"
+            card_view:cardUseCompatPadding="true">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tv_moji"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Moji"
+                    android:textAlignment="center"
+                    android:textSize="40sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.CardView>
+
+    </com.wajahatkarim3.easyflipview.EasyFlipView>
+
+</android.support.constraint.ConstraintLayout>

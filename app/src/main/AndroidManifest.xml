@@ -28,7 +28,7 @@
         <activity android:name=".explores.KanjiExploresActivity">
 
         </activity>
-        <activity android:name=".Feature_Test.TestActivity">
+        <activity android:name=".Feature_Test.TestActivity"></activity>
 
         <activity android:name=".userlist.CreateVocabActivity"/>
 

@@ -21,10 +21,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
+import com.jishin.ankiji.features.FeatureActivity;
 import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.QuestionAnswer;
-import com.jishin.ankiji.view.activity.MainActivity;
-
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -405,7 +404,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.btnMain:
-                startActivity(new Intent(TestActivity.this, MainActivity.class));
+                startActivity(new Intent(TestActivity.this, FeatureActivity.class));
                 break;
 
             case R.id.btnRetry:

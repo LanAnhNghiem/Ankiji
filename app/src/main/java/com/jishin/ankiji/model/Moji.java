@@ -46,6 +46,7 @@ public class Moji {
     }
     public void setTuTiengNhat(String tuTiengNhat) {
         TuTiengNhat = tuTiengNhat;
+    }
     @Override
     public String toString() {
         return "Moji{" +

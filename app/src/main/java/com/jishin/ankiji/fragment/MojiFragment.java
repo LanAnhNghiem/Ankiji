@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,7 +73,8 @@ public class MojiFragment extends Fragment {
     private void initParam() {
         mMojiSetRef = mData.getDatabase()
                 .child(Constants.MOJI_SET_NODE)
-                .child(mData.getFirebaseAuth().getCurrentUser().getUid());
+                .child(mData.getUserID());
+        Log.d(TAG, "initParam: " + mMojiSetList.toString());
     }
 
     private void addControl(View view){
@@ -159,10 +161,11 @@ public class MojiFragment extends Fragment {
         rvRecentlyList.setAdapter(mItemsAdapter);
         mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {
             @Override
-            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum) {
+            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum, Set set) {
                 switch (classIndex) {
                     case 0:
                         Intent intent = new Intent(getContext(), LearnActivity.class);
+                        intent.putExtra(Constants.SET_BY_USER, set);
                         intent.putExtra(Constants.DATA_TYPE, dataTypeEnum);
                         startActivity(intent);
                         break;

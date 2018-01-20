@@ -2,6 +2,7 @@ package com.jishin.ankiji.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 
 import com.jishin.ankiji.fragment.CardKanjiFragment;
 import com.jishin.ankiji.fragment.CardMojiFragment;
@@ -17,20 +18,25 @@ import java.util.List;
  */
 
 public class CardFragmentPagerAdapter extends FragmentViewPagerAdapter {
+    private static final String TAG = CardFragmentPagerAdapter.class.getSimpleName();
     private List<?> mFragments = new ArrayList<>();
-    private ArrayList<?> contentList;
+    private ArrayList<?> contentList = new ArrayList<>();
     private DataTypeEnum dataTypeEnum;
     public CardFragmentPagerAdapter(FragmentManager fm, ArrayList<?> contentList, DataTypeEnum dataTypeEnum) {
         super(fm);
         this.contentList = contentList;
+        Log.i(TAG, "CardFragmentPagerAdapter: contextListSize " + this.contentList.size());
         this.dataTypeEnum = dataTypeEnum;
-
         createCardList();
     }
 
     @Override
     public int getCount() {
         return mFragments.size();
+    }
+
+    public void setContentList(ArrayList<?> contentList) {
+        this.contentList = contentList;
     }
 
     @Override

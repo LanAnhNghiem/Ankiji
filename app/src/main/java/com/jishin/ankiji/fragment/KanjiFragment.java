@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,7 @@ import java.util.ArrayList;
 @SuppressLint("ValidFragment")
 public class KanjiFragment extends Fragment {
 
+    private static final String TAG = KanjiFragment.class.getSimpleName();
     private ArrayList<Set> mKanjiSetList = new ArrayList<>();
     private RecyclerView rvRecentlyList;
     private CardItemsAdapter mItemsAdapter;
@@ -67,7 +69,9 @@ public class KanjiFragment extends Fragment {
     private void initParam() {
         mKanjiSetRef = mData.getDatabase()
                 .child(Constants.KANJI_SET_NODE)
-                .child(mData.getFirebaseAuth().getCurrentUser().getUid());
+                .child(mData.getUserID());
+        Log.d(TAG, "initParam: " + mKanjiSetList.toString());
+
     }
     private void initRecycler(View view) {
         rvRecentlyList = (RecyclerView) view.findViewById(R.id.recycle_view);
@@ -78,10 +82,11 @@ public class KanjiFragment extends Fragment {
         mItemsAdapter.setSetList(this.mKanjiSetList);
         mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {
             @Override
-            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum) {
+            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum, Set set) {
                 switch (classIndex) {
                     case 0:
                         Intent intent = new Intent(getContext(), LearnActivity.class);
+                        intent.putExtra(Constants.SET_BY_USER, set);
                         intent.putExtra(Constants.DATA_TYPE, dataTypeEnum);
                         startActivity(intent);
                         break;

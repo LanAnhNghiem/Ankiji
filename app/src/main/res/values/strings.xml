@@ -50,6 +50,10 @@
 
     <string name="warning_unsave_data">Do you want to save your vocabulary set?</string>
     <string name="remove_warning">Do you want to remove this set?</string>
+    <string name="ptit">Học Viện Công Nghệ Bưu Chính Viễn Thông</string>
+    <string name="leader"><i>Leader</i></string>
+    <string name="deverloper"><i>Deverloper</i></string>
+    <string name="uit">Đại học Công nghệ Thông Tin</string>
 
 
 </resources>

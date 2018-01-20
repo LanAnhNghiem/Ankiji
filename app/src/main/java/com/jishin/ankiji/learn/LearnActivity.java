@@ -121,7 +121,6 @@ public class LearnActivity extends AppCompatActivity {
                 }
                 mProgressBar.setProgress(progressValue);
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
 

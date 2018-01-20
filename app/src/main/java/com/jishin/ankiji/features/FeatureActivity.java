@@ -11,13 +11,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.jishin.ankiji.R;
+import com.jishin.ankiji.about_us.AboutUsActivity;
 import com.jishin.ankiji.adapter.FragmentAdapter;
-import com.jishin.ankiji.utilities.DatabaseService;
 import com.jishin.ankiji.signin.SigninActivity;
+import com.jishin.ankiji.utilities.Constants;
+import com.jishin.ankiji.utilities.DatabaseService;
 
 
 public class FeatureActivity extends AppCompatActivity{
@@ -29,13 +32,22 @@ public class FeatureActivity extends AppCompatActivity{
     private ActionBarDrawerToggle drawerToggle;
     private DatabaseService mData = DatabaseService.getInstance();
     private NavigationView nav;
+    private String mUserID = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_features);
+        getUserID();
         getControls();
         setEvents();
+        Log.d(TAG,String.valueOf(mData.isSignIn()));
+    }
+    private void getUserID(){
+        Intent intent = getIntent();
+        if(intent.hasExtra(Constants.USER_ID)){
+            mUserID = intent.getStringExtra(Constants.USER_ID);
+        }
     }
 
     private void getControls() {
@@ -47,7 +59,7 @@ public class FeatureActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
         drawerLayout = findViewById(R.id.drawerLayout);
         tabLayout.setupWithViewPager(viewPager);
-        viewPager.setAdapter(new FragmentAdapter(getSupportFragmentManager()));
+        viewPager.setAdapter(new FragmentAdapter(getSupportFragmentManager(), mUserID));
 
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,R.string.ns_menu_open,R.string.ns_menu_close);
         drawerLayout.addDrawerListener(drawerToggle);
@@ -87,9 +99,15 @@ public class FeatureActivity extends AppCompatActivity{
                     case R.id.item_use:
                         Toast.makeText(FeatureActivity.this, "How to use", Toast.LENGTH_SHORT).show();
                         break;
+                    case R.id.about:
+                        Intent aboutIntent = new Intent(FeatureActivity.this, AboutUsActivity.class);
+                        startActivity(aboutIntent);
+                        break;
                     case R.id.log_out:
+                        Log.d(TAG,String.valueOf(mData.isSignIn()));
                         Toast.makeText(FeatureActivity.this, "Signed out", Toast.LENGTH_SHORT).show();
-                        mData.getFirebaseAuth().signOut();
+                        mData.signOut();
+                        Log.d(TAG,String.valueOf(mData.isSignIn()));
                         Intent intent = new Intent(FeatureActivity.this, SigninActivity.class);
                         startActivity(intent);
                         finish();

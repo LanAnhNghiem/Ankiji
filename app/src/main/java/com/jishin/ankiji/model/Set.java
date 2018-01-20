@@ -4,10 +4,17 @@ package com.jishin.ankiji.model;
  * Created by SPlayer on 20/01/2018.
  */
 
-public class Set {
+import java.io.Serializable;
+
+/**
+ * Created by lana on 19/01/2018.
+ */
+
+public class Set implements Serializable{
     private String id;
     private String name;
     private String datetime;
+
     public Set(String id, String name, String datetime) {
         this.id = id;
         this.name = name;
@@ -40,4 +47,5 @@ public class Set {
     public void setDatetime(String datetime) {
         this.datetime = datetime;
     }
+
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jishin.ankiji">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -12,7 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
         <activity
             android:name=".signup.SignupActivity"
@@ -20,17 +23,18 @@
         <activity
             android:name=".explores.TopicKanjiActivity"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".features.FeatureActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".explores.MojiExploresActivity" />
         <activity android:name=".explores.KanjiExploresActivity" />
-        <activity android:name=".userlist.CreateVocabActivity"/>
-        <activity android:name=".features.FeatureActivity">
-
-        </activity>
-
-        <activity android:name="com.facebook.FacebookActivity"
+        <activity android:name=".Feature_Test.TestActivity" />
+        <activity android:name=".userlist.CreateVocabActivity" />
+        <activity
+            android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+
         <provider
             android:name="com.facebook.FacebookContentProvider"
             android:authorities="com.facebook.app.FacebookContentProvider929227390576555"
@@ -43,7 +47,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity android:name=".learn.LearnActivity" />
+        <activity android:name=".about_us.AboutUsActivity"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

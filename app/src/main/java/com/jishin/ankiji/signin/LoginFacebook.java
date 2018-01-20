@@ -27,6 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.features.FeatureActivity;
 import com.jishin.ankiji.model.User;
+import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
 
 import java.util.Arrays;
@@ -62,7 +63,7 @@ public class LoginFacebook {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
-                Toast.makeText(mActivity, R.string.login_success, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mActivity, R.string.login_success, Toast.LENGTH_SHORT).show();
 
             }
 
@@ -79,33 +80,36 @@ public class LoginFacebook {
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
-        //showProgress();
+        showProgress();
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-                    //hideProgress();
-                    //Toast.makeText(mActivity, R.string.login_success, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, R.string.login_success, Toast.LENGTH_SHORT).show();
                     email = task.getResult().getUser().getEmail();
                     userName = task.getResult().getUser().getDisplayName();
                     avatar = task.getResult().getUser().getPhotoUrl().toString();
                     idUser = task.getResult().getUser().getUid();
-                    User user = new User(idUser, email, userName, avatar);
+                    User user = new User(idUser, userName, email,avatar);
                     createUserOnFireBase(user);
                     Intent intent = new Intent(mActivity, FeatureActivity.class);
+                    intent.putExtra(Constants.USER_ID, idUser);
                     mActivity.startActivity(intent);
-                    mActivity.finish();
+                    if(progressDialog.isShowing()){
+                        hideProgress();
+                        mActivity.finish();
+                    }
                 }
                 else {
-                    //hideProgress();
-                    //Toast.makeText(mActivity, R.string.login_failed, Toast.LENGTH_SHORT).show();
+                    hideProgress();
+                    Toast.makeText(mActivity, R.string.login_failed, Toast.LENGTH_SHORT).show();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                //hideProgress();
+                hideProgress();
                 Log.d("UNSUCCESSFUL", "SignInError");
                 Toast.makeText(mActivity, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
             }
@@ -118,12 +122,12 @@ public class LoginFacebook {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() == null){
                     userNode.setValue(user);
-                    Toast.makeText(mActivity, mActivity.getResources().getString(R.string.login_success), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(mActivity, mActivity.getResources().getString(R.string.login_success), Toast.LENGTH_SHORT).show();
 //                    mActivity.startActivity(new Intent(mActivity, CustomMapsActivity.class));
                 }
                 else {
                     hideProgress();
-                    Toast.makeText(mActivity, mActivity.getResources().getString(R.string.login_success), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(mActivity, mActivity.getResources().getString(R.string.login_success), Toast.LENGTH_SHORT).show();
 //                    mActivity.startActivity(new Intent(mActivity, CustomMapsActivity.class));
                 }
             }

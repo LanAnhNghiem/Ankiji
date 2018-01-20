@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.jishin.ankiji.R;
+import com.jishin.ankiji.about_us.AboutUsActivity;
 import com.jishin.ankiji.adapter.FragmentAdapter;
 import com.jishin.ankiji.signin.SigninActivity;
 import com.jishin.ankiji.utilities.Constants;
@@ -97,6 +98,10 @@ public class FeatureActivity extends AppCompatActivity{
                         break;
                     case R.id.item_use:
                         Toast.makeText(FeatureActivity.this, "How to use", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.about:
+                        Intent aboutIntent = new Intent(FeatureActivity.this, AboutUsActivity.class);
+                        startActivity(aboutIntent);
                         break;
                     case R.id.log_out:
                         Log.d(TAG,String.valueOf(mData.isSignIn()));

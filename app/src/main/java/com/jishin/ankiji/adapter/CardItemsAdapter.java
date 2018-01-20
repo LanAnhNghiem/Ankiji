@@ -11,9 +11,12 @@ import android.widget.TextView;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.animation.BuilderManager;
 import com.jishin.ankiji.model.DataTypeEnum;
+import com.jishin.ankiji.model.Set;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
 import com.nightonke.boommenu.BoomButtons.TextOutsideCircleButton;
 import com.nightonke.boommenu.BoomMenuButton;
+
+import java.util.ArrayList;
 
 /**
  * Created by trungnguyeen on 12/27/17.
@@ -21,9 +24,11 @@ import com.nightonke.boommenu.BoomMenuButton;
 
 public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.ItemViewHolder> {
 
+    private final static String TAG = CardFragmentPagerAdapter.class.getSimpleName();
+    private ArrayList<Set> mSetList = new ArrayList<>();
     private String FRAGMENT_TAG;
     private OnBoomMenuItemClicked mListener;
-    private final static String TAG = CardFragmentPagerAdapter.class.getSimpleName();
+
 
     public CardItemsAdapter(String FRAGMENT_TAG) {
         this.FRAGMENT_TAG = FRAGMENT_TAG;
@@ -31,6 +36,10 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
 
     public void setOnBoomMenuItemClick(OnBoomMenuItemClicked mListener) {
         this.mListener = mListener;
+    }
+
+    public void setSetList(ArrayList<Set> mSetList) {
+        this.mSetList = mSetList;
     }
 
     @Override
@@ -53,15 +62,21 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
         }
 
         if (FRAGMENT_TAG.equals("MOJI")) {
-            holder.tvTitle.setText("MOJI");
-            holder.tvItemCount.setText("20 items");
-            holder.dataType = DataTypeEnum.Moji;
+            if (this.mSetList.size() != 0){
+                Set item = this.mSetList.get(position);
+                holder.tvTitle.setText(item.getName());
+                holder.tvItemCount.setText(item.getDatetime());
+                holder.dataType = DataTypeEnum.Moji;
+            }
         }
 
         if (FRAGMENT_TAG.equals("KANJI")) {
-            holder.tvTitle.setText("KANJI");
-            holder.tvItemCount.setText("3 items");
-            holder.dataType = DataTypeEnum.Kanji;
+            if (this.mSetList.size() != 0){
+                Set item = this.mSetList.get(position);
+                holder.tvTitle.setText(item.getName());
+                holder.tvItemCount.setText(item.getDatetime());
+                holder.dataType = DataTypeEnum.Kanji;
+            }
         }
 
         holder.bmb.clearBuilders();
@@ -86,7 +101,7 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
         }
     }
 
-    private void addBuilder(final ItemViewHolder viewHolder, int stringIndex) {
+    void addBuilder(final ItemViewHolder viewHolder, int stringIndex) {
         viewHolder.bmb.addBuilder(new TextOutsideCircleButton.Builder()
                 .normalImageRes(BuilderManager.getImageResource())
                 .normalTextRes(stringIndex)
@@ -105,13 +120,11 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
         if (FRAGMENT_TAG.equalsIgnoreCase("RECENTLY")) {
             return 10;
         }
-        if (FRAGMENT_TAG.equalsIgnoreCase("MOJI")) {
-            return 20;
-        }
-        return 3;
+        return this.mSetList.size();
+
     }
 
-    static class ItemViewHolder extends RecyclerView.ViewHolder {
+    class ItemViewHolder extends RecyclerView.ViewHolder {
 
         DataTypeEnum dataType;
         TextView tvTitle;

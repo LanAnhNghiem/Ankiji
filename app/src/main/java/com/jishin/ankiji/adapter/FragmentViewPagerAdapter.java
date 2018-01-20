@@ -3,8 +3,8 @@ package com.jishin.ankiji.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import com.jishin.ankiji.features.KanjiFragment;
-import com.jishin.ankiji.features.MojiFragment;
+import com.jishin.ankiji.fragment.KanjiFragment;
+import com.jishin.ankiji.fragment.MojiFragment;
 import com.jishin.ankiji.fragment.RecentlyFragment;
 
 /**

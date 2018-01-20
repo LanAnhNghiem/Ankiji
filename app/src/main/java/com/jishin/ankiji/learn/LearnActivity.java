@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ProgressBar;
 
 import com.jishin.ankiji.R;
@@ -37,6 +38,7 @@ public class LearnActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null) {
             dataTypeEnum = (DataTypeEnum) intent.getSerializableExtra(Constants.DATA_TYPE);
+            Log.i(TAG, "onCreate: " + dataTypeEnum);
             if (dataTypeEnum == DataTypeEnum.Kanji) {
                 kanjiList = new ArrayList<Kanji>();
             } else {

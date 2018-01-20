@@ -16,8 +16,8 @@ import android.widget.Toast;
 
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.FragmentAdapter;
-import com.jishin.ankiji.utilities.DatabaseService;
 import com.jishin.ankiji.signin.SigninActivity;
+import com.jishin.ankiji.utilities.DatabaseService;
 
 
 public class FeatureActivity extends AppCompatActivity{

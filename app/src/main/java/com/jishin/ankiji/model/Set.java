@@ -1,5 +1,9 @@
 package com.jishin.ankiji.model;
 
+/**
+ * Created by SPlayer on 20/01/2018.
+ */
+
 import java.io.Serializable;
 
 /**
@@ -43,4 +47,5 @@ public class Set implements Serializable{
     public void setDatetime(String datetime) {
         this.datetime = datetime;
     }
+
 }

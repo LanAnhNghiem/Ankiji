@@ -1,10 +1,12 @@
 package com.jishin.ankiji.model;
 
+import java.io.Serializable;
+
 /**
  * Created by lana on 16/01/2018.
  */
-
-public class Moji {
+@SuppressWarnings("serial")
+public class Moji implements Serializable{
     private String AmHan;
     private String CachDocHira;
     private String NghiaTiengViet;

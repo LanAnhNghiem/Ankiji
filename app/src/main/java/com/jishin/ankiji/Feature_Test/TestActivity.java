@@ -22,8 +22,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.features.FeatureActivity;
+import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.QuestionAnswer;
+import com.jishin.ankiji.utilities.Constants;
+
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -41,13 +45,15 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
     private int number_of_right_answer = 0;
     private int index_question = 0;
-
-    private ArrayList<Moji> mojiList;
-    private ArrayList<String> answerList;
-    private ArrayList<QuestionAnswer> QAList;
+    private ArrayList<Kanji> kanjiList = new ArrayList<>();
+    private ArrayList<Moji> mojiList = new ArrayList<>() ;
+    private ArrayList<String> answerList = new ArrayList<>();
+    private ArrayList<QuestionAnswer> QAList = new ArrayList<>();
+    private ArrayList<Kanji> oldKanjiList = new ArrayList<>();
+    private ArrayList<Moji> oldMojiList = new ArrayList<>();
 
     private Toolbar toolbar;
-    private ProgressBar progressBar;
+    //private ProgressBar progressBar;
     private TextView txtRightCount, txtQuestion, txtAnswerA, txtAnswerB, txtAnswerC, txtAnswerD;
     private TextView txtNumberQuestion;
     private ConstraintLayout layout;
@@ -55,21 +61,36 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     private TextView txtNotification;
     private Button btnMain;
     private Button btnRetry;
-
-
-    public FirebaseDatabase database;
-    public DatabaseReference mReference;
-
-
+    private static boolean isKanji = false;
     Dialog settingsDialog = null;
+    //Intent refresh;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_moji_test);
+
+        Intent intent = getIntent();
+
+        if(intent.hasExtra(Constants.SET_BY_USER)){
+            String fragmentTag = intent.getStringExtra(Constants.KANJI);
+            if(fragmentTag.equals("KANJI")){
+                isKanji = true;
+                //oldKanjiList = (ArrayList<Kanji>) intent.getSerializableExtra(Constants.SET_BY_USER);
+                kanjiList = (ArrayList<Kanji>) intent.getSerializableExtra(Constants.SET_BY_USER);
+                //oldKanjiList = kanjiList;
+            }else{
+                isKanji = false;
+                //oldMojiList = (ArrayList<Moji>) intent.getSerializableExtra(Constants.SET_BY_USER);
+                mojiList = (ArrayList<Moji>) intent.getSerializableExtra(Constants.SET_BY_USER);
+                //oldMojiList = mojiList;
+            }
+        }
+
         addControls();
-        database = FirebaseDatabase.getInstance();
-        mReference = database.getReference(REFERENCE).child(BOOK).child("Bai_1");
-        new LoadDataTask().execute();
+        initData(isKanji);
+        //database = FirebaseDatabase.getInstance();
+        //mReference = database.getReference(REFERENCE).child(BOOK).child("Bai_1");
+        //new LoadDataTask().execute();
         addEvents();
 
     }
@@ -90,7 +111,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        progressBar = findViewById(R.id.determinateBar);
+        //progressBar = findViewById(R.id.determinateBar);
         txtRightCount = findViewById(R.id.txtRightCount);
         txtQuestion = findViewById(R.id.txtQuestion);
         txtAnswerA = findViewById(R.id.txtAnswerA);
@@ -99,9 +120,9 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         txtAnswerD = findViewById(R.id.txtAnswerD);
         txtNumberQuestion = findViewById(R.id.txtNumberOfQuestion);
 
-        mojiList = new ArrayList<>();
-        answerList = new ArrayList<>();
-        QAList = new ArrayList<>();
+//        kanjiList = new ArrayList<>();
+//        answerList = new ArrayList<>();
+//        QAList = new ArrayList<>();
 
         layout = findViewById(R.id.layoutTest);
         
@@ -109,7 +130,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         btnRetry = findViewById(R.id.btnRetry);
         txtNotification = findViewById(R.id.txtNotification);
 
-        progressBar.setProgress(0);
+        //progressBar.setProgress(0);
 
         btnMain.setVisibility(View.INVISIBLE);
         btnRetry.setVisibility(View.INVISIBLE);
@@ -128,12 +149,13 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         finish();
     }
 
-    public void updateQuestion (ArrayList<Moji> listMoji, ArrayList<String> listAnswer) {
+    public void updateQuestionMoji (ArrayList<Moji> listMoji, ArrayList<String> listAnswer) {
         index_question++;
-        progressBar.setProgress(index_question * 100 / NUMBER_OF_QUESTION);
-        txtNumberQuestion.setText("Question: " + index_question + "/" + NUMBER_OF_QUESTION);
-        txtRightCount.setText("Correct: " + number_of_right_answer + " / " + NUMBER_OF_QUESTION);
-        Log.d("MOJI_SIZE", String.valueOf(mojiList.size()));
+        //progressBar.setProgress(index_question * 100 / NUMBER_OF_QUESTION);
+        txtNumberQuestion.setText("Question: " + String.valueOf(index_question) + "/"
+                + String.valueOf(NUMBER_OF_QUESTION));
+        txtRightCount.setText("Correct: " + String.valueOf(number_of_right_answer) + " / "
+                + String.valueOf(NUMBER_OF_QUESTION));        //Log.d("MOJI_SIZE", String.valueOf(mojiList.size()));
         Log.d("ANSWER_SIZE", String.valueOf(listAnswer.size()));
         int index_moji = 0;
         index_moji = new Random().nextInt(listMoji.size());
@@ -256,6 +278,138 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
 
     }
+    public void updateQuestionKanji (ArrayList<Kanji> listKanji, ArrayList<String> listAnswer) {
+        index_question++;
+        //progressBar.setProgress(index_question * 100 / NUMBER_OF_QUESTION);
+        String numberQuestion = "Question: " + String.valueOf(index_question) + "/"
+                + String.valueOf(NUMBER_OF_QUESTION);
+        String rightCount = "Correct: " + String.valueOf(number_of_right_answer) + " / "
+                + String.valueOf(NUMBER_OF_QUESTION);
+        txtNumberQuestion.setText(numberQuestion);
+        txtRightCount.setText(rightCount);
+        //Log.d("MOJI_SIZE", String.valueOf(mojiList.size()));
+        Log.d("ANSWER_SIZE", String.valueOf(listAnswer.size()));
+        int index_kanji = 0;
+        index_kanji = new Random().nextInt(listKanji.size());
+
+        Log.d("INDEX_MOJI", String.valueOf(index_kanji));
+        int index_one;
+        int index_two;
+        int index_three;
+
+        String answer_kanjiRemove = "";
+        String answerRemove_1 = "";
+        String answerRemove_2 = "";
+
+        txtQuestion.setText(listKanji.get(index_kanji).getKanji());
+
+
+        int index_one_location = new Random().nextInt(4);
+        switch (index_one_location){
+            case 0:
+                // set dap an vao cau A
+                txtAnswerA.setText(listKanji.get(index_kanji).getAmhan());
+                // đánh dấu câu trả lời đúng của câu hỏi
+                answer_kanjiRemove = listKanji.get(index_kanji).getAmhan();
+                // remove khỏi list answer
+                listAnswer.remove(answer_kanjiRemove);
+
+
+                index_one = new Random().nextInt(listAnswer.size());
+                answerRemove_1 = listAnswer.get(index_one);
+                txtAnswerB.setText(answerRemove_1);
+                listAnswer.remove(answerRemove_1);
+                index_two = new Random().nextInt(listAnswer.size());
+                answerRemove_2 = listAnswer.get(index_two);
+
+                txtAnswerC.setText(answerRemove_2);
+                listAnswer.remove(answerRemove_2);
+                index_three = new Random().nextInt(listAnswer.size());
+                txtAnswerD.setText(listAnswer.get(index_three));
+
+                Log.d("INDEX_ONE", String.valueOf(index_one));
+                Log.d("INDEX_TWO", String.valueOf(index_two));
+                Log.d("INDEX_THREE", String.valueOf(index_three));
+
+                break;
+            case 1:
+                txtAnswerB.setText(listKanji.get(index_kanji).getAmhan());
+                answer_kanjiRemove = listKanji.get(index_kanji).getAmhan();
+                listAnswer.remove(answer_kanjiRemove);
+                listAnswer.remove(listKanji.get(index_kanji).getAmhan());
+
+                index_one = new Random().nextInt(listAnswer.size());
+                answerRemove_1 = listAnswer.get(index_one);
+                txtAnswerA.setText(answerRemove_1);
+                listAnswer.remove(answerRemove_1);
+
+                index_two = new Random().nextInt(listAnswer.size());
+                answerRemove_2 = listAnswer.get(index_two);
+                txtAnswerC.setText(answerRemove_2);
+                listAnswer.remove(answerRemove_2);
+
+                index_three = new Random().nextInt(listAnswer.size());
+                txtAnswerD.setText(listAnswer.get(index_three));
+
+                Log.d("INDEX_ONE", String.valueOf(index_one));
+                Log.d("INDEX_TWO", String.valueOf(index_two));
+                Log.d("INDEX_THREE", String.valueOf(index_three));
+                break;
+            case 2:
+                txtAnswerC.setText(listKanji.get(index_kanji).getAmhan());
+                answer_kanjiRemove = listKanji.get(index_kanji).getAmhan();
+                listAnswer.remove(answer_kanjiRemove);
+                listAnswer.remove(listKanji.get(index_kanji).getAmhan());
+
+                index_one = new Random().nextInt(listAnswer.size());
+                answerRemove_1 = listAnswer.get(index_one);
+                txtAnswerA.setText(answerRemove_1);
+                listAnswer.remove(answerRemove_1);
+
+                index_two = new Random().nextInt(listAnswer.size());
+                answerRemove_2 = listAnswer.get(index_two);
+                txtAnswerB.setText(answerRemove_2);
+                listAnswer.remove(answerRemove_2);
+
+                index_three = new Random().nextInt(listAnswer.size());
+                txtAnswerD.setText(listAnswer.get(index_three));
+                Log.d("INDEX_ONE", String.valueOf(index_one));
+                Log.d("INDEX_TWO", String.valueOf(index_two));
+                Log.d("INDEX_THREE", String.valueOf(index_three));
+
+                break;
+            case 3:
+                txtAnswerD.setText(listKanji.get(index_kanji).getAmhan());
+                answer_kanjiRemove = listKanji.get(index_kanji).getAmhan();
+                listAnswer.remove(answer_kanjiRemove);
+                listAnswer.remove(listKanji.get(index_kanji).getAmhan());
+
+                index_one = new Random().nextInt(listAnswer.size());
+                answerRemove_1 = listAnswer.get(index_one);
+                txtAnswerA.setText(answerRemove_1);
+                listAnswer.remove(answerRemove_1);
+
+                index_two = new Random().nextInt(listAnswer.size());
+                answerRemove_2 = listAnswer.get(index_two);
+                txtAnswerB.setText(answerRemove_2);
+                listAnswer.remove(answerRemove_2);
+
+                index_three = new Random().nextInt(listAnswer.size());
+                txtAnswerC.setText(listAnswer.get(index_three));
+                Log.d("INDEX_ONE", String.valueOf(index_one));
+                Log.d("INDEX_TWO", String.valueOf(index_two));
+                Log.d("INDEX_THREE", String.valueOf(index_three));
+                break;
+        }
+
+        listKanji.remove(listKanji.get(index_kanji));
+        // RE ADD answer To ListAnswer
+        listAnswer.add(answer_kanjiRemove);
+        listAnswer.add(answerRemove_1);
+        listAnswer.add(answerRemove_2);
+
+
+    }
     public void updateNumberOfRightAnswer () {
         txtRightCount.setText("Correct: " + number_of_right_answer + " / " + NUMBER_OF_QUESTION);
     }
@@ -297,7 +451,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         layout.removeView(txtAnswerB);
         layout.removeView(txtAnswerC);
         layout.removeView(txtAnswerD);
-        layout.removeView(progressBar);
+        //layout.removeView(progressBar);
         layout.removeView(txtRightCount);
         layout.removeView(txtNumberQuestion);
 
@@ -330,13 +484,24 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
                 showDialog(check);
-                if (mojiList.isEmpty()){
-                    Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
-                    updateNumberOfRightAnswer();
-                    showResult();
+                if(isKanji){
+                    if (kanjiList.isEmpty()){
+                        Log.d("KANJIlist_EMPTY","KANJIlist_EMPTY");
+                        updateNumberOfRightAnswer();
+                        showResult();
+                    }else{
+                        updateQuestionKanji(kanjiList, answerList);
+                    }
                 }else{
-                    updateQuestion(mojiList, answerList);
+                    if (mojiList.isEmpty()){
+                        Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
+                        updateNumberOfRightAnswer();
+                        showResult();
+                    }else{
+                        updateQuestionMoji(mojiList, answerList);
+                    }
                 }
+
                 break;
             case R.id.txtAnswerB:
 
@@ -352,13 +517,24 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
                 showDialog(check);
-                if (mojiList.isEmpty()){
-                    Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
-                    updateNumberOfRightAnswer();
-                    showResult();
+                if(isKanji){
+                    if (kanjiList.isEmpty()){
+                        Log.d("KANJIlist_EMPTY","KANJIlist_EMPTY");
+                        updateNumberOfRightAnswer();
+                        showResult();
+                    }else{
+                        updateQuestionKanji(kanjiList, answerList);
+                    }
                 }else{
-                    updateQuestion(mojiList, answerList);
+                    if (mojiList.isEmpty()){
+                        Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
+                        updateNumberOfRightAnswer();
+                        showResult();
+                    }else{
+                        updateQuestionMoji(mojiList, answerList);
+                    }
                 }
+
                 break;
             case R.id.txtAnswerC:
                 answer = txtAnswerC.getText().toString();
@@ -373,12 +549,22 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
                 showDialog(check);
-                if (mojiList.isEmpty()){
-                    Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
-                    updateNumberOfRightAnswer();
-                    showResult();
+                if(isKanji){
+                    if (kanjiList.isEmpty()){
+                        Log.d("KANJIlist_EMPTY","KANJIlist_EMPTY");
+                        updateNumberOfRightAnswer();
+                        showResult();
+                    }else{
+                        updateQuestionKanji(kanjiList, answerList);
+                    }
                 }else{
-                    updateQuestion(mojiList, answerList);
+                    if (mojiList.isEmpty()){
+                        Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
+                        updateNumberOfRightAnswer();
+                        showResult();
+                    }else{
+                        updateQuestionMoji(mojiList, answerList);
+                    }
                 }
                 break;
             case R.id.txtAnswerD:
@@ -394,12 +580,22 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
                 showDialog(check);
-                if (mojiList.isEmpty()){
-                    Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
-                    updateNumberOfRightAnswer();
-                    showResult();
+                if(isKanji){
+                    if (kanjiList.isEmpty()){
+                        Log.d("KANJIlist_EMPTY","KANJIlist_EMPTY");
+                        updateNumberOfRightAnswer();
+                        showResult();
+                    }else{
+                        updateQuestionKanji(kanjiList, answerList);
+                    }
                 }else{
-                    updateQuestion(mojiList, answerList);
+                    if (mojiList.isEmpty()){
+                        Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
+                        updateNumberOfRightAnswer();
+                        showResult();
+                    }else{
+                        updateQuestionMoji(mojiList, answerList);
+                    }
                 }
                 break;
 
@@ -408,41 +604,76 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.btnRetry:
-                finish();
-                startActivity(getIntent());
+//                startActivity(getIntent());
+//                finish();
+                Intent refresh = new Intent(this, TestActivity.class);
+                if(isKanji){
+                    Log.d("test", String.valueOf(kanjiList.size()));
+
+                    refresh.putExtra(Constants.SET_BY_USER, oldKanjiList);
+                    refresh.putExtra(Constants.KANJI, "KANJI");
+                }
+                else{
+
+                    refresh.putExtra(Constants.SET_BY_USER, oldMojiList);
+                    refresh.putExtra(Constants.MOJI, "MOJI");
+                }
+                startActivity(refresh);
+                this.finish();
                 break;
         }
     }
-
-    class LoadDataTask extends AsyncTask<Void, Void, Void>{
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            mReference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                        Moji moji = snapshot.getValue(Moji.class);
-                        mojiList.add(moji);
-                        answerList.add(moji.getCachDocHira());
-                        QAList.add(new QuestionAnswer(moji.getTuTiengNhat(), moji.getCachDocHira()));
-                    }
-                    NUMBER_OF_QUESTION = mojiList.size();
-
-                    updateQuestion(mojiList, answerList);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {}
-            });
-            return null;
+    private void initData(boolean isKanji){
+        if(isKanji){
+            for(int i = 0; i< kanjiList.size(); i++){
+                oldKanjiList.add(kanjiList.get(i));
+                answerList.add(kanjiList.get(i).getAmhan());
+                QAList.add(new QuestionAnswer(kanjiList.get(i).getKanji(),
+                                kanjiList.get(i).getAmhan()));
+            }
+            NUMBER_OF_QUESTION = kanjiList.size();
+            updateQuestionKanji(kanjiList, answerList);
         }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        else{
+            for(int i = 0; i< mojiList.size(); i++){
+                oldMojiList.add(mojiList.get(i));
+                answerList.add(mojiList.get(i).getCachDocHira());
+                QAList.add(new QuestionAnswer(mojiList.get(i).getTuTiengNhat(),
+                        mojiList.get(i).getCachDocHira()));
+            }
+            NUMBER_OF_QUESTION = mojiList.size();
+            updateQuestionMoji(mojiList, answerList);
         }
     }
+//    class LoadDataTask extends AsyncTask<Void, Void, Void>{
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            mReference.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+//                        Moji moji = snapshot.getValue(Moji.class);
+//                        mojiList.add(moji);
+//                        answerList.add(moji.getCachDocHira());
+//                        QAList.add(new QuestionAnswer(moji.getTuTiengNhat(), moji.getCachDocHira()));
+//                    }
+//                    NUMBER_OF_QUESTION = mojiList.size();
+//
+//                    updateQuestionMoji(mojiList, answerList);
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {}
+//            });
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//        }
+//    }
 
 //    class progressBarTask extends AsyncTask<Integer, Integer, Void> {
 //        @Override

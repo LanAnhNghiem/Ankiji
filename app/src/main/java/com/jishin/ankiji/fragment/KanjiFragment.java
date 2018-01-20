@@ -25,12 +25,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.jishin.ankiji.Feature_Test.TestActivity;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
 import com.jishin.ankiji.explores.TopicKanjiActivity;
 import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.learn.LearnActivity;
 import com.jishin.ankiji.model.DataTypeEnum;
+import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.model.Set;
 import com.jishin.ankiji.userlist.CreateVocabActivity;
 import com.jishin.ankiji.utilities.Constants;
@@ -42,11 +44,10 @@ import java.util.ArrayList;
  * Created by trungnguyeen on 12/27/17.
  */
 
-@SuppressLint("ValidFragment")
-
 public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
     private static final String TAG = KanjiFragment.class.getSimpleName();
     private ArrayList<Set> mKanjiSetList = new ArrayList<>();
+    private ArrayList<Kanji> mKanjiList = new ArrayList<>();
     private RecyclerView rvRecentlyList;
     private CardItemsAdapter mItemsAdapter;
     public String FRAGMENT_TAG = "KANJI";
@@ -69,7 +70,6 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_kanji, container, false);
-
         initParam();
         addControl(view);
         initRecycler(view);
@@ -109,6 +109,7 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
                         startActivity(intent);
                         break;
                     case 1:
+                        new CountItemTask(set).execute();
 
                         break;
                     case 2:
@@ -232,17 +233,56 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
         mSetByUser.child(id).removeValue();
         mItemsAdapter.notifyDataSetChanged();
     }
+    public class CountItemTask extends AsyncTask<Void, Void, Void>{
+        Set mSet = new Set();
+        public CountItemTask(Set set){
+            this.mSet = set;
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            mSetByUser.child(mSet.getId()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    mKanjiList.clear();
+                    for(DataSnapshot data: dataSnapshot.getChildren()){
+                        mKanjiList.add(data.getValue(Kanji.class));
+                        Log.d(TAG, data.getKey()+" "+data.getValue());
+                    }
+                    onProgressUpdate();
+                }
 
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            if(mKanjiList.size() >= 5){
+                Intent intentTest = new Intent(getContext(), TestActivity.class);
+                intentTest.putExtra(Constants.SET_BY_USER, mKanjiList);
+                intentTest.putExtra(Constants.KANJI, FRAGMENT_TAG);
+                startActivity(intentTest);
+            }
+            else{
+                Toast.makeText(getContext(), "Cannot create test.\nLess than 5 items in the set.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     public class LoadKanjiDataTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            getMojiSet();
+            getKanjiSet();
             return null;
         }
     }
 
-    private void getMojiSet() {
+    private void getKanjiSet() {
         mKanjiSetRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

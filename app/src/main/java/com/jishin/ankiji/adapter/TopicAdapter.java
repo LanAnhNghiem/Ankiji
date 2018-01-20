@@ -66,8 +66,7 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicHolder>
                 public void onClick(View v) {
                     Log.d(TAG, "onClick: " + Topic.get(position));
                     Intent intent = new Intent(holder.context, MojiExploresActivity.class);
-                    intent.putExtra("Moji_Key", Topic.get(position));
-                    holder.context.startActivity(intent);
+                    intent.putExtra("Moji_Key", Topic.get(position));                    holder.context.startActivity(intent);
 
                 }
             });

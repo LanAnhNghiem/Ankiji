@@ -72,27 +72,18 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = getIntent();
 
         if(intent.hasExtra(Constants.SET_BY_USER)){
-            String fragmentTag = intent.getStringExtra(Constants.KANJI);
+            String fragmentTag = intent.getStringExtra(Constants.DATA_TYPE);
             if(fragmentTag.equals("KANJI")){
                 isKanji = true;
-                //oldKanjiList = (ArrayList<Kanji>) intent.getSerializableExtra(Constants.SET_BY_USER);
                 kanjiList = (ArrayList<Kanji>) intent.getSerializableExtra(Constants.SET_BY_USER);
-                //oldKanjiList = kanjiList;
             }else{
                 isKanji = false;
-                //oldMojiList = (ArrayList<Moji>) intent.getSerializableExtra(Constants.SET_BY_USER);
                 mojiList = (ArrayList<Moji>) intent.getSerializableExtra(Constants.SET_BY_USER);
-                //oldMojiList = mojiList;
             }
         }
-
         addControls();
         initData(isKanji);
-        //database = FirebaseDatabase.getInstance();
-        //mReference = database.getReference(REFERENCE).child(BOOK).child("Bai_1");
-        //new LoadDataTask().execute();
         addEvents();
-
     }
 
     private void addEvents() {
@@ -611,12 +602,12 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d("test", String.valueOf(kanjiList.size()));
 
                     refresh.putExtra(Constants.SET_BY_USER, oldKanjiList);
-                    refresh.putExtra(Constants.KANJI, "KANJI");
+                    refresh.putExtra(Constants.DATA_TYPE, "KANJI");
                 }
                 else{
 
                     refresh.putExtra(Constants.SET_BY_USER, oldMojiList);
-                    refresh.putExtra(Constants.MOJI, "MOJI");
+                    refresh.putExtra(Constants.DATA_TYPE, "MOJI");
                 }
                 startActivity(refresh);
                 this.finish();

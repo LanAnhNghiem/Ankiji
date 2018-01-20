@@ -265,7 +265,7 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
             if(mKanjiList.size() >= 5){
                 Intent intentTest = new Intent(getContext(), TestActivity.class);
                 intentTest.putExtra(Constants.SET_BY_USER, mKanjiList);
-                intentTest.putExtra(Constants.KANJI, FRAGMENT_TAG);
+                intentTest.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
                 startActivity(intentTest);
             }
             else{

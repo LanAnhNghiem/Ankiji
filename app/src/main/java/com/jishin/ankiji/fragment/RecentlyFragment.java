@@ -1,6 +1,5 @@
 package com.jishin.ankiji.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,7 +15,7 @@ import com.jishin.ankiji.adapter.CardItemsAdapter;
 import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.learn.LearnActivity;
 import com.jishin.ankiji.model.DataTypeEnum;
-import com.jishin.ankiji.utilities.Constants;
+import com.jishin.ankiji.model.Set;
 
 /**
  * Created by trungnguyeen on 12/27/17.
@@ -53,12 +52,13 @@ public class RecentlyFragment extends Fragment implements RemoveDataCommunicator
         mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG, getContext(), this);
         mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {
             @Override
-            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum) {
+            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum, Set set) {
                 switch (classIndex) {
                     case 0:{
-                        Intent intent = new Intent(getContext(), LearnActivity.class);
-                        intent.putExtra(Constants.DATA_TYPE, dataTypeEnum);
-                        startActivity(intent);
+//                        Intent intent = new Intent(getContext(), LearnActivity.class);
+//                        intent.putExtra(Constants.DATA_TYPE, dataTypeEnum);
+//                        intent.putExtra(Constants.SET_BY_USER, set);
+//                        startActivity(intent);
                         break;
                     }
 

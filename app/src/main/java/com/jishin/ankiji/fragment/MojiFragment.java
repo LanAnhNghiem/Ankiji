@@ -181,10 +181,11 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
         rvRecentlyList.setAdapter(mItemsAdapter);
         mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {
             @Override
-            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum) {
+            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum, Set set) {
                 switch (classIndex) {
                     case 0:
                         Intent intent = new Intent(getContext(), LearnActivity.class);
+                        intent.putExtra(Constants.SET_BY_USER, set);
                         intent.putExtra(Constants.DATA_TYPE, dataTypeEnum);
                         startActivity(intent);
                         break;

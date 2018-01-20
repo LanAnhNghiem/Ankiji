@@ -1,10 +1,12 @@
 package com.jishin.ankiji.model;
 
+import java.io.Serializable;
+
 /**
  * Created by lana on 19/01/2018.
  */
 
-public class Set {
+public class Set implements Serializable{
     private String id;
     private String name;
     private String datetime;

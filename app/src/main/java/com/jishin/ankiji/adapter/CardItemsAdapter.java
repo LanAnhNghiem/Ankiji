@@ -70,9 +70,9 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
 
         if (FRAGMENT_TAG.equals("MOJI")) {
             if (this.mSetList.size() != 0){
-                final Set item = this.mSetList.get(position);
-                holder.tvTitle.setText(item.getName());
-                holder.tvItemCount.setText(item.getDatetime());
+                holder.set = this.mSetList.get(position);
+                holder.tvTitle.setText(holder.set.getName());
+                holder.tvItemCount.setText(holder.set.getDatetime());
                 holder.dataType = DataTypeEnum.Moji;
                 holder.btnDeleteItem.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -86,9 +86,9 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
 
         if (FRAGMENT_TAG.equals("KANJI")) {
             if (this.mSetList.size() != 0){
-                final Set item = this.mSetList.get(position);
-                holder.tvTitle.setText(item.getName());
-                holder.tvItemCount.setText(item.getDatetime());
+                holder.set = this.mSetList.get(position);
+                holder.tvTitle.setText(holder.set.getName());
+                holder.tvItemCount.setText(holder.set.getDatetime());
                 holder.dataType = DataTypeEnum.Kanji;
                 holder.btnDeleteItem.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -117,7 +117,6 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
                     stringIndex = R.string.text_outside_button_buider_edit;
                     break;
             }
-
             addBuilder(holder, stringIndex);
         }
     }
@@ -150,7 +149,7 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
                 .listener(new OnBMClickListener() {
                     @Override
                     public void onBoomButtonClick(int index) {
-                        mListener.OnMenuItemClicked(index, viewHolder.dataType);
+                        mListener.OnMenuItemClicked(index, viewHolder.dataType, viewHolder.set);
                     }
                 }));
     }
@@ -172,6 +171,7 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
         TextView tvItemCount;
         ImageButton btnDeleteItem;
         BoomMenuButton bmb;
+        Set set;
 
         ItemViewHolder(View itemView) {
             super(itemView);
@@ -183,7 +183,7 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
     }
 
     public interface OnBoomMenuItemClicked{
-        void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum);
+        void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum, Set set);
     }
 
 }

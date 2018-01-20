@@ -42,6 +42,8 @@ import java.util.ArrayList;
  * Created by trungnguyeen on 12/27/17.
  */
 
+@SuppressLint("ValidFragment")
+
 public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
     private static final String TAG = KanjiFragment.class.getSimpleName();
     private ArrayList<Set> mKanjiSetList = new ArrayList<>();
@@ -98,10 +100,11 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
         mItemsAdapter.setSetList(this.mKanjiSetList);
         mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {
             @Override
-            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum) {
+            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum, Set set) {
                 switch (classIndex) {
                     case 0:
                         Intent intent = new Intent(getContext(), LearnActivity.class);
+                        intent.putExtra(Constants.SET_BY_USER, set);
                         intent.putExtra(Constants.DATA_TYPE, dataTypeEnum);
                         startActivity(intent);
                         break;

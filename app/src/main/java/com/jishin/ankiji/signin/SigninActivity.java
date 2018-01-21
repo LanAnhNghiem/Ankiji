@@ -27,9 +27,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.jishin.ankiji.R;
+import com.jishin.ankiji.ResetPassword.ResetPasswordActivity;
 import com.jishin.ankiji.features.FeatureActivity;
-import com.jishin.ankiji.utilities.DatabaseService;
 import com.jishin.ankiji.signup.SignupActivity;
+import com.jishin.ankiji.utilities.DatabaseService;
 
 public class SigninActivity extends AppCompatActivity {
 
@@ -64,6 +65,7 @@ public class SigninActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         if(mData.isSignIn()){
+            Log.d("Da_SIGN_IN", "Da_SIGN_IN");
             Intent intent = new Intent(SigninActivity.this, FeatureActivity.class);
             startActivity(intent);
             finish();
@@ -137,7 +139,7 @@ public class SigninActivity extends AppCompatActivity {
         txtForgotPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(SigninActivity.this, "Forgotpass.TRUNG", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(SigninActivity.this, ResetPasswordActivity.class));
             }
         });
     }

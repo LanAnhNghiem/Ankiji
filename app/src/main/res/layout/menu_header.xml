@@ -22,7 +22,7 @@
             android:src="@drawable/user_default" />
 
         <TextView
-            android:id="@+id/txtUsername"
+            android:id="@+id/txtUsername_PF"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -31,7 +31,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/txtEmail"
+            android:id="@+id/txtEmail_PF"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="username@gmail.com"

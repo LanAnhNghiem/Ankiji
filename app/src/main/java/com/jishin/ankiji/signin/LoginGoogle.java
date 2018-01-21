@@ -16,7 +16,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -76,7 +75,7 @@ public class LoginGoogle {
                             userName = task.getResult().getUser().getDisplayName();
                             avatar = task.getResult().getUser().getPhotoUrl().toString();
                             idUser = task.getResult().getUser().getUid();
-                            User user = new User(idUser, email, userName, avatar);
+                            User user = new User(idUser, userName, email, avatar);
                             createUserOnFireBase(user);
                             Toast.makeText(mActivity, R.string.login_success, Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(mActivity, FeatureActivity.class);

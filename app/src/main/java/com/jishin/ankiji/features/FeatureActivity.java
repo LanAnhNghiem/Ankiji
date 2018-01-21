@@ -11,13 +11,22 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.FragmentAdapter;
-import com.jishin.ankiji.utilities.DatabaseService;
 import com.jishin.ankiji.signin.SigninActivity;
+import com.jishin.ankiji.utilities.DatabaseService;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class FeatureActivity extends AppCompatActivity{
@@ -29,6 +38,13 @@ public class FeatureActivity extends AppCompatActivity{
     private ActionBarDrawerToggle drawerToggle;
     private DatabaseService mData = DatabaseService.getInstance();
     private NavigationView nav;
+
+
+    private CircleImageView imgAvatar;
+    private TextView txtUsername;
+    private TextView txtEmail;
+
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +70,14 @@ public class FeatureActivity extends AppCompatActivity{
         drawerToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         nav = (NavigationView) findViewById(R.id.navigationBar);
+
+        View hView = nav.getHeaderView(0);
+
+        imgAvatar = hView.findViewById(R.id.imgAvatar);
+        txtUsername = hView.findViewById(R.id.txtUsername_PF);
+        txtEmail = hView.findViewById(R.id.txtEmail_PF);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
     }
     private void setEvents(){
@@ -99,6 +123,23 @@ public class FeatureActivity extends AppCompatActivity{
                 return true;
             }
         });
+        if (user != null) {
+            if (!TextUtils.isEmpty(user.getEmail())){
+                Log.d("txtEmail", user.getEmail());
+                txtEmail.setText(user.getEmail());
+            }
+            if (!TextUtils.isEmpty(user.getDisplayName())){
+                Log.d("txtUsername", user.getDisplayName());
+                txtUsername.setText(user.getDisplayName());
+            }
+
+            if (user.getPhotoUrl() != null){
+                Log.d("imgAvatar", user.getPhotoUrl().toString());
+                Glide.with(imgAvatar).load(user.getPhotoUrl()).into(imgAvatar);
+            }else{
+                Log.d("NONE_URL", "NONE_URL");
+            }
+        }
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

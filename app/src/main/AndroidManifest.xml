@@ -26,12 +26,18 @@
 
         </activity>
         <activity
-            android:name=".explores.TopicMojiActivity"
+            android:name=".explores.TopicKanjiActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".features.FeatureActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".explores.MojiExploresActivity" />
         <activity android:name=".explores.KanjiExploresActivity" />
         <activity android:name=".userlist.CreateVocabActivity" />
         <activity android:name=".features.FeatureActivity" />
+        <activity android:name=".Feature_Test.TestActivity" />
+        <activity android:name=".userlist.CreateVocabActivity" />
+
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -42,7 +48,8 @@
             android:authorities="com.facebook.app.FacebookContentProvider929227390576555"
             android:exported="true" />
 
-        <activity android:name=".explores.TopicKanjiActivity" />
+        <activity android:name=".explores.TopicMojiActivity" />
+
         <activity android:name=".signin.SigninActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,8 +57,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".ResetPassword.ResetPasswordActivity" />
         <activity android:name=".PROFILE.ProfileActivity"></activity>
+
+        <activity android:name=".learn.LearnActivity" />
+        <activity android:name=".about_us.AboutUsActivity"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

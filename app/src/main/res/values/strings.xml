@@ -52,7 +52,7 @@
     <string name="remove_warning">Do you want to remove this set?</string>
     <string name="ptit">Học Viện Công Nghệ Bưu Chính Viễn Thông</string>
     <string name="leader"><i>Leader</i></string>
-    <string name="deverloper"><i>Deverloper</i></string>
+    <string name="developer"><i>Developer</i></string>
     <string name="uit">Đại học Công nghệ Thông Tin</string>
 
     <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>

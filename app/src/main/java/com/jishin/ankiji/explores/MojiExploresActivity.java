@@ -190,7 +190,7 @@ public class MojiExploresActivity extends AppCompatActivity {
         if (isAdded) {
             ivAdd.setBackgroundResource(R.drawable.ic_add_set);
         } else {
-            ivAdd.setBackgroundResource(R.drawable.ic_remove_set);
+            //ivAdd.setBackgroundResource(R.drawable.ic_remove_set);
         }
     }
 
@@ -228,6 +228,7 @@ public class MojiExploresActivity extends AppCompatActivity {
                         mMojiSet.child(userID).child(id).removeValue();
                         mSetByUser.child(userID).child(id).removeValue();
                         isAdded = false;
+                        ivAdd.setBackgroundResource(R.drawable.ic_remove_set);
                     }
                 }
             }

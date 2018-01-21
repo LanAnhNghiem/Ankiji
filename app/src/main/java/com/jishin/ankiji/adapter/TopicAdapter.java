@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.jishin.ankiji.R;
@@ -87,16 +86,12 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicHolder>
 
         private TextView tvTitle;
         private CardView cardView;
-        public TextView tvItemCount;
-        public ImageButton btnDeleteItem;
         private final Context context;
 
         public TopicHolder(View itemView) {
             super(itemView);
-            tvTitle = itemView.findViewById(R.id.tv_title);
-            tvItemCount = itemView.findViewById(R.id.tv_item_count);
-            btnDeleteItem = itemView.findViewById(R.id.btn_delete_item);
-            cardView = itemView.findViewById(R.id.card_view);
+            tvTitle = itemView.findViewById(R.id.txt_title);
+            cardView = itemView.findViewById(R.id.cardView_Topic);
             context = itemView.getContext();
 
         }

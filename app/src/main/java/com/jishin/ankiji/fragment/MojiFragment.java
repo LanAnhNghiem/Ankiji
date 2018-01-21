@@ -29,11 +29,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.Feature_Test.TestActivity;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
+import com.jishin.ankiji.edit.EditVocabActivity;
 import com.jishin.ankiji.explores.TopicMojiActivity;
 import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.learn.LearnActivity;
 import com.jishin.ankiji.model.DataTypeEnum;
-import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.Set;
 import com.jishin.ankiji.userlist.CreateVocabActivity;
@@ -138,8 +138,8 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
                         String setName = edtSetName.getText().toString().trim();
                         if(!setName.isEmpty()){
                             Intent intent = new Intent(getContext(), CreateVocabActivity.class);
-                            intent.putExtra("create", Constants.CREATE_MOJI);
-                            intent.putExtra("name", setName);
+                            intent.putExtra(Constants.CREATE, Constants.CREATE_MOJI);
+                            intent.putExtra(Constants.NAME, setName);
                             intent.putExtra(Constants.USER_ID, mUserID);
                             startActivity(intent);
                         }
@@ -200,7 +200,11 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
 
                         break;
                     case 3:
-
+                        Intent editIntent = new Intent(getContext(), EditVocabActivity.class);
+                        editIntent.putExtra(Constants.SET_BY_USER, set);
+                        editIntent.putExtra(Constants.DATA_TYPE, dataTypeEnum);
+                        editIntent.putExtra(Constants.USER_ID, mUserID);
+                        startActivity(editIntent);
                         break;
                 }
             }

@@ -5,8 +5,6 @@ package com.jishin.ankiji.utilities;
  */
 
 public class Constants {
-    public static final String KANJI = "Kanji";
-    public static final String MOJI = "Moji";
     public static final String SET_BY_USER = "SetByUser";
     public static final String MOJI_NODE = "moji";
     public static final String KANJI_NODE = "data_kanji";
@@ -17,4 +15,7 @@ public class Constants {
     public static final String DATA_TYPE = "DATA_TYPE";
     public static final String USER_ID = "userID";
     public static final String SET_BY_USER_NODE = "SetByUser";
+    public static final String CREATE = "create";
+    public static final String NAME = "name";
+    public static final String EDIT = "edit";
 }

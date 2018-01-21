@@ -8,11 +8,11 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.Toast;
 
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.model.Kanji;
-import com.jishin.ankiji.userlist.OnTextListener;
-import com.jishin.ankiji.utilities.Constants;
 
 import java.util.ArrayList;
 
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.KanjiItemHolder> {
     public ArrayList<Kanji> mList = new ArrayList<>();
     private Context mContext;
+    private boolean isClick = false;
 
     public KanjiItemAdapter(ArrayList<Kanji> list, Context context) {
         this.mList = list;
@@ -67,7 +68,6 @@ public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.Kanj
                     mList.get(position).setKanji(s.toString());
                     setOnTextListener(mList);
                 }
-
             }
         });
         holder.edtWord.addTextChangedListener(new TextWatcher() {
@@ -117,7 +117,7 @@ public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.Kanj
         return mList.size();
     }
 
-    public class KanjiItemHolder extends RecyclerView.ViewHolder {
+    public class KanjiItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener, AbsListView.OnScrollListener{
         TextInputEditText edtKanji, edtMeaning, edtWord;
 
         public KanjiItemHolder(View itemView) {
@@ -126,8 +126,34 @@ public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.Kanj
             edtKanji = itemView.findViewById(R.id.edt_kanji);
             edtMeaning = itemView.findViewById(R.id.edt_meaning);
             edtWord = itemView.findViewById(R.id.edt_word);
-
+            edtKanji.setOnClickListener(this);
+            edtMeaning.setOnClickListener(this);
+            edtWord.setOnClickListener(this);
+            //addTextListener(this,getAdapterPosition());
         }
+
+        @Override
+        public void onClick(View v) {
+            isClick = true;
+            Toast.makeText(mContext,"click nè", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            if(scrollState == SCROLL_STATE_IDLE && isClick){
+
+            }
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            if(isClick){
+
+
+
+            }
+        }
+
     }
 
 }

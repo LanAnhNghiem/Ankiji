@@ -1,6 +1,5 @@
 package com.jishin.ankiji.fragment;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,6 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.Feature_Test.TestActivity;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
+import com.jishin.ankiji.edit.EditVocabActivity;
 import com.jishin.ankiji.explores.TopicKanjiActivity;
 import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.learn.LearnActivity;
@@ -110,13 +110,16 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
                         break;
                     case 1:
                         new CountItemTask(set).execute();
-
                         break;
                     case 2:
 
                         break;
                     case 3:
-
+                        Intent editIntent = new Intent(getContext(), EditVocabActivity.class);
+                        editIntent.putExtra(Constants.SET_BY_USER, set);
+                        editIntent.putExtra(Constants.DATA_TYPE, dataTypeEnum);
+                        editIntent.putExtra(Constants.USER_ID, mUserID);
+                        startActivity(editIntent);
                         break;
                 }
             }
@@ -192,10 +195,10 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
                     public void onClick(DialogInterface dialog, int which) {
                         String setName = edtSetName.getText().toString().trim();
                         if(!setName.isEmpty()){
-                            Toast.makeText(getContext(), "Click click", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getContext(), "Click click", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getContext(), CreateVocabActivity.class);
-                            intent.putExtra("create", Constants.CREATE_KANJI);
-                            intent.putExtra("name", setName);
+                            intent.putExtra(Constants.CREATE, Constants.CREATE_KANJI);
+                            intent.putExtra(Constants.NAME, setName);
                             intent.putExtra(Constants.USER_ID, mUserID);
                             startActivity(intent);
                         }else{

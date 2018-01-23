@@ -94,11 +94,9 @@ public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.Kanj
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if(!s.toString().isEmpty()){
-                        if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
-                            //Toast.makeText(mContext, edtKanji.getText().toString(), Toast.LENGTH_SHORT).show();
-                            mList.get(getAdapterPosition()).setKanji(s.toString());
-                        }
+                    if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                        //Toast.makeText(mContext, edtKanji.getText().toString(), Toast.LENGTH_SHORT).show();
+                        mList.get(getAdapterPosition()).setKanji(s.toString());
                     }
                 }
             });
@@ -115,11 +113,9 @@ public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.Kanj
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if(!s.toString().isEmpty()){
-                        if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
-                            //Toast.makeText(mContext, edtKanji.getText().toString(), Toast.LENGTH_SHORT).show();
-                            mList.get(getAdapterPosition()).setTuvung(s.toString());
-                        }
+                    if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                        //Toast.makeText(mContext, edtKanji.getText().toString(), Toast.LENGTH_SHORT).show();
+                        mList.get(getAdapterPosition()).setTuvung(s.toString());
                     }
                 }
             });
@@ -136,11 +132,9 @@ public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.Kanj
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if(!s.toString().isEmpty()){
-                        if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
-                            //Toast.makeText(mContext, edtKanji.getText().toString(), Toast.LENGTH_SHORT).show();
-                            mList.get(getAdapterPosition()).setAmhan(s.toString());
-                        }
+                    if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                        //Toast.makeText(mContext, edtKanji.getText().toString(), Toast.LENGTH_SHORT).show();
+                        mList.get(getAdapterPosition()).setAmhan(s.toString());
                     }
                 }
             });

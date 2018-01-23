@@ -80,10 +80,8 @@ public class MojiItemAdapter extends RecyclerView.Adapter<MojiItemAdapter.MojiIt
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if(!s.toString().isEmpty()){
-                        if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
-                            mList.get(getAdapterPosition()).setTuTiengNhat(s.toString());
-                        }
+                    if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                        mList.get(getAdapterPosition()).setTuTiengNhat(s.toString());
                     }
                 }
             });
@@ -100,10 +98,8 @@ public class MojiItemAdapter extends RecyclerView.Adapter<MojiItemAdapter.MojiIt
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if(!s.toString().isEmpty()){
-                        if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
-                            mList.get(getAdapterPosition()).setCachDocHira(s.toString());
-                        }
+                    if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                        mList.get(getAdapterPosition()).setCachDocHira(s.toString());
                     }
                 }
             });
@@ -120,10 +116,8 @@ public class MojiItemAdapter extends RecyclerView.Adapter<MojiItemAdapter.MojiIt
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if(!s.toString().isEmpty()){
-                        if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
-                            mList.get(getAdapterPosition()).setNghiaTiengViet(s.toString());
-                        }
+                    if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                        mList.get(getAdapterPosition()).setNghiaTiengViet(s.toString());
                     }
                 }
             });
@@ -140,10 +134,8 @@ public class MojiItemAdapter extends RecyclerView.Adapter<MojiItemAdapter.MojiIt
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if(!s.toString().isEmpty()){
-                        if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
-                            mList.get(getAdapterPosition()).setAmHan(s.toString());
-                        }
+                    if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                        mList.get(getAdapterPosition()).setAmHan(s.toString());
                     }
                 }
             });

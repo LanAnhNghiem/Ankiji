@@ -10,9 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jishin.ankiji.R;
-import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.model.Moji;
-import com.jishin.ankiji.userlist.OnTextListener;
 
 import java.util.ArrayList;
 
@@ -47,86 +45,7 @@ public class MojiItemAdapter extends RecyclerView.Adapter<MojiItemAdapter.MojiIt
         holder.edtWord.setText(mList.get(position).getTuTiengNhat());
         holder.edtMeaning.setText(mList.get(position).getNghiaTiengViet());
         holder.edtOnyomi.setText(mList.get(position).getAmHan());
-        addTextListener(holder, position);
         holder.edtWord.requestFocus();
-    }
-    public void addTextListener(MojiItemHolder holder, final int position){
-
-        holder.edtWord.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(position < mList.size()){
-                    mList.get(position).setTuTiengNhat(s.toString());
-
-                }
-
-            }
-        });
-        holder.edtHira.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(position < mList.size()){
-                    mList.get(position).setCachDocHira(s.toString());
-                }
-            }
-        });
-        holder.edtMeaning.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(position < mList.size()){
-                    mList.get(position).setNghiaTiengViet(s.toString());
-
-                }
-            }
-        });
-        holder.edtOnyomi.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                 if(position < mList.size()){
-                     mList.get(position).setAmHan(s.toString());
-                 }
-            }
-        });
     }
 
     @Override
@@ -144,7 +63,90 @@ public class MojiItemAdapter extends RecyclerView.Adapter<MojiItemAdapter.MojiIt
             edtMeaning = itemView.findViewById(R.id.edt_meaning);
             edtWord = itemView.findViewById(R.id.edt_word);
             edtOnyomi = itemView.findViewById(R.id.edt_onyomi);
+            addTextListener();
+        }
+        public void addTextListener(){
 
+            edtWord.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if(!s.toString().isEmpty()){
+                        if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                            mList.get(getAdapterPosition()).setTuTiengNhat(s.toString());
+                        }
+                    }
+                }
+            });
+            edtHira.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if(!s.toString().isEmpty()){
+                        if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                            mList.get(getAdapterPosition()).setCachDocHira(s.toString());
+                        }
+                    }
+                }
+            });
+            edtMeaning.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if(!s.toString().isEmpty()){
+                        if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                            mList.get(getAdapterPosition()).setNghiaTiengViet(s.toString());
+                        }
+                    }
+                }
+            });
+            edtOnyomi.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if(!s.toString().isEmpty()){
+                        if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                            mList.get(getAdapterPosition()).setAmHan(s.toString());
+                        }
+                    }
+                }
+            });
         }
     }
 

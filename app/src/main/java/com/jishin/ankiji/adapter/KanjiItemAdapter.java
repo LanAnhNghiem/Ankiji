@@ -8,8 +8,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.Toast;
 
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.model.Kanji;
@@ -21,9 +19,9 @@ import java.util.ArrayList;
  */
 
 public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.KanjiItemHolder> {
+    public static final String TAG = KanjiItemAdapter.class.getSimpleName();
     public ArrayList<Kanji> mList = new ArrayList<>();
     private Context mContext;
-    private boolean isClick = false;
 
     public KanjiItemAdapter(ArrayList<Kanji> list, Context context) {
         this.mList = list;
@@ -32,7 +30,6 @@ public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.Kanj
     public KanjiItemAdapter(Context context){
         this.mContext = context;
     }
-    public KanjiItemAdapter(){}
 
     @Override
     public KanjiItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -46,78 +43,16 @@ public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.Kanj
         holder.edtKanji.setText(mList.get(position).getKanji());
         holder.edtWord.setText(mList.get(position).getTuvung());
         holder.edtMeaning.setText(mList.get(position).getAmhan());
-        addTextListener(holder, position);
         holder.edtKanji.requestFocus();
-    }
-    public void addTextListener(KanjiItemHolder holder, final int position){
+  }
 
-        holder.edtKanji.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(position < mList.size()){
-                    mList.get(position).setKanji(s.toString());
-                    setOnTextListener(mList);
-                }
-            }
-        });
-        holder.edtWord.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(position < mList.size()){
-                    mList.get(position).setTuvung(s.toString());
-                    setOnTextListener(mList);
-                }
-            }
-        });
-        holder.edtMeaning.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(position < mList.size()){
-                    mList.get(position).setAmhan(s.toString());
-                    setOnTextListener(mList);
-                }
-            }
-        });
-    }
-    public void setOnTextListener(ArrayList<Kanji> list){
-        //onTextListener.onTextListener(list);
-    }
     @Override
     public int getItemCount() {
         return mList.size();
     }
 
-    public class KanjiItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener, AbsListView.OnScrollListener{
+    public class KanjiItemHolder extends RecyclerView.ViewHolder {
         TextInputEditText edtKanji, edtMeaning, edtWord;
 
         public KanjiItemHolder(View itemView) {
@@ -126,34 +61,91 @@ public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.Kanj
             edtKanji = itemView.findViewById(R.id.edt_kanji);
             edtMeaning = itemView.findViewById(R.id.edt_meaning);
             edtWord = itemView.findViewById(R.id.edt_word);
-            edtKanji.setOnClickListener(this);
-            edtMeaning.setOnClickListener(this);
-            edtWord.setOnClickListener(this);
-            //addTextListener(this,getAdapterPosition());
+            addTextListener();
         }
 
-        @Override
-        public void onClick(View v) {
-            isClick = true;
-            Toast.makeText(mContext,"click nè", Toast.LENGTH_SHORT).show();
+//        @Override
+//        public boolean onTouch(View v, MotionEvent event) {
+//            if(event.getAction() == MotionEvent.ACTION_SCROLL){
+//                isScroll = true;
+//            }
+//            if(event.getAction() == MotionEvent.ACTION_DOWN &&
+//                    event.getAction() != MotionEvent.ACTION_SCROLL){
+//                realPosition = getAdapterPosition();
+//                if(oldPos != getAdapterPosition()){
+//                    //Toast.makeText(mContext,String.valueOf("Position: "+realPosition), Toast.LENGTH_SHORT).show();
+//                    oldPos = realPosition;
+//                    addTextListener(realPosition);
+//                }
+//            }
+//            return false;
+//        }
+        public void addTextListener(){
+            edtKanji.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if(!s.toString().isEmpty()){
+                        if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                            //Toast.makeText(mContext, edtKanji.getText().toString(), Toast.LENGTH_SHORT).show();
+                            mList.get(getAdapterPosition()).setKanji(s.toString());
+                        }
+                    }
+                }
+            });
+            edtWord.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if(!s.toString().isEmpty()){
+                        if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                            //Toast.makeText(mContext, edtKanji.getText().toString(), Toast.LENGTH_SHORT).show();
+                            mList.get(getAdapterPosition()).setTuvung(s.toString());
+                        }
+                    }
+                }
+            });
+            edtMeaning.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if(!s.toString().isEmpty()){
+                        if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                            //Toast.makeText(mContext, edtKanji.getText().toString(), Toast.LENGTH_SHORT).show();
+                            mList.get(getAdapterPosition()).setAmhan(s.toString());
+                        }
+                    }
+                }
+            });
+
         }
-
-        @Override
-        public void onScrollStateChanged(AbsListView view, int scrollState) {
-            if(scrollState == SCROLL_STATE_IDLE && isClick){
-
-            }
-        }
-
-        @Override
-        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-            if(isClick){
-
-
-
-            }
-        }
-
     }
 
 }

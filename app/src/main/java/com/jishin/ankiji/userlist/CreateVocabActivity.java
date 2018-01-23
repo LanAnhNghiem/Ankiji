@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.KanjiItemAdapter;
 import com.jishin.ankiji.adapter.MojiItemAdapter;
+import com.jishin.ankiji.interfaces.SetDataListener;
 import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.Set;
@@ -46,6 +47,7 @@ public class CreateVocabActivity extends AppCompatActivity{
     private DatabaseReference mMojiSet = mData.createDatabase(Constants.MOJI_SET_NODE);
     private DatabaseReference mKanjiSet = mData.createDatabase(Constants.KANJI_SET_NODE);
     private DatabaseReference mSetByUser = mData.createDatabase(Constants.SET_BY_USER_NODE);
+    private SetDataListener setDataListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,8 +149,6 @@ public class CreateVocabActivity extends AppCompatActivity{
                 if(isKanji){
                     mKanjiList.add(new Kanji("","","",""));
                     kanjiAdapter.notifyItemInserted(mKanjiList.size());
-                    //kanjiAdapter.no
-                    //kanjiAdapter.notifyItemInserted(mKanjiList.size());
                     rvVocab.scrollToPosition(mKanjiList.size()-1);
                     txtWord.setText("Từ vựng ("+mKanjiList.size()+")");
                 }
@@ -235,4 +235,11 @@ public class CreateVocabActivity extends AppCompatActivity{
             mSetByUser.child(mUserID).child(id).setValue(mKanjiList);
         }
     }
+
+//    @Override
+//    public void setData(Kanji kanji, int position) {
+//        mKanjiList.get(position).setTuvung(kanji.getTuvung());
+//        mKanjiList.get(position).setKanji(kanji.getKanji());
+//        mKanjiList.get(position).setAmhan(kanji.getAmhan());
+//    }
 }

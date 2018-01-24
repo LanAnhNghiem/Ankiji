@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.MojiAdater;
+import com.jishin.ankiji.model.DateAccess;
 import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.Set;
 import com.jishin.ankiji.utilities.Constants;
@@ -50,6 +51,7 @@ public class MojiExploresActivity extends AppCompatActivity {
     String userID;
     String id;
     Boolean isAdded;
+    DateAccess dateAccess;
 
     private DatabaseService mData = DatabaseService.getInstance();
     private DatabaseReference mMojiSet = mData.createDatabase("MojiSet");
@@ -68,7 +70,6 @@ public class MojiExploresActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mTopic = intent.getStringExtra("Moji_Key");
         mSetName = mTopic;
-
         setReference(mTopic);
         changeButtonAdd();
         checkStatus();
@@ -95,6 +96,7 @@ public class MojiExploresActivity extends AppCompatActivity {
                 controlAddButton();
             }
         });
+
     }
 
     @Override
@@ -138,6 +140,7 @@ public class MojiExploresActivity extends AppCompatActivity {
 
             Moji moji = ds.getValue(Moji.class);
             mojiList.add(moji);
+
         }
         mojiAdater.notifyDataSetChanged();
     }
@@ -155,7 +158,7 @@ public class MojiExploresActivity extends AppCompatActivity {
 
                     Set mojiSet = new Set();
                     mojiSet.setName(ds.getValue(Set.class).getName());
-
+                    Log.d(TAG, "onDataChange: mojiSet: " + mojiSet.getName());
                     if (mojiSet.getName().equals(mTopic)) {
                         isAdded = true;
                         changeButtonAdd();
@@ -185,6 +188,8 @@ public class MojiExploresActivity extends AppCompatActivity {
             showRemoveDialog();
         }
     }
+
+
 
     private void changeButtonAdd() {
         if (isAdded) {
@@ -224,7 +229,7 @@ public class MojiExploresActivity extends AppCompatActivity {
                         if (name.equals(mTopic)) {
                             id = ds.getKey();
                         }
-
+                        Log.d(TAG, "onDataChange: key: " + id);
                         mMojiSet.child(userID).child(id).removeValue();
                         mSetByUser.child(userID).child(id).removeValue();
                         isAdded = false;
@@ -239,4 +244,5 @@ public class MojiExploresActivity extends AppCompatActivity {
             }
         });
     }
+
 }

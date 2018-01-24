@@ -1,6 +1,5 @@
 package com.jishin.ankiji.fragment;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -44,7 +43,7 @@ import java.util.ArrayList;
  * Created by trungnguyeen on 12/27/17.
  */
 
-public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
+public class KanjiFragment extends Fragment implements RemoveDataCommunicator {
     private static final String TAG = KanjiFragment.class.getSimpleName();
     private ArrayList<Set> mKanjiSetList = new ArrayList<>();
     private ArrayList<Kanji> mKanjiList = new ArrayList<>();
@@ -58,6 +57,7 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
     private DatabaseReference mSetByUser;
     private String mUserID = "";
     private boolean isScrollDown = false;
+
     public String getmUserID() {
         return mUserID;
     }
@@ -78,19 +78,19 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
     }
 
     private void initParam() {
-        if(!mData.getUserID().isEmpty()){
+        if (!mData.getUserID().isEmpty()) {
             mKanjiSetRef = mData.getDatabase()
                     .child(Constants.KANJI_SET_NODE)
                     .child(mData.getUserID());
             mSetByUser = mData.createDatabase(Constants.SET_BY_USER_NODE).child(mData.getUserID());
-        }
-        else{
+        } else {
             mKanjiSetRef = mData.getDatabase()
                     .child(Constants.KANJI_SET_NODE)
                     .child(getmUserID());
             mSetByUser = mData.createDatabase(Constants.SET_BY_USER_NODE).child(getmUserID());
         }
     }
+
     private void initRecycler(View view) {
         rvRecentlyList = (RecyclerView) view.findViewById(R.id.recycle_view);
 
@@ -126,10 +126,10 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
         rvRecentlyList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCROLL_STATE_IDLE && isScrollDown == false){
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && isScrollDown == false) {
                     mFABtn.show();
-                    if(isStable == false && !mFABCreate.isShown()){
-                        mFABtn.setRotation(mFABtn.getRotation()+45F);
+                    if (isStable == false && !mFABCreate.isShown()) {
+                        mFABtn.setRotation(mFABtn.getRotation() + 45F);
                         isStable = true;
                     }
                 }
@@ -139,37 +139,37 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if ((dy > 0 ||dy<0) && mFABtn.isShown()) {
+                if ((dy > 0 || dy < 0) && mFABtn.isShown()) {
                     mFABtn.hide();
-                    if(mFABAdd.isShown()|| mFABCreate.isShown()){
+                    if (mFABAdd.isShown() || mFABCreate.isShown()) {
                         mFABAdd.hide();
                         mFABCreate.hide();
                         isStable = true;
                     }
                 }
-                if(dy > 0){
+                if (dy > 0) {
                     isScrollDown = true;
-                }else{
+                } else {
                     isScrollDown = false;
                 }
             }
         });
     }
-    private void addControl(View view){
+
+    private void addControl(View view) {
         mFABtn = view.findViewById(R.id.fabKanji);
         mFABAdd = view.findViewById(R.id.fabAdd);
         mFABCreate = view.findViewById(R.id.fabCreate);
         mFABtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mFABCreate.isShown()){
+                if (!mFABCreate.isShown()) {
                     mFABAdd.show();
                     mFABCreate.show();  //required
                     float deg = mFABtn.getRotation() + 45F;
                     mFABtn.animate().rotation(deg).setInterpolator(new AccelerateDecelerateInterpolator());
                     isStable = false;
-                }
-                else{
+                } else {
                     mFABAdd.hide();
                     mFABCreate.hide();
                     float deg = mFABtn.getRotation() + 45F;
@@ -191,19 +191,19 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String setName = edtSetName.getText().toString().trim();
-                        if(!setName.isEmpty()){
+                        if (!setName.isEmpty()) {
                             Toast.makeText(getContext(), "Click click", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getContext(), CreateVocabActivity.class);
                             intent.putExtra("create", Constants.CREATE_KANJI);
                             intent.putExtra("name", setName);
                             intent.putExtra(Constants.USER_ID, mUserID);
                             startActivity(intent);
-                        }else{
+                        } else {
                             Toast.makeText(getContext(), "Cannot create a new set.\nSet name field is required", Toast.LENGTH_SHORT).show();
                         }
                         mFABAdd.hide();
                         mFABCreate.hide();
-                        mFABtn.setRotation(mFABtn.getRotation()+45F);
+                        mFABtn.setRotation(mFABtn.getRotation() + 45F);
                         isStable = true;
 
                     }
@@ -233,20 +233,24 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
         mSetByUser.child(id).removeValue();
         mItemsAdapter.notifyDataSetChanged();
     }
-    public class CountItemTask extends AsyncTask<Void, Void, Void>{
+
+
+    public class CountItemTask extends AsyncTask<Void, Void, Void> {
         Set mSet = new Set();
-        public CountItemTask(Set set){
+
+        public CountItemTask(Set set) {
             this.mSet = set;
         }
+
         @Override
         protected Void doInBackground(Void... voids) {
             mSetByUser.child(mSet.getId()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     mKanjiList.clear();
-                    for(DataSnapshot data: dataSnapshot.getChildren()){
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
                         mKanjiList.add(data.getValue(Kanji.class));
-                        Log.d(TAG, data.getKey()+" "+data.getValue());
+                        Log.d(TAG, data.getKey() + " " + data.getValue());
                     }
                     onProgressUpdate();
                 }
@@ -262,17 +266,17 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
         @Override
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
-            if(mKanjiList.size() >= 5){
+            if (mKanjiList.size() >= 5) {
                 Intent intentTest = new Intent(getContext(), TestActivity.class);
                 intentTest.putExtra(Constants.SET_BY_USER, mKanjiList);
                 intentTest.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
                 startActivity(intentTest);
-            }
-            else{
+            } else {
                 Toast.makeText(getContext(), "Cannot create test.\nLess than 5 items in the set.", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
     public class LoadKanjiDataTask extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -300,7 +304,7 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
         mKanjiSetList.clear();
         for (DataSnapshot ds : dataSnapshot.getChildren()) {
             mKanjiSetList.add(ds.getValue(Set.class));
-            Log.d(TAG, ds.getKey()+"/"+String.valueOf(ds.getValue()));
+            Log.d(TAG, ds.getKey() + "/" + String.valueOf(ds.getValue()));
         }
         mItemsAdapter.notifyDataSetChanged();
     }

@@ -17,5 +17,5 @@ public class Constants {
     public static final String SET_BY_USER_NODE = "SetByUser";
     public static final String CREATE = "create";
     public static final String NAME = "name";
-    public static final String EDIT = "edit";
+    public static final String USER_NODE = "User";
 }

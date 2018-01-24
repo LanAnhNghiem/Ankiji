@@ -25,9 +25,10 @@ import com.jishin.ankiji.R;
 import com.jishin.ankiji.about_us.AboutUsActivity;
 import com.jishin.ankiji.adapter.FragmentAdapter;
 import com.jishin.ankiji.signin.SigninActivity;
-import com.jishin.ankiji.utilities.DatabaseService;
-import de.hdodenhof.circleimageview.CircleImageView;
 import com.jishin.ankiji.utilities.Constants;
+import com.jishin.ankiji.utilities.DatabaseService;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FeatureActivity extends AppCompatActivity{
     private static final String TAG = FeatureActivity.class.getSimpleName();

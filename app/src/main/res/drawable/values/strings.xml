@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Ankiji</string>
+    <string name="btn_login">Go</string>
+    <string name="login_with">Sign in with</string>
+    <string name="create_an_account"><u>Create an account?</u></string>
+    <string name="forgot_passowrd"><u>Forgot passowrd?</u>></string>
+    <string name="login">SIGN IN</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="back">Back</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="marugoto_title">まるごと A2.1</string>
+    <string name="item_count">30 items</string>
+
+    <string name="text_outside_button_buider_learn">Learn</string>
+    <string name="text_outside_button_buider_chart">Chart</string>
+    <string name="text_outside_button_buider_test">Test</string>
+    <string name="text_outside_button_buider_edit">Edit</string>
+
+    <string name="text_inside_circle_button_text_normal">Text Inside Circle Button(Normal)</string>
+    <string name="text_inside_circle_button_text_highlighted">Text Inside Circle Button(Highlighted)</string>
+    <string name="text_inside_circle_button_text_unable">Text Inside Circle Button(Unable)</string>
+
+    <string name="text_outside_circle_button_text_normal">Text Outside Circle Button(Normal)</string>
+    <string name="text_outside_circle_button_text_highlighted">Text Outside Circle Button(Highlighted)</string>
+    <string name="text_outside_circle_button_text_unable">Text Outside Circle Button(Unable)</string>
+
+    <string name="text_ham_button_text_normal">Ham Button Text(Normal)</string>
+    <string name="text_ham_button_text_highlighted">Ham Button Text(Highlighted)</string>
+    <string name="text_ham_button_text_unable">Ham Button Text(Unable)</string>
+    <string name="text_ham_button_sub_text_normal">Ham Button Sub Text(Normal)</string>
+    <string name="text_ham_button_sub_text_highlighted">Ham Button Sub Text(Highlighted)</string>
+    <string name="text_ham_button_sub_text_unable">Ham Button Sub Text(Unable)</string>
+</resources>

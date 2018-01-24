@@ -15,14 +15,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.KanjiItemAdapter;
 import com.jishin.ankiji.adapter.MojiItemAdapter;
 import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.model.Moji;
+import com.jishin.ankiji.model.Set;
 import com.jishin.ankiji.utilities.Constants;
+import com.jishin.ankiji.utilities.DatabaseService;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class CreateVocabActivity extends AppCompatActivity{
     private Toolbar toolbar;
@@ -36,7 +44,11 @@ public class CreateVocabActivity extends AppCompatActivity{
     private ImageView btnAdd;
     private TextView txtWord;
     private boolean isKanji = true;
-    private String mSetName = "";
+    private String mSetName = "", mUserID = "";
+    private DatabaseService mData = DatabaseService.getInstance();
+    private DatabaseReference mMojiSet = mData.createDatabase("MojiSet");
+    private DatabaseReference mKanjiSet = mData.createDatabase("KanjiSet");
+    private DatabaseReference mSetByUser = mData.createDatabase("SetByUser");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,11 +59,15 @@ public class CreateVocabActivity extends AppCompatActivity{
                 isKanji = false;
             }
             mSetName = intent.getStringExtra("name");
-
+            mUserID = intent.getStringExtra(Constants.USER_ID);
+            if(mUserID.isEmpty())
+                mUserID = mData.getUserID();
         }
         initControl();
         setupRecyclerView();
         setEvents();
+        Date currentTime = Calendar.getInstance().getTime();
+        Toast.makeText(this, String.valueOf(currentTime), Toast.LENGTH_SHORT).show();
     }
     private void initControl(){
         //create data sample
@@ -103,11 +119,11 @@ public class CreateVocabActivity extends AppCompatActivity{
     //Warning if user hasn't saved vocab set.
     private void showAlertDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Do you want to save your vocabulary set?");
+        builder.setMessage(R.string.warning_unsave_data);
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //TODO save vocab data
+                saveDatabase();
                 finish();
             }
             }).setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -118,11 +134,14 @@ public class CreateVocabActivity extends AppCompatActivity{
         });
         builder.show();
     }
+
     private void setEvents(){
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(CreateVocabActivity.this, "Done", Toast.LENGTH_SHORT).show();
+                saveDatabase();
+                finish();
             }
         });
         btnAdd.setOnClickListener(new View.OnClickListener() {
@@ -202,31 +221,19 @@ public class CreateVocabActivity extends AppCompatActivity{
             mojiAdapter = new MojiItemAdapter(mMojiList, getBaseContext());
             rvVocab.setAdapter(mojiAdapter);
         }
-
     }
-
-
-//    public void noUse(){
-//        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.DOWN | ItemTouchHelper.UP) {
-//
-//            @Override
-//            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHol der viewHolder, RecyclerView.ViewHolder target) {
-//                Toast.makeText(CreateVocabActivity.this, "on Move", Toast.LENGTH_SHORT).show();
-//                return false;
-//            }
-//
-//            @Override
-//            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-//                Toast.makeText(CreateVocabActivity.this, "on Swiped ", Toast.LENGTH_SHORT).show();
-//                //Remove swiped item from list and notify the RecyclerView
-//                int position = viewHolder.getAdapterPosition();
-//                mKanjiList.remove(position);
-//                kanjiAdapter.notifyDataSetChanged();
-//
-//            }
-//        };
-//
-//        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-//        itemTouchHelper.attachToRecyclerView(rvVocab);
-//    }
+    private void saveDatabase(){
+        Date currentTime = Calendar.getInstance().getTime();
+        if(!isKanji){
+            String id = mMojiSet.push().getKey();
+            Set set = new Set(id, mSetName, String.valueOf(currentTime));
+            mMojiSet.child(mUserID).child(id).setValue(set);
+            mSetByUser.child(mUserID).child(id).setValue(mMojiList);
+        }else{
+            String id = mKanjiSet.push().getKey();
+            Set set = new Set(id, mSetName, String.valueOf(currentTime));
+            mKanjiSet.child(mUserID).child(id).setValue(set);
+            mSetByUser.child(mUserID).child(id).setValue(mKanjiList);
+        }
+    }
 }

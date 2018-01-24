@@ -72,7 +72,7 @@ public class MojiItemAdapter extends RecyclerView.Adapter<MojiItemAdapter.MojiIt
 
             }
         });
-        holder.edtWord.addTextChangedListener(new TextWatcher() {
+        holder.edtHira.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -86,7 +86,7 @@ public class MojiItemAdapter extends RecyclerView.Adapter<MojiItemAdapter.MojiIt
             @Override
             public void afterTextChanged(Editable s) {
                 if(position < mList.size()){
-                    mList.get(position).setTuTiengNhat(s.toString());
+                    mList.get(position).setCachDocHira(s.toString());
                 }
             }
         });

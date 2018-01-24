@@ -1,10 +1,12 @@
 package com.jishin.ankiji.model;
 
+import java.io.Serializable;
+
 /**
  * Created by lana on 16/01/2018.
  */
-
-public class Kanji {
+@SuppressWarnings("serial")
+public class Kanji implements Serializable {
     private String id;
     private String amhan;
     private String kanji;

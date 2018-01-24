@@ -65,7 +65,6 @@ public class SigninActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         if(mData.isSignIn()){
-            Log.d("Da_SIGN_IN", "Da_SIGN_IN");
             Intent intent = new Intent(SigninActivity.this, FeatureActivity.class);
             startActivity(intent);
             finish();

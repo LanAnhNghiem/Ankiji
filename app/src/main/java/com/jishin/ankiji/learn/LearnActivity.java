@@ -22,8 +22,11 @@ import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.Set;
 import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
+import com.jishin.ankiji.utilities.LocalDatabase;
+import com.jishin.ankiji.utilities.MapHelper;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class LearnActivity extends AppCompatActivity {
 
@@ -40,36 +43,60 @@ public class LearnActivity extends AppCompatActivity {
     private DatabaseReference mSetByUserRef;
     private Toolbar mToolbar;
     private DatabaseService mData = DatabaseService.getInstance();
+    private LocalDatabase mLocalData = LocalDatabase.getInstance();
+    private String mUserID = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learn);
 
-
         Intent intent = getIntent();
         if (intent != null) {
             dataTypeEnum = (DataTypeEnum) intent.getSerializableExtra(Constants.DATA_TYPE);
             set = (Set) intent.getSerializableExtra(Constants.SET_BY_USER);
+            mUserID = intent.getStringExtra(Constants.USER_ID);
             if (dataTypeEnum == DataTypeEnum.Kanji) {
                 kanjiList = new ArrayList<Kanji>();
             } else {
                 mojiList = new ArrayList<Moji>();
             };
         }
-        initParam();
+        //initParam();
         Log.i(TAG, "onCreate: contextlistsize " + this.contentList.size());
         initControls();
-        new fetchData().execute();
+        loadData();
+        //new fetchData().execute();
         Log.i(TAG, "onCreate: contextlistsize " + this.contentList.size());
         setEvents();
 
     }
+    private void loadData(){
+        mLocalData.init(this,mUserID,mData);
+        String id = set.getId();
+        Map learnMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
+        if(learnMap != null){
+            if (dataTypeEnum == DataTypeEnum.Moji){
+                if(learnMap.containsKey(id)){
+                    mojiList = MapHelper.convertToMoji(learnMap, set.getId());
+                    contentList = mojiList;
+                }
 
+            }else{
+                if(learnMap.containsKey(id)){
+                    kanjiList = MapHelper.convertToKanji(learnMap, set.getId());
+                    contentList = kanjiList;
+                }
+            }
+            mPagerAdapter.setContentList(contentList);
+            mPagerAdapter.createCardList();
+            mPagerAdapter.notifyDataSetChanged();
+        }
+    }
     private void initParam() {
         mSetByUserRef = mData.getDatabase()
                 .child(Constants.SET_BY_USER)
-                .child(mData.getUserID())
+                .child(mUserID)
                 .child(set.getId());
         Log.d(TAG, "initParam: " + mSetByUserRef.getKey());
     }

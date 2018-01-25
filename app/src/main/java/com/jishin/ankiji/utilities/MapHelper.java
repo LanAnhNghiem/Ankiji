@@ -4,11 +4,13 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.Set;
 import com.jishin.ankiji.model.User;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -23,8 +25,7 @@ public class MapHelper {
         String[] subPaths = path.split("/");
 
         Map result = map;
-        for (String subPath:
-                subPaths) {
+        for (String subPath: subPaths) {
             result = (Map) result.get(subPath);
         }
         return result;
@@ -43,32 +44,27 @@ public class MapHelper {
         }
         return list;
     }
-    public static ArrayList<Moji> convertToMoji(Map<String, Map> map){
+    public static ArrayList<Moji> convertToMoji(Map<String, Map> map, String id){
         ArrayList<Moji> list = new ArrayList<>();
-        Gson gson = new Gson();
-        for (Map.Entry<String, Map> entry : map.entrySet())
-        {
-            Gson gsonBuilder = new GsonBuilder().create();
-            // Convert Java Map into JSON
-            String jsonStr = gsonBuilder.toJson(entry.getValue())
-                    .replace("[","").replace("]","");
-            Log.d(TAG +"json",jsonStr );
-            Moji set = gson.fromJson(jsonStr, Moji.class);
-            list.add(set);
+
+        if(map.containsKey(id)){
+            list= (ArrayList<Moji>) map.get(id);
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<Moji>>() {}.getType();
+            String json = gson.toJson(list, type);
+            list = gson.fromJson(json, type);
         }
         return list;
     }
-    public static ArrayList<Kanji> convertToKanji(Map<String, Map> map){
+    public static ArrayList<Kanji> convertToKanji(Map<String, Map> map, String id){
         ArrayList<Kanji> list = new ArrayList<>();
-        Gson gson = new Gson();
-        for (Map.Entry<String, Map> entry : map.entrySet())
-        {
-            Gson gsonBuilder = new GsonBuilder().create();
-            // Convert Java Map into JSON
-            String jsonStr = gsonBuilder.toJson(entry.getValue()).replace("[","").replace("]","");
-            Log.d(TAG +"json",jsonStr );
-            Kanji set = gson.fromJson(jsonStr, Kanji.class);
-            list.add(set);
+
+        if(map.containsKey(id)){
+            list= (ArrayList<Kanji>) map.get(id);
+//            Gson gson = new Gson();
+//            JSONObject jsonObj = new JSONObject(map.get(id).values());
+//            Type type = new TypeToken<MyDto>() {}.getType();
+//            servDto = gson.fromJson(jsonObj.toString(),type);
         }
         return list;
     }

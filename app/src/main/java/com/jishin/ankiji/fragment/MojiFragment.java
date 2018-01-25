@@ -219,6 +219,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
                         Intent intent = new Intent(getContext(), LearnActivity.class);
                         intent.putExtra(Constants.SET_BY_USER, set);
                         intent.putExtra(Constants.DATA_TYPE, dataTypeEnum);
+                        intent.putExtra(Constants.USER_ID, mUserID);
                         startActivity(intent);
                         break;
                     case 1:
@@ -338,9 +339,9 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
 //                }
 //            });
             mMojiList.clear();
-            Map map = mLocalData.readData(Constants.SET_BY_USER_NODE+"/"+Constants.USER_ID+"/"+mSet.getId());
-            mMojiList = MapHelper.convertToMoji(map);
-            onProgressUpdate();
+            Map map = mLocalData.readData(Constants.SET_BY_USER_NODE);
+            mMojiList = MapHelper.convertToMoji(map, mSet.getId());
+            publishProgress();
             return null;
         }
 

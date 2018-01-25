@@ -104,6 +104,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private void setControls() {
         toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("Profile");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         layoutProfileImg = findViewById(R.id.layoutProfileImg);
         layoutUsername = findViewById(R.id.layoutUsername);
         layoutEmail = findViewById(R.id.layoutEmail);
@@ -123,7 +126,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         user = FirebaseAuth.getInstance().getCurrentUser() ;
 
-        toolbar.setTitle("Profile");
+
         mReference = FirebaseDatabase.getInstance().getReference("User").child(user.getUid());
         getUserDetail();
         getNumberOfSetsAndWords();

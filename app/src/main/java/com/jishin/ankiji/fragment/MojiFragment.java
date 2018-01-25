@@ -88,7 +88,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
 
         //new LoadMojiDataTask().execute();
     }
-
+    //Load local data
     private void loadLocalData(){
         Map myMap = mLocalData.readData(Constants.MOJI_SET_NODE);
         if(myMap != null){
@@ -105,6 +105,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
         View view = inflater.inflate(R.layout.fragment_moji, container, false);
         addControl(view);
         initRecycler(view);
+        //load Local data
         loadLocalData();
         return view;
     }

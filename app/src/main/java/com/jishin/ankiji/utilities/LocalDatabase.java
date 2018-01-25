@@ -11,9 +11,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jishin.ankiji.interfaces.LoadDataListener;
-import com.jishin.ankiji.model.Kanji;
-import com.jishin.ankiji.model.Moji;
-import com.jishin.ankiji.model.Set;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -22,7 +19,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,7 +74,7 @@ public class LocalDatabase {
         new LoadAllDataTask().execute();
     }
     public static void updateAllData(){
-        new UpdateAllDataTask().execute();
+        new SyncDataTask().execute();
     }
     private static void writeToFile(String fileName, String data, Context context) {
         try {
@@ -144,6 +140,7 @@ public class LocalDatabase {
         }
         return null;
     }
+    //Load data from Firebase and save to local
     private static class LoadAllDataTask extends AsyncTask<Void, Void, Void>{
 
         @Override
@@ -209,45 +206,22 @@ public class LocalDatabase {
             mListener.loadData();
         }
     }
-    private static class UpdateAllDataTask extends AsyncTask<Void, Void, Void>{
+    //Sync data from local to Firebase
+    private static class SyncDataTask extends AsyncTask<Void, Void, Void>{
         @Override
         protected Void doInBackground(Void... voids) {
-            //Map map = readData(Constants.SET_BY_USER_NODE);
+            //update SetByUser
             Map setByUserMap = readData(Constants.SET_BY_USER_NODE);
-            Map setByUserMoji = new HashMap(), setByUserKanji= new HashMap();
-            ArrayList<String> mojiID = new ArrayList<>();
+            mSetByUserRef.setValue(setByUserMap);
+
             //update MojiSet
             Map mojiMap = readData(Constants.MOJI_SET_NODE);
-            ArrayList<Set> mojiSet = MapHelper.convertToSet(mojiMap);
+            mMojiSetRef.setValue(mojiMap);
 
-            for(int i =0 ;i<mojiSet.size();i++){
-                if(setByUserMap.containsKey(mojiSet.get(i).getId())){
-                    //mSetByUserRef.child(mojiSet.get(i).getId()).setValue()
-                    setByUserMoji.put(mojiSet.get(i).getId(),setByUserMap.get(mojiSet.get(i).getId()));
-                    mojiID.add(mojiSet.get(i).getId());
-                }
-                mMojiSetRef.child(mojiSet.get(i).getId()).setValue(mojiSet.get(i));
-            }
             //update KanjiSet
             Map kanjiMap = readData(Constants.KANJI_SET_NODE);
-            ArrayList<Set> kanjiSet = MapHelper.convertToSet(kanjiMap);
-            for(int i=0; i<kanjiSet.size();i++){
-                if(setByUserMap.containsKey(kanjiSet.get(i).getId())){
-                    //mSetByUserRef.child(mojiSet.get(i).getId()).setValue()
-                    setByUserKanji.put(kanjiSet.get(i).getId(),setByUserMap.get(kanjiSet.get(i).getId()));
-                }
-                mKanjiSetRef.child(kanjiSet.get(i).getId()).setValue(kanjiSet.get(i));
-            }
-            //update SetByUser
-            ArrayList<Moji> mojiList = MapHelper.convertToMoji(setByUserMoji);
-            ArrayList<Kanji> kanjiList = MapHelper.convertToKanji(setByUserKanji);
-            for(int i=0;i<mojiList.size();i++){
-                mSetByUserRef.child(mojiID.get(i)).setValue(mojiList.get(i));
-            }
-            for(int i=0; i<kanjiList.size();i++){
-                mSetByUserRef.child(kanjiList.get(i).getId()).setValue(kanjiList.get(i));
-            }
-            //mKanjiSetRef.setValue(mLocalData.get(Constants.MOJI_SET_NODE));
+            mKanjiSetRef.setValue(kanjiMap);
+
             return null;
         }
     }

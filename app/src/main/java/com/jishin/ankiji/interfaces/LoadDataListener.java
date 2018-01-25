@@ -5,5 +5,6 @@ package com.jishin.ankiji.interfaces;
  */
 
 public interface LoadDataListener {
+    //if load data completed and data.json existed, call loadData in Fragment or Activity
     void loadData();
 }

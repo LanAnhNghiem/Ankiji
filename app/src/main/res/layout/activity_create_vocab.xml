@@ -77,6 +77,7 @@
         android:clickable="true"
         android:focusable="true"
         android:background="?attr/selectableItemBackgroundBorderless"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvVocab"
         android:layout_width="0dp"
@@ -90,5 +91,7 @@
         android:layout_marginEnd="10dp"
         android:clipToPadding="false"
         android:orientation="horizontal"
-        android:paddingTop="10dp"></android.support.v7.widget.RecyclerView>
+        android:paddingTop="10dp">
+
+    </android.support.v7.widget.RecyclerView>
 </android.support.constraint.ConstraintLayout>

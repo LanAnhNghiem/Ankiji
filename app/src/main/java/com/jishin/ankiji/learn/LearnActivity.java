@@ -58,10 +58,8 @@ public class LearnActivity extends AppCompatActivity {
             };
         }
         initParam();
-        Log.i(TAG, "onCreate: contextlistsize " + this.contentList.size());
         initControls();
         new fetchData().execute();
-        Log.i(TAG, "onCreate: contextlistsize " + this.contentList.size());
         setEvents();
 
     }
@@ -89,7 +87,6 @@ public class LearnActivity extends AppCompatActivity {
         }
 
         mViewPager = findViewById(R.id.viewPager);
-        Log.i(TAG, "initControls: contextListSize " + contentList.size());
         mPagerAdapter = new CardFragmentPagerAdapter(getSupportFragmentManager(), contentList, dataTypeEnum);
         mViewPager.setAdapter(mPagerAdapter);
     }
@@ -164,6 +161,9 @@ public class LearnActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
+            if (contentList.size() != 0){
+                mProgressBar.setProgress(100 / contentList.size());
+            }
             mPagerAdapter.setContentList(contentList);
             mPagerAdapter.createCardList();
             mPagerAdapter.notifyDataSetChanged();

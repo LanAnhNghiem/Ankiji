@@ -37,8 +37,8 @@
     <string name="answerB">B: がくせい</string>
     <string name="answerC">C: だいがく</string>
     <string name="answerD">D: さくぶん</string>
-    <string name="main">MAIN</string>
-    <string name="retry">RETRY</string>
+    <string name="main">Main</string>
+    <string name="retry">Retry</string>
     <string name="notification">Do you want to retry?</string>
 
     <string name="text_outside_button_buider_learn">Learn</string>
@@ -58,7 +58,7 @@
     <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
     <string name="btn_forgot_password">Forgot your password?</string>
     <string name="btn_reset_password">Reset Password</string>
-    <string name="lbl_forgot_password">Forgot password?</string>
+    <string name="lbl_forgot_password">Forgot Password?</string>
 
     <string name="pick_picture">Pick your picture</string>
 </resources>

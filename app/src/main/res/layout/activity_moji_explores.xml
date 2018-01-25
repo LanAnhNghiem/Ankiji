@@ -12,7 +12,8 @@
         android:layout_height="?android:attr/actionBarSize"
         android:background="@color/colorPrimaryDark"
         android:theme="@style/ToolBarTheme.ToolBarStyle"
-        app:titleTextColor="@android:color/white">
+        app:titleTextColor="@android:color/white"
+        android:paddingEnd="15dp">
 
     </android.support.v7.widget.Toolbar>
 

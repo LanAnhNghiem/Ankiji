@@ -34,7 +34,7 @@
         <activity android:name=".explores.MojiExploresActivity" />
         <activity android:name=".explores.KanjiExploresActivity" />
         <activity android:name=".userlist.CreateVocabActivity" />
-        <activity android:name=".Feature_Test.TestActivity" />
+        <activity android:name=".feature_Test.TestActivity" />
 
         <activity
             android:name="com.facebook.FacebookActivity"

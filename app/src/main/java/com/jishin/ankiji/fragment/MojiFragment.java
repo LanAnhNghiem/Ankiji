@@ -26,14 +26,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.jishin.ankiji.Feature_Test.TestActivity;
+import com.jishin.ankiji.feature_Test.TestActivity;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
 import com.jishin.ankiji.explores.TopicMojiActivity;
 import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.learn.LearnActivity;
 import com.jishin.ankiji.model.DataTypeEnum;
-import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.Set;
 import com.jishin.ankiji.userlist.CreateVocabActivity;
@@ -279,6 +278,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
         Set mSet = new Set();
         public CountItemTask(Set set){
             this.mSet = set;
+            Log.d(TAG, this.mSet.toString());
         }
         @Override
         protected Void doInBackground(Void... voids) {

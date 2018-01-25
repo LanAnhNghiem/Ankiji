@@ -3,9 +3,9 @@ package com.jishin.ankiji.userlist;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -15,10 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.KanjiItemAdapter;
 import com.jishin.ankiji.adapter.MojiItemAdapter;
@@ -28,9 +25,9 @@ import com.jishin.ankiji.model.Set;
 import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class CreateVocabActivity extends AppCompatActivity{
     private Toolbar toolbar;
@@ -66,8 +63,10 @@ public class CreateVocabActivity extends AppCompatActivity{
         initControl();
         setupRecyclerView();
         setEvents();
-        Date currentTime = Calendar.getInstance().getTime();
-        Toast.makeText(this, String.valueOf(currentTime), Toast.LENGTH_SHORT).show();
+        //Date currentTime = Calendar.getInstance().getTime();
+        String currentTime = new SimpleDateFormat("dd-MM-yyyy")
+                .format(Calendar.getInstance().getTime());
+        //Toast.makeText(this, "Created", Toast.LENGTH_SHORT).show();
     }
     private void initControl(){
         //create data sample
@@ -223,15 +222,16 @@ public class CreateVocabActivity extends AppCompatActivity{
         }
     }
     private void saveDatabase(){
-        Date currentTime = Calendar.getInstance().getTime();
+        String currentTime = new SimpleDateFormat("dd-MM-yyyy")
+                .format(Calendar.getInstance().getTime());
         if(!isKanji){
             String id = mMojiSet.push().getKey();
-            Set set = new Set(id, mSetName, String.valueOf(currentTime));
+            Set set = new Set(id, mSetName, currentTime);
             mMojiSet.child(mUserID).child(id).setValue(set);
             mSetByUser.child(mUserID).child(id).setValue(mMojiList);
         }else{
             String id = mKanjiSet.push().getKey();
-            Set set = new Set(id, mSetName, String.valueOf(currentTime));
+            Set set = new Set(id, mSetName, currentTime);
             mKanjiSet.child(mUserID).child(id).setValue(set);
             mSetByUser.child(mUserID).child(id).setValue(mKanjiList);
         }

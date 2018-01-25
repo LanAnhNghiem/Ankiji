@@ -1,25 +1,21 @@
-package com.jishin.ankiji.Feature_Test;
+package com.jishin.ankiji.feature_Test;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.features.FeatureActivity;
 import com.jishin.ankiji.model.Kanji;
@@ -27,7 +23,6 @@ import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.QuestionAnswer;
 import com.jishin.ankiji.utilities.Constants;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -54,7 +49,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
     private Toolbar toolbar;
     //private ProgressBar progressBar;
-    private TextView txtRightCount, txtQuestion, txtAnswerA, txtAnswerB, txtAnswerC, txtAnswerD;
+    private TextView txtRightCount, txtQuestion, txtAnswerA, txtAnswerB, txtAnswerC, txtAnswerD, txtCorrect;
     private TextView txtNumberQuestion;
     private ConstraintLayout layout;
 
@@ -67,7 +62,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_moji_test);
+        setContentView(R.layout.activity_test);
 
         Intent intent = getIntent();
 
@@ -110,22 +105,21 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         txtAnswerC = findViewById(R.id.txtAnswerC);
         txtAnswerD = findViewById(R.id.txtAnswerD);
         txtNumberQuestion = findViewById(R.id.txtNumberOfQuestion);
+        txtCorrect = (TextView) findViewById(R.id.txt_correct);
 
 //        kanjiList = new ArrayList<>();
 //        answerList = new ArrayList<>();
 //        QAList = new ArrayList<>();
 
         layout = findViewById(R.id.layoutTest);
-        
+
         btnMain = findViewById(R.id.btnMain);
         btnRetry = findViewById(R.id.btnRetry);
         txtNotification = findViewById(R.id.txtNotification);
 
-        //progressBar.setProgress(0);
-
-        btnMain.setVisibility(View.INVISIBLE);
-        btnRetry.setVisibility(View.INVISIBLE);
-        txtNotification.setVisibility(View.INVISIBLE);
+        btnMain.setVisibility(View.GONE);
+        btnRetry.setVisibility(View.GONE);
+        txtNotification.setVisibility(View.GONE);
     }
 
     @Override
@@ -143,10 +137,10 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     public void updateQuestionMoji (ArrayList<Moji> listMoji, ArrayList<String> listAnswer) {
         index_question++;
         //progressBar.setProgress(index_question * 100 / NUMBER_OF_QUESTION);
-        txtNumberQuestion.setText("Question: " + String.valueOf(index_question) + "/"
+        txtNumberQuestion.setText("QUESTION: " + String.valueOf(index_question) + "/"
                 + String.valueOf(NUMBER_OF_QUESTION));
-        txtRightCount.setText("Correct: " + String.valueOf(number_of_right_answer) + " / "
-                + String.valueOf(NUMBER_OF_QUESTION));        //Log.d("MOJI_SIZE", String.valueOf(mojiList.size()));
+        txtRightCount.setText(String.valueOf(number_of_right_answer));
+        //Log.d("MOJI_SIZE", String.valueOf(mojiList.size()));
         Log.d("ANSWER_SIZE", String.valueOf(listAnswer.size()));
         int index_moji = 0;
         index_moji = new Random().nextInt(listMoji.size());
@@ -272,10 +266,9 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     public void updateQuestionKanji (ArrayList<Kanji> listKanji, ArrayList<String> listAnswer) {
         index_question++;
         //progressBar.setProgress(index_question * 100 / NUMBER_OF_QUESTION);
-        String numberQuestion = "Question: " + String.valueOf(index_question) + "/"
+        String numberQuestion = "QUESTION: " + String.valueOf(index_question) + "/"
                 + String.valueOf(NUMBER_OF_QUESTION);
-        String rightCount = "Correct: " + String.valueOf(number_of_right_answer) + " / "
-                + String.valueOf(NUMBER_OF_QUESTION);
+        String rightCount = String.valueOf(number_of_right_answer);
         txtNumberQuestion.setText(numberQuestion);
         txtRightCount.setText(rightCount);
         //Log.d("MOJI_SIZE", String.valueOf(mojiList.size()));
@@ -402,7 +395,70 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
     }
     public void updateNumberOfRightAnswer () {
-        txtRightCount.setText("Correct: " + number_of_right_answer + " / " + NUMBER_OF_QUESTION);
+        txtRightCount.setText(String.valueOf(number_of_right_answer));
+    }
+    public void checkTrueOrFalseAnswer(boolean check, final TextView answer_view) {
+        if (check){
+            new CountDownTimer(1200, 1000) {
+                public void onTick(long millisUntilFinished) {
+                    answer_view.setBackgroundColor(Color.parseColor("#4CAF50"));
+                    answer_view.setTextColor(Color.WHITE);
+                    txtAnswerA.setEnabled(false);
+                    txtAnswerB.setEnabled(false);
+                    txtAnswerC.setEnabled(false);
+                    txtAnswerD.setEnabled(false);
+                }
+
+                public void onFinish() {
+                    finishCheckAnswer(answer_view);
+                }
+            }.start();
+
+        }else{
+            new CountDownTimer(1200, 1000) {
+
+                public void onTick(long millisUntilFinished) {
+                    answer_view.setBackgroundColor(Color.parseColor("#C62828"));
+                    answer_view.setTextColor(Color.WHITE);
+                    txtAnswerA.setEnabled(false);
+                    txtAnswerB.setEnabled(false);
+                    txtAnswerC.setEnabled(false);
+                    txtAnswerD.setEnabled(false);
+                }
+
+                public void onFinish() {
+                   finishCheckAnswer(answer_view);
+                }
+            }.start();
+        }
+    }
+
+
+    public void finishCheckAnswer(TextView answer_view){
+        answer_view.setTextColor(Color.parseColor("#AB5E4F"));
+        answer_view.setBackgroundResource(R.drawable.border);
+        txtAnswerA.setEnabled(true);
+        txtAnswerB.setEnabled(true);
+        txtAnswerC.setEnabled(true);
+        txtAnswerD.setEnabled(true);
+
+        if(isKanji){
+            if (kanjiList.isEmpty()){
+                Log.d("KANJIlist_EMPTY","KANJIlist_EMPTY");
+                updateNumberOfRightAnswer();
+                showResult();
+            }else{
+                updateQuestionKanji(kanjiList, answerList);
+            }
+        }else{
+            if (mojiList.isEmpty()){
+                Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
+                updateNumberOfRightAnswer();
+                showResult();
+            }else{
+                updateQuestionMoji(mojiList, answerList);
+            }
+        }
     }
 
     public void showDialog(boolean check) {
@@ -416,14 +472,6 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                     .inflate(R.layout.image_wrong, null));
         }
         settingsDialog.show();
-
-//        settingsDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//            @Override
-//            public void onDismiss(DialogInterface dialogInterface) {
-//                updateQuestion(mojiList, answerList);
-//            }
-//        });
-
     }
 
     @Override
@@ -438,17 +486,26 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         if (settingsDialog != null) {
             settingsDialog.dismiss();
         }
-        layout.removeView(txtAnswerA);
-        layout.removeView(txtAnswerB);
-        layout.removeView(txtAnswerC);
-        layout.removeView(txtAnswerD);
-        //layout.removeView(progressBar);
-        layout.removeView(txtRightCount);
-        layout.removeView(txtNumberQuestion);
+//        layout.removeView(txtAnswerA);
+//        layout.removeView(txtAnswerB);
+//        layout.removeView(txtAnswerC);
+//        layout.removeView(txtAnswerD);
+//        //layout.removeView(progressBar);
+//        layout.removeView(txtRightCount);
+//        layout.removeView(txtNumberQuestion);
+//
+//        txtQuestion.setTextSize(30f);
 
-        txtQuestion.setTextSize(30f);
+        txtQuestion.setVisibility(View.GONE);
+        txtAnswerA.setVisibility(View.GONE);
+        txtAnswerB.setVisibility(View.GONE);
+        txtAnswerC.setVisibility(View.GONE);
+        txtAnswerD.setVisibility(View.GONE);
 
-        txtQuestion.setText("RESULT: " + number_of_right_answer +"/" + NUMBER_OF_QUESTION+ " CORRECT");
+        ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) txtNumberQuestion.getLayoutParams();
+        marginLayoutParams.setMargins(0, 250, 0, 0);
+        txtRightCount.setTextSize(100f);
+        //txtQuestion.setText("RESULT: " + number_of_right_answer +"/" + NUMBER_OF_QUESTION+ " CORRECT");
 
         txtNotification.setVisibility(View.VISIBLE);
         btnMain.setVisibility(View.VISIBLE);
@@ -474,24 +531,25 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 }
-                showDialog(check);
-                if(isKanji){
-                    if (kanjiList.isEmpty()){
-                        Log.d("KANJIlist_EMPTY","KANJIlist_EMPTY");
-                        updateNumberOfRightAnswer();
-                        showResult();
-                    }else{
-                        updateQuestionKanji(kanjiList, answerList);
-                    }
-                }else{
-                    if (mojiList.isEmpty()){
-                        Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
-                        updateNumberOfRightAnswer();
-                        showResult();
-                    }else{
-                        updateQuestionMoji(mojiList, answerList);
-                    }
-                }
+                //showDialog(check);
+                checkTrueOrFalseAnswer(check, txtAnswerA);
+//                if(isKanji){
+//                    if (kanjiList.isEmpty()){
+//                        Log.d("KANJIlist_EMPTY","KANJIlist_EMPTY");
+//                        updateNumberOfRightAnswer();
+//                        showResult();
+//                    }else{
+//                        updateQuestionKanji(kanjiList, answerList);
+//                    }
+//                }else{
+//                    if (mojiList.isEmpty()){
+//                        Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
+//                        updateNumberOfRightAnswer();
+//                        showResult();
+//                    }else{
+//                        updateQuestionMoji(mojiList, answerList);
+//                    }
+//                }
 
                 break;
             case R.id.txtAnswerB:
@@ -507,24 +565,25 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 }
-                showDialog(check);
-                if(isKanji){
-                    if (kanjiList.isEmpty()){
-                        Log.d("KANJIlist_EMPTY","KANJIlist_EMPTY");
-                        updateNumberOfRightAnswer();
-                        showResult();
-                    }else{
-                        updateQuestionKanji(kanjiList, answerList);
-                    }
-                }else{
-                    if (mojiList.isEmpty()){
-                        Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
-                        updateNumberOfRightAnswer();
-                        showResult();
-                    }else{
-                        updateQuestionMoji(mojiList, answerList);
-                    }
-                }
+//                showDialog(check);
+                checkTrueOrFalseAnswer(check, txtAnswerB);
+//                if(isKanji){
+//                    if (kanjiList.isEmpty()){
+//                        Log.d("KANJIlist_EMPTY","KANJIlist_EMPTY");
+//                        updateNumberOfRightAnswer();
+//                        showResult();
+//                    }else{
+//                        updateQuestionKanji(kanjiList, answerList);
+//                    }
+//                }else{
+//                    if (mojiList.isEmpty()){
+//                        Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
+//                        updateNumberOfRightAnswer();
+//                        showResult();
+//                    }else{
+//                        updateQuestionMoji(mojiList, answerList);
+//                    }
+//                }
 
                 break;
             case R.id.txtAnswerC:
@@ -539,24 +598,26 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 }
-                showDialog(check);
-                if(isKanji){
-                    if (kanjiList.isEmpty()){
-                        Log.d("KANJIlist_EMPTY","KANJIlist_EMPTY");
-                        updateNumberOfRightAnswer();
-                        showResult();
-                    }else{
-                        updateQuestionKanji(kanjiList, answerList);
-                    }
-                }else{
-                    if (mojiList.isEmpty()){
-                        Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
-                        updateNumberOfRightAnswer();
-                        showResult();
-                    }else{
-                        updateQuestionMoji(mojiList, answerList);
-                    }
-                }
+//                showDialog(check);
+                checkTrueOrFalseAnswer(check, txtAnswerC);
+
+//                if(isKanji){
+//                    if (kanjiList.isEmpty()){
+//                        Log.d("KANJIlist_EMPTY","KANJIlist_EMPTY");
+//                        updateNumberOfRightAnswer();
+//                        showResult();
+//                    }else{
+//                        updateQuestionKanji(kanjiList, answerList);
+//                    }
+//                }else{
+//                    if (mojiList.isEmpty()){
+//                        Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
+//                        updateNumberOfRightAnswer();
+//                        showResult();
+//                    }else{
+//                        updateQuestionMoji(mojiList, answerList);
+//                    }
+//                }
                 break;
             case R.id.txtAnswerD:
                 answer = txtAnswerD.getText().toString();
@@ -570,24 +631,26 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 }
-                showDialog(check);
-                if(isKanji){
-                    if (kanjiList.isEmpty()){
-                        Log.d("KANJIlist_EMPTY","KANJIlist_EMPTY");
-                        updateNumberOfRightAnswer();
-                        showResult();
-                    }else{
-                        updateQuestionKanji(kanjiList, answerList);
-                    }
-                }else{
-                    if (mojiList.isEmpty()){
-                        Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
-                        updateNumberOfRightAnswer();
-                        showResult();
-                    }else{
-                        updateQuestionMoji(mojiList, answerList);
-                    }
-                }
+                //showDialog(check);
+                checkTrueOrFalseAnswer(check, txtAnswerD);
+
+//                if(isKanji){
+//                    if (kanjiList.isEmpty()){
+//                        Log.d("KANJIlist_EMPTY","KANJIlist_EMPTY");
+//                        updateNumberOfRightAnswer();
+//                        showResult();
+//                    }else{
+//                        updateQuestionKanji(kanjiList, answerList);
+//                    }
+//                }else{
+//                    if (mojiList.isEmpty()){
+//                        Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
+//                        updateNumberOfRightAnswer();
+//                        showResult();
+//                    }else{
+//                        updateQuestionMoji(mojiList, answerList);
+//                    }
+//                }
                 break;
 
             case R.id.btnMain:
@@ -614,13 +677,14 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
     private void initData(boolean isKanji){
         if(isKanji){
             for(int i = 0; i< kanjiList.size(); i++){
                 oldKanjiList.add(kanjiList.get(i));
                 answerList.add(kanjiList.get(i).getAmhan());
                 QAList.add(new QuestionAnswer(kanjiList.get(i).getKanji(),
-                                kanjiList.get(i).getAmhan()));
+                        kanjiList.get(i).getAmhan()));
             }
             NUMBER_OF_QUESTION = kanjiList.size();
             updateQuestionKanji(kanjiList, answerList);
@@ -636,6 +700,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             updateQuestionMoji(mojiList, answerList);
         }
     }
+
 //    class LoadDataTask extends AsyncTask<Void, Void, Void>{
 //
 //        @Override

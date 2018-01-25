@@ -106,6 +106,4 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicHolder>
             Log.d(TAG, "onClick(in): " + getAdapterPosition());
         }
     }
-
-
 }

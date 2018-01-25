@@ -30,18 +30,18 @@ import java.util.Random;
  * Created by huuduc on 17/01/2018.
  */
 
-public class TestActivity extends AppCompatActivity implements View.OnClickListener{
+public class TestActivity extends AppCompatActivity implements View.OnClickListener {
 
     public boolean check;
     public static final String BOOK = "Soumatome";
     public static final String REFERENCE = "moji";
 
     public static int NUMBER_OF_QUESTION = 0;
-
+    private static final String TAG = TestActivity.class.getSimpleName();
     private int number_of_right_answer = 0;
     private int index_question = 0;
     private ArrayList<Kanji> kanjiList = new ArrayList<>();
-    private ArrayList<Moji> mojiList = new ArrayList<>() ;
+    private ArrayList<Moji> mojiList = new ArrayList<>();
     private ArrayList<String> answerList = new ArrayList<>();
     private ArrayList<QuestionAnswer> QAList = new ArrayList<>();
     private ArrayList<Kanji> oldKanjiList = new ArrayList<>();
@@ -52,12 +52,13 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     private TextView txtRightCount, txtQuestion, txtAnswerA, txtAnswerB, txtAnswerC, txtAnswerD, txtCorrect;
     private TextView txtNumberQuestion;
     private ConstraintLayout layout;
-
     private TextView txtNotification;
     private Button btnMain;
     private Button btnRetry;
     private static boolean isKanji = false;
     Dialog settingsDialog = null;
+    private ConstraintLayout layout_test;
+
     //Intent refresh;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,12 +67,12 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
         Intent intent = getIntent();
 
-        if(intent.hasExtra(Constants.SET_BY_USER)){
+        if (intent.hasExtra(Constants.SET_BY_USER)) {
             String fragmentTag = intent.getStringExtra(Constants.DATA_TYPE);
-            if(fragmentTag.equals("KANJI")){
+            if (fragmentTag.equals("KANJI")) {
                 isKanji = true;
                 kanjiList = (ArrayList<Kanji>) intent.getSerializableExtra(Constants.SET_BY_USER);
-            }else{
+            } else {
                 isKanji = false;
                 mojiList = (ArrayList<Moji>) intent.getSerializableExtra(Constants.SET_BY_USER);
             }
@@ -106,6 +107,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         txtAnswerD = findViewById(R.id.txtAnswerD);
         txtNumberQuestion = findViewById(R.id.txtNumberOfQuestion);
         txtCorrect = (TextView) findViewById(R.id.txt_correct);
+        layout_test = (ConstraintLayout) findViewById(R.id.layout_test_activity);
 
 //        kanjiList = new ArrayList<>();
 //        answerList = new ArrayList<>();
@@ -134,7 +136,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         finish();
     }
 
-    public void updateQuestionMoji (ArrayList<Moji> listMoji, ArrayList<String> listAnswer) {
+    public void updateQuestionMoji(ArrayList<Moji> listMoji, ArrayList<String> listAnswer) {
         index_question++;
         //progressBar.setProgress(index_question * 100 / NUMBER_OF_QUESTION);
         txtNumberQuestion.setText("QUESTION: " + String.valueOf(index_question) + "/"
@@ -158,7 +160,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
 
         int index_one_location = new Random().nextInt(4);
-        switch (index_one_location){
+        switch (index_one_location) {
             case 0:
                 // set dap an vao cau A
                 txtAnswerA.setText(listMoji.get(index_moji).getCachDocHira());
@@ -263,7 +265,8 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
 
     }
-    public void updateQuestionKanji (ArrayList<Kanji> listKanji, ArrayList<String> listAnswer) {
+
+    public void updateQuestionKanji(ArrayList<Kanji> listKanji, ArrayList<String> listAnswer) {
         index_question++;
         //progressBar.setProgress(index_question * 100 / NUMBER_OF_QUESTION);
         String numberQuestion = "QUESTION: " + String.valueOf(index_question) + "/"
@@ -289,7 +292,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
 
         int index_one_location = new Random().nextInt(4);
-        switch (index_one_location){
+        switch (index_one_location) {
             case 0:
                 // set dap an vao cau A
                 txtAnswerA.setText(listKanji.get(index_kanji).getAmhan());
@@ -394,12 +397,14 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
 
     }
-    public void updateNumberOfRightAnswer () {
+
+    public void updateNumberOfRightAnswer() {
         txtRightCount.setText(String.valueOf(number_of_right_answer));
     }
+
     public void checkTrueOrFalseAnswer(boolean check, final TextView answer_view) {
-        if (check){
-            new CountDownTimer(1200, 1000) {
+        if (check) {
+            new CountDownTimer(1000, 1000) {
                 public void onTick(long millisUntilFinished) {
                     answer_view.setBackgroundColor(Color.parseColor("#4CAF50"));
                     answer_view.setTextColor(Color.WHITE);
@@ -407,16 +412,25 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                     txtAnswerB.setEnabled(false);
                     txtAnswerC.setEnabled(false);
                     txtAnswerD.setEnabled(false);
-                }
 
+                    //next question if touch on screen
+                    layout_test.setEnabled(true);
+                    layout_test.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            onFinish();
+                            cancel();
+                        }
+                    });
+                }
                 public void onFinish() {
+                    layout_test.setEnabled(false);
                     finishCheckAnswer(answer_view);
                 }
             }.start();
-
-        }else{
-            new CountDownTimer(1200, 1000) {
-
+        }
+        else {
+            new CountDownTimer(1000, 1000) {
                 public void onTick(long millisUntilFinished) {
                     answer_view.setBackgroundColor(Color.parseColor("#C62828"));
                     answer_view.setTextColor(Color.WHITE);
@@ -424,17 +438,28 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                     txtAnswerB.setEnabled(false);
                     txtAnswerC.setEnabled(false);
                     txtAnswerD.setEnabled(false);
+
+                    //next question if touch on screen
+                    layout_test.setEnabled(true);
+                    layout_test.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            onFinish();
+                            cancel();
+                        }
+                    });
                 }
 
                 public void onFinish() {
-                   finishCheckAnswer(answer_view);
+                    layout_test.setEnabled(false);
+                    finishCheckAnswer(answer_view);
                 }
             }.start();
         }
     }
 
 
-    public void finishCheckAnswer(TextView answer_view){
+    public void finishCheckAnswer(TextView answer_view) {
         answer_view.setTextColor(Color.parseColor("#AB5E4F"));
         answer_view.setBackgroundResource(R.drawable.border);
         txtAnswerA.setEnabled(true);
@@ -442,20 +467,20 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         txtAnswerC.setEnabled(true);
         txtAnswerD.setEnabled(true);
 
-        if(isKanji){
-            if (kanjiList.isEmpty()){
-                Log.d("KANJIlist_EMPTY","KANJIlist_EMPTY");
+        if (isKanji) {
+            if (kanjiList.isEmpty()) {
+                Log.d("KANJIlist_EMPTY", "KANJIlist_EMPTY");
                 updateNumberOfRightAnswer();
                 showResult();
-            }else{
+            } else {
                 updateQuestionKanji(kanjiList, answerList);
             }
-        }else{
-            if (mojiList.isEmpty()){
-                Log.d("MOJIlist_EMPTY","MOJIlist_EMPTY");
+        } else {
+            if (mojiList.isEmpty()) {
+                Log.d("MOJIlist_EMPTY", "MOJIlist_EMPTY");
                 updateNumberOfRightAnswer();
                 showResult();
-            }else{
+            } else {
                 updateQuestionMoji(mojiList, answerList);
             }
         }
@@ -464,10 +489,10 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     public void showDialog(boolean check) {
         settingsDialog = new Dialog(this);
         settingsDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        if (check){
+        if (check) {
             settingsDialog.setContentView(getLayoutInflater()
                     .inflate(R.layout.image_right, null));
-        }else{
+        } else {
             settingsDialog.setContentView(getLayoutInflater()
                     .inflate(R.layout.image_wrong, null));
         }
@@ -482,7 +507,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void showResult () {
+    public void showResult() {
         if (settingsDialog != null) {
             settingsDialog.dismiss();
         }
@@ -518,15 +543,15 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         String question = txtQuestion.getText().toString();
         String answer = "";
 
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.txtAnswerA:
                 answer = txtAnswerA.getText().toString();
-                for (QuestionAnswer item : QAList){
-                    if (item.getQuestion().equalsIgnoreCase(question)){
-                        if (item.getAnswer().equalsIgnoreCase(answer)){
+                for (QuestionAnswer item : QAList) {
+                    if (item.getQuestion().equalsIgnoreCase(question)) {
+                        if (item.getAnswer().equalsIgnoreCase(answer)) {
                             check = true;
                             number_of_right_answer++;
-                        }else{
+                        } else {
                             check = false;
                         }
                     }
@@ -555,12 +580,12 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.txtAnswerB:
 
                 answer = txtAnswerB.getText().toString();
-                for (QuestionAnswer item : QAList){
-                    if (item.getQuestion().equalsIgnoreCase(question)){
-                        if (item.getAnswer().equalsIgnoreCase(answer)){
+                for (QuestionAnswer item : QAList) {
+                    if (item.getQuestion().equalsIgnoreCase(question)) {
+                        if (item.getAnswer().equalsIgnoreCase(answer)) {
                             check = true;
                             number_of_right_answer++;
-                        }else{
+                        } else {
                             check = false;
                         }
                     }
@@ -588,12 +613,12 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.txtAnswerC:
                 answer = txtAnswerC.getText().toString();
-                for (QuestionAnswer item : QAList){
-                    if (item.getQuestion().equalsIgnoreCase(question)){
-                        if (item.getAnswer().equalsIgnoreCase(answer)){
+                for (QuestionAnswer item : QAList) {
+                    if (item.getQuestion().equalsIgnoreCase(question)) {
+                        if (item.getAnswer().equalsIgnoreCase(answer)) {
                             check = true;
                             number_of_right_answer++;
-                        }else{
+                        } else {
                             check = false;
                         }
                     }
@@ -621,12 +646,12 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.txtAnswerD:
                 answer = txtAnswerD.getText().toString();
-                for (QuestionAnswer item : QAList){
-                    if (item.getQuestion().equalsIgnoreCase(question)){
-                        if (item.getAnswer().equalsIgnoreCase(answer)){
+                for (QuestionAnswer item : QAList) {
+                    if (item.getQuestion().equalsIgnoreCase(question)) {
+                        if (item.getAnswer().equalsIgnoreCase(answer)) {
                             check = true;
                             number_of_right_answer++;
-                        }else{
+                        } else {
                             check = false;
                         }
                     }
@@ -661,13 +686,12 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 //                startActivity(getIntent());
 //                finish();
                 Intent refresh = new Intent(this, TestActivity.class);
-                if(isKanji){
+                if (isKanji) {
                     Log.d("test", String.valueOf(kanjiList.size()));
 
                     refresh.putExtra(Constants.SET_BY_USER, oldKanjiList);
                     refresh.putExtra(Constants.DATA_TYPE, "KANJI");
-                }
-                else{
+                } else {
 
                     refresh.putExtra(Constants.SET_BY_USER, oldMojiList);
                     refresh.putExtra(Constants.DATA_TYPE, "MOJI");
@@ -678,9 +702,9 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void initData(boolean isKanji){
-        if(isKanji){
-            for(int i = 0; i< kanjiList.size(); i++){
+    private void initData(boolean isKanji) {
+        if (isKanji) {
+            for (int i = 0; i < kanjiList.size(); i++) {
                 oldKanjiList.add(kanjiList.get(i));
                 answerList.add(kanjiList.get(i).getAmhan());
                 QAList.add(new QuestionAnswer(kanjiList.get(i).getKanji(),
@@ -688,9 +712,8 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             }
             NUMBER_OF_QUESTION = kanjiList.size();
             updateQuestionKanji(kanjiList, answerList);
-        }
-        else{
-            for(int i = 0; i< mojiList.size(); i++){
+        } else {
+            for (int i = 0; i < mojiList.size(); i++) {
                 oldMojiList.add(mojiList.get(i));
                 answerList.add(mojiList.get(i).getCachDocHira());
                 QAList.add(new QuestionAnswer(mojiList.get(i).getTuTiengNhat(),
@@ -700,6 +723,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             updateQuestionMoji(mojiList, answerList);
         }
     }
+
 
 //    class LoadDataTask extends AsyncTask<Void, Void, Void>{
 //

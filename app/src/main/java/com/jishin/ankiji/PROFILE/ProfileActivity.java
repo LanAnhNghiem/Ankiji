@@ -83,6 +83,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private String currentUid;
 
     private int totalOfWords = 0;
+    private int totalOfSets = 0;
 
 
     @Override
@@ -135,16 +136,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()){
                     if (data.getKey().equalsIgnoreCase(user.getUid())){
-                        Log.d("STRING_VALUE", String.valueOf(data.getChildrenCount()));
-                        txtNumberOfSet.setText("Number Of Sets: " + String.valueOf(data.getChildrenCount()));
+                        totalOfSets += data.getChildrenCount();
                         for (DataSnapshot word : data.getChildren()){
                             totalOfWords += word.getChildrenCount();
                         }
-                    }else{
-                        Log.d("NO_SETS", "NO_SETS");
-                        txtNumberOfSet.setText("Number Of Sets: 0");
                     }
                 }
+                txtNumberOfSet.setText("Number Of Sets: " + String.valueOf(totalOfSets));
                 txtTotalWord.setText("Total Of Words: " + String.valueOf(totalOfWords));
             }
 

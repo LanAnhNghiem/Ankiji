@@ -51,7 +51,13 @@ public class TestDataActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_data);
         mLocalData.init(getApplicationContext(),"yRBa49I8oOhPDReyi5rwxog02G13", mData);
-        mLocalData.loadAllData();
+        if(!mLocalData.hasLocalData()){
+            mLocalData.loadAllData();
+            mLocalData.readData("KanjiSet");
+        }
+        else{
+            mLocalData.readData("KanjiSet");
+        }
         mContext = this;
 
         // ------------ init firebase data ----------------
@@ -128,13 +134,6 @@ public class TestDataActivity extends AppCompatActivity {
         });
     }
 
-
-
-
-
-
-
-
     private void showLogcat(String veryLongString){
         int maxLogSize = 1000;
         for(int i = 0; i <= veryLongString.length() / maxLogSize; i++) {
@@ -192,14 +191,6 @@ public class TestDataActivity extends AppCompatActivity {
     // ------------------------------------------------------------------
 
 }
-
-
-
-
-
-
-
-
 
 
 // ------------------ map helper ----------------------

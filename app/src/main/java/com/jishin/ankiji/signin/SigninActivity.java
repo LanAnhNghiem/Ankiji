@@ -26,16 +26,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.ResetPassword.ResetPasswordActivity;
 import com.jishin.ankiji.features.FeatureActivity;
-import com.jishin.ankiji.model.Kanji;
-import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.signup.SignupActivity;
+import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
 
 public class SigninActivity extends AppCompatActivity {
@@ -71,8 +66,8 @@ public class SigninActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         if(mData.isSignIn()){
-            Log.d("Da_SIGN_IN", "Da_SIGN_IN");
             Intent intent = new Intent(SigninActivity.this, FeatureActivity.class);
+            intent.putExtra(Constants.USER_ID, mData.getUserID());
             startActivity(intent);
             finish();
         }
@@ -97,7 +92,6 @@ public class SigninActivity extends AppCompatActivity {
     }
 
     private void setEvents() {
-        
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

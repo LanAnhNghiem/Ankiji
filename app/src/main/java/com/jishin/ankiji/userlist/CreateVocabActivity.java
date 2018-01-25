@@ -19,7 +19,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.KanjiItemAdapter;
 import com.jishin.ankiji.adapter.MojiItemAdapter;
-import com.jishin.ankiji.interfaces.SetDataListener;
 import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.Set;
@@ -47,7 +46,6 @@ public class CreateVocabActivity extends AppCompatActivity{
     private DatabaseReference mMojiSet = mData.createDatabase(Constants.MOJI_SET_NODE);
     private DatabaseReference mKanjiSet = mData.createDatabase(Constants.KANJI_SET_NODE);
     private DatabaseReference mSetByUser = mData.createDatabase(Constants.SET_BY_USER_NODE);
-    private SetDataListener setDataListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

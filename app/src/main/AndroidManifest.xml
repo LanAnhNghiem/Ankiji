@@ -49,7 +49,11 @@
         <activity android:name=".explores.TopicMojiActivity" />
 
         <activity android:name=".signin.SigninActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity android:name=".ResetPassword.ResetPasswordActivity" />
@@ -62,11 +66,7 @@
         <activity android:name=".edit.EditVocabActivity"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".testdata.TestDataActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

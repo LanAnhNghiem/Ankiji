@@ -1,8 +1,11 @@
 package com.jishin.ankiji.fragment;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,24 +32,28 @@ import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.Feature_Test.TestActivity;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
+import com.jishin.ankiji.edit.EditVocabActivity;
 import com.jishin.ankiji.explores.TopicMojiActivity;
+import com.jishin.ankiji.interfaces.LoadDataListener;
 import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.learn.LearnActivity;
 import com.jishin.ankiji.model.DataTypeEnum;
-import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.Set;
 import com.jishin.ankiji.userlist.CreateVocabActivity;
 import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
+import com.jishin.ankiji.utilities.LocalDatabase;
+import com.jishin.ankiji.utilities.MapHelper;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by trungnguyeen on 12/27/17.
  */
 
-public class MojiFragment extends Fragment implements RemoveDataCommunicator{
+public class MojiFragment extends Fragment implements RemoveDataCommunicator, LoadDataListener{
 
     private static final String TAG = MojiFragment.class.getSimpleName();
     private RecyclerView rvRecentlyList;
@@ -64,16 +71,32 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
     public String getmUserID() {
         return mUserID;
     }
-
     public void setmUserID(String mUserID) {
         this.mUserID = mUserID;
     }
-
+    private LocalDatabase mLocalData = LocalDatabase.getInstance();
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initParam();
-        new LoadMojiDataTask().execute();
+        if(isNetworkAvailable()){
+            //Toast.makeText(getContext(), R.string.connected, Toast.LENGTH_SHORT).show();
+
+        }else{
+            //Toast.makeText(getContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+        }
+
+        //new LoadMojiDataTask().execute();
+    }
+    //Load local data
+    private void loadLocalData(){
+        Map myMap = mLocalData.readData(Constants.MOJI_SET_NODE);
+        if(myMap != null){
+            mMojiSetList = MapHelper.convertToSet(myMap);
+            if(mMojiSetList!=null)
+                mItemsAdapter.setSetList(mMojiSetList);
+        }
+
     }
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
@@ -82,21 +105,26 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
         View view = inflater.inflate(R.layout.fragment_moji, container, false);
         addControl(view);
         initRecycler(view);
+        //load Local data
+        loadLocalData();
         return view;
     }
 
     private void initParam() {
+        mLocalData.init(getContext(),mUserID, mData, this);
         if(!mData.getUserID().isEmpty()){
             mMojiSetRef = mData.getDatabase()
                     .child(Constants.MOJI_SET_NODE)
                     .child(mData.getUserID());
             mSetByUser = mData.createDatabase(Constants.SET_BY_USER_NODE).child(mData.getUserID());
+            mUserID = mData.getUserID();
         }
         else{
             mMojiSetRef = mData.getDatabase()
                     .child(Constants.MOJI_SET_NODE)
                     .child(getmUserID());
             mSetByUser = mData.createDatabase(Constants.SET_BY_USER_NODE).child(getmUserID());
+            mUserID = getmUserID();
         }
     }
 
@@ -138,8 +166,8 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
                         String setName = edtSetName.getText().toString().trim();
                         if(!setName.isEmpty()){
                             Intent intent = new Intent(getContext(), CreateVocabActivity.class);
-                            intent.putExtra("create", Constants.CREATE_MOJI);
-                            intent.putExtra("name", setName);
+                            intent.putExtra(Constants.CREATE, Constants.CREATE_MOJI);
+                            intent.putExtra(Constants.NAME, setName);
                             intent.putExtra(Constants.USER_ID, mUserID);
                             startActivity(intent);
                         }
@@ -191,16 +219,28 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
                         Intent intent = new Intent(getContext(), LearnActivity.class);
                         intent.putExtra(Constants.SET_BY_USER, set);
                         intent.putExtra(Constants.DATA_TYPE, dataTypeEnum);
+                        intent.putExtra(Constants.USER_ID, mUserID);
                         startActivity(intent);
                         break;
                     case 1:
                         new CountItemTask(set).execute();
+                        if(mMojiList.size() >= 5){
+                            Intent intentTest = new Intent(getContext(), TestActivity.class);
+                            intentTest.putExtra(Constants.SET_BY_USER, set);
+                            intentTest.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
+                            startActivity(intentTest);
+                        }
+
                         break;
                     case 2:
 
                         break;
                     case 3:
-
+                        Intent editIntent = new Intent(getContext(), EditVocabActivity.class);
+                        editIntent.putExtra(Constants.SET_BY_USER, set);
+                        editIntent.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
+                        editIntent.putExtra(Constants.USER_ID, mUserID);
+                        startActivity(editIntent);
                         break;
                 }
             }
@@ -246,6 +286,12 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
         mItemsAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void loadData() {
+        loadLocalData();
+    }
+
+    //Load moji set
     public class LoadMojiDataTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
@@ -275,6 +321,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
             mItemsAdapter.notifyDataSetChanged();
         }
     }
+    //Load moji list
     public class CountItemTask extends AsyncTask<Void, Void, Void>{
         Set mSet = new Set();
         public CountItemTask(Set set){
@@ -282,22 +329,26 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
         }
         @Override
         protected Void doInBackground(Void... voids) {
-            mSetByUser.child(mSet.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    mMojiList.clear();
-                    for(DataSnapshot data: dataSnapshot.getChildren()){
-                        mMojiList.add(data.getValue(Moji.class));
-                        Log.d(TAG, data.getKey()+" "+data.getValue());
-                    }
-                    onProgressUpdate();
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
+//            mSetByUser.child(mSet.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    mMojiList.clear();
+//                    for(DataSnapshot data: dataSnapshot.getChildren()){
+//                        mMojiList.add(data.getValue(Moji.class));
+//                        Log.d(TAG, data.getKey()+" "+data.getValue());
+//                    }
+//                    onProgressUpdate();
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//
+//                }
+//            });
+            mMojiList.clear();
+            Map map = mLocalData.readData(Constants.SET_BY_USER_NODE);
+            mMojiList = MapHelper.convertToMoji(map, mSet.getId());
+            publishProgress();
             return null;
         }
 
@@ -316,4 +367,10 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
         }
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 }

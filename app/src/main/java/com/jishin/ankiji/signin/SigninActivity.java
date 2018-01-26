@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,16 +27,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.ResetPassword.ResetPasswordActivity;
 import com.jishin.ankiji.features.FeatureActivity;
-import com.jishin.ankiji.model.Kanji;
-import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.signup.SignupActivity;
+import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
 
 public class SigninActivity extends AppCompatActivity {
@@ -48,6 +44,8 @@ public class SigninActivity extends AppCompatActivity {
     private ImageView imgGoogle;
     private TextView txtCreateAcount;
     private TextView txtForgotPass;
+    private ProgressBar progressBar;
+    private ImageView imgBottom;
     private LoginGoogle loginGoogle;
     private LoginFacebook loginFacebook;
     private LoginManager loginManager;
@@ -72,12 +70,15 @@ public class SigninActivity extends AppCompatActivity {
         super.onStart();
         if(mData.isSignIn()){
             Intent intent = new Intent(SigninActivity.this, FeatureActivity.class);
+            intent.putExtra(Constants.USER_ID, mData.getUserID());
             startActivity(intent);
             finish();
         }
     }
 
     private void getControls() {
+        imgBottom = (ImageView) findViewById(R.id.img_bottom);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         edtUsername = (EditText) findViewById(R.id.edt_username);
         edtPassword = (EditText) findViewById(R.id.edt_password);
         btnLogin = (Button) findViewById(R.id.btnLogin);
@@ -96,14 +97,16 @@ public class SigninActivity extends AppCompatActivity {
     }
 
     private void setEvents() {
-        
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String username = edtUsername.getText().toString().trim();
                 String password = edtPassword.getText().toString().trim();
-                hideKeyboard(view);
+
                 if(!username.isEmpty() && !password.isEmpty()){
+                    hideKeyboard(view);
+                    progressBar.setVisibility(View.VISIBLE);
+                    imgBottom.setVisibility(View.GONE);
                     requestSignIn(username, password);
 
                 }else{
@@ -185,6 +188,8 @@ public class SigninActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                progressBar.setVisibility(View.GONE);
+                imgBottom.setVisibility(View.VISIBLE);
                 Toast.makeText(SigninActivity.this, R.string.login_failed, Toast.LENGTH_SHORT).show();
                 btnLogin.setEnabled(true);
                 btnLogin.setBackgroundColor(ContextCompat.getColor(getBaseContext(), R.color.colorPrimaryDark));

@@ -27,9 +27,9 @@ import com.jishin.ankiji.model.Set;
 import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class MojiExploresActivity extends AppCompatActivity {
 
@@ -45,7 +45,8 @@ public class MojiExploresActivity extends AppCompatActivity {
     private DatabaseReference mMojiRef;
     private String mSetName = "";
     final Context context = this;
-    Date currentTime;
+    //Date currentTime;
+    String currentTime;
     ImageView ivAdd;
     String userID;
     String id;
@@ -60,7 +61,9 @@ public class MojiExploresActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_moji_explores);
 
-        currentTime = Calendar.getInstance().getTime();
+//        currentTime = Calendar.getInstance().getTime();
+        currentTime = new SimpleDateFormat("dd-MM-yyyy")
+                          .format(Calendar.getInstance().getTime());
         userID = mData.getUserID();
         isAdded = false;
 
@@ -175,7 +178,8 @@ public class MojiExploresActivity extends AppCompatActivity {
     private void controlAddButton() {
         if (isAdded == false) {
             id = mMojiSet.push().getKey();
-            Set set = new Set(id, mSetName, String.valueOf(currentTime));
+            //Set set = new Set(id, mSetName, String.valueOf(currentTime));
+            Set set = new Set(id, mSetName, currentTime);
             mMojiSet.child(userID).child(id).setValue(set);
             mSetByUser.child(userID).child(id).setValue(mojiList);
             isAdded = true;

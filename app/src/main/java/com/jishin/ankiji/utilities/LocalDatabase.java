@@ -165,7 +165,9 @@ public class LocalDatabase {
                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                             mSetByUserData = (Map<String, Map>)dataSnapshot.getValue();
                                             mLocalData.put(Constants.SET_BY_USER_NODE, mSetByUserData);
-                                            onProgressUpdate();
+                                            String str = new Gson().toJson(mLocalData);
+                                            writeToFile(Constants.DATA_FILE, str, mContext);
+                                            mListener.loadData();
                                         }
 
                                         @Override
@@ -195,15 +197,6 @@ public class LocalDatabase {
                 }
             });
             return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            super.onProgressUpdate(values);
-            // you need to compile Gson in build.gradle (app level)
-            String str = new Gson().toJson(mLocalData);
-            writeToFile(Constants.DATA_FILE, str, mContext);
-            mListener.loadData();
         }
     }
     //Sync data from local to Firebase

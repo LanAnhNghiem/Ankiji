@@ -82,8 +82,8 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicHolder>
             });
 
         } else if (FRAGMENT_TAG == "MOJI") {
-            final int topicNum = position + 1;
-            holder.tvTitle.setText("Topic " + String.valueOf(topicNum));
+            int topicNum = position+1;
+            holder.tvTitle.setText(Topic.get(position));
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -97,7 +97,6 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicHolder>
                     Intent intent = new Intent(holder.context, MojiExploresActivity.class);
                     intent.putExtra("Moji_Key", Topic.get(position));
                     holder.context.startActivity(intent);
-
                 }
             });
         }

@@ -11,8 +11,6 @@ import android.view.ViewGroup;
 
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.model.Kanji;
-import com.jishin.ankiji.userlist.OnTextListener;
-import com.jishin.ankiji.utilities.Constants;
 
 import java.util.ArrayList;
 
@@ -21,6 +19,7 @@ import java.util.ArrayList;
  */
 
 public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.KanjiItemHolder> {
+    public static final String TAG = KanjiItemAdapter.class.getSimpleName();
     public ArrayList<Kanji> mList = new ArrayList<>();
     private Context mContext;
 
@@ -31,7 +30,6 @@ public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.Kanj
     public KanjiItemAdapter(Context context){
         this.mContext = context;
     }
-    public KanjiItemAdapter(){}
 
     @Override
     public KanjiItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -45,73 +43,10 @@ public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.Kanj
         holder.edtKanji.setText(mList.get(position).getKanji());
         holder.edtWord.setText(mList.get(position).getTuvung());
         holder.edtMeaning.setText(mList.get(position).getAmhan());
-        addTextListener(holder, position);
         holder.edtKanji.requestFocus();
-    }
-    public void addTextListener(KanjiItemHolder holder, final int position){
+  }
 
-        holder.edtKanji.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(position < mList.size()){
-                    mList.get(position).setKanji(s.toString());
-                    setOnTextListener(mList);
-                }
-
-            }
-        });
-        holder.edtWord.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(position < mList.size()){
-                    mList.get(position).setTuvung(s.toString());
-                    setOnTextListener(mList);
-                }
-            }
-        });
-        holder.edtMeaning.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(position < mList.size()){
-                    mList.get(position).setAmhan(s.toString());
-                    setOnTextListener(mList);
-                }
-            }
-        });
-    }
-    public void setOnTextListener(ArrayList<Kanji> list){
-        //onTextListener.onTextListener(list);
-    }
     @Override
     public int getItemCount() {
         return mList.size();
@@ -126,6 +61,83 @@ public class KanjiItemAdapter extends RecyclerView.Adapter<KanjiItemAdapter.Kanj
             edtKanji = itemView.findViewById(R.id.edt_kanji);
             edtMeaning = itemView.findViewById(R.id.edt_meaning);
             edtWord = itemView.findViewById(R.id.edt_word);
+            addTextListener();
+        }
+
+//        @Override
+//        public boolean onTouch(View v, MotionEvent event) {
+//            if(event.getAction() == MotionEvent.ACTION_SCROLL){
+//                isScroll = true;
+//            }
+//            if(event.getAction() == MotionEvent.ACTION_DOWN &&
+//                    event.getAction() != MotionEvent.ACTION_SCROLL){
+//                realPosition = getAdapterPosition();
+//                if(oldPos != getAdapterPosition()){
+//                    //Toast.makeText(mContext,String.valueOf("Position: "+realPosition), Toast.LENGTH_SHORT).show();
+//                    oldPos = realPosition;
+//                    addTextListener(realPosition);
+//                }
+//            }
+//            return false;
+//        }
+        public void addTextListener(){
+            edtKanji.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                        //Toast.makeText(mContext, edtKanji.getText().toString(), Toast.LENGTH_SHORT).show();
+                        mList.get(getAdapterPosition()).setKanji(s.toString());
+                    }
+                }
+            });
+            edtWord.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                        //Toast.makeText(mContext, edtKanji.getText().toString(), Toast.LENGTH_SHORT).show();
+                        mList.get(getAdapterPosition()).setTuvung(s.toString());
+                    }
+                }
+            });
+            edtMeaning.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if(getAdapterPosition() < mList.size() && !s.toString().isEmpty()){
+                        //Toast.makeText(mContext, edtKanji.getText().toString(), Toast.LENGTH_SHORT).show();
+                        mList.get(getAdapterPosition()).setAmhan(s.toString());
+                    }
+                }
+            });
 
         }
     }

@@ -10,6 +10,9 @@ public class User {
     private String email;
     private String linkPhoto;
 
+    public User() {
+    }
+
     public User(String id, String username, String email, String linkPhoto) {
         this.id = id;
         this.username = username;

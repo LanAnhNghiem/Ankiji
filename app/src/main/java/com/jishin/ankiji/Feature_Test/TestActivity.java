@@ -2,7 +2,6 @@ package com.jishin.ankiji.Feature_Test;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -12,22 +11,16 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.features.FeatureActivity;
 import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.QuestionAnswer;
 import com.jishin.ankiji.utilities.Constants;
+import com.jishin.ankiji.utilities.LocalDatabase;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -63,11 +56,12 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnRetry;
     private static boolean isKanji = false;
     Dialog settingsDialog = null;
+    private LocalDatabase mLocalData = LocalDatabase.getInstance();
     //Intent refresh;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_moji_test);
+        setContentView(R.layout.activity_test);
 
         Intent intent = getIntent();
 

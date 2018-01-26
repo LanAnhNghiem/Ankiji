@@ -12,4 +12,5 @@
     <color name="click_textview">#d6d4d4</color>
     <color name="progressBarBackground">#CE93D8</color>
     <color name="image_boder_color">#9C27B0</color>
+    <color name="text_color_test">#AB5E4F</color>
 </resources>

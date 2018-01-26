@@ -54,14 +54,25 @@
                 android:textSize="26sp"/>
 
             <TextView
+                android:id="@+id/tv_created_day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Created day: "
+                app:layout_constraintTop_toBottomOf="@id/tv_title"
+                app:layout_constraintStart_toEndOf="@id/bmb"
+                android:textSize="14sp"/>
+
+
+            <TextView
                 android:id="@+id/tv_item_count"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/item_count"
                 app:layout_constraintTop_toBottomOf="@id/tv_title"
-                app:layout_constraintStart_toEndOf="@id/bmb"
+                card_view:layout_constraintStart_toEndOf="@id/tv_created_day"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:textSize="14sp"/>
+
             <ImageButton
                 android:layout_width="12dp"
                 android:layout_height="12dp"

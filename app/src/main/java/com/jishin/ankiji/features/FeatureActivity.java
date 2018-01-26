@@ -1,6 +1,9 @@
 package com.jishin.ankiji.features;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -21,13 +24,21 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.jishin.ankiji.PROFILE.ProfileActivity;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.about_us.AboutUsActivity;
 import com.jishin.ankiji.adapter.FragmentAdapter;
+import com.jishin.ankiji.model.User;
 import com.jishin.ankiji.signin.SigninActivity;
-import com.jishin.ankiji.utilities.DatabaseService;
-import de.hdodenhof.circleimageview.CircleImageView;
 import com.jishin.ankiji.utilities.Constants;
+import com.jishin.ankiji.utilities.DatabaseService;
+import com.jishin.ankiji.utilities.LocalDatabase;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FeatureActivity extends AppCompatActivity{
     private static final String TAG = FeatureActivity.class.getSimpleName();
@@ -39,23 +50,38 @@ public class FeatureActivity extends AppCompatActivity{
     private DatabaseService mData = DatabaseService.getInstance();
     private NavigationView nav;
     private String mUserID = "";
-
-
     private CircleImageView imgAvatar;
     private TextView txtUsername;
     private TextView txtEmail;
-
     private FirebaseUser user;
+    LocalDatabase mLocalData = LocalDatabase.getInstance();
+
+    private DatabaseReference mReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_features);
         getUserID();
+        if(isNetworkAvailable()){
+            Toast.makeText(this, R.string.connected, Toast.LENGTH_SHORT).show();
+            loadLocalData();
+        }else{
+            Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+        }
         getControls();
         setEvents();
         Log.d(TAG,String.valueOf(mData.isSignIn()));
     }
+    private void loadLocalData(){
+        mLocalData.init(getApplicationContext(),mUserID, mData);
+        if(!mLocalData.hasLocalData()){
+            mLocalData.loadAllData();
+        }else{
+            mLocalData.updateAllData();
+        }
+    }
+
     private void getUserID(){
         Intent intent = getIntent();
         if(intent.hasExtra(Constants.USER_ID)){
@@ -88,6 +114,7 @@ public class FeatureActivity extends AppCompatActivity{
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
+
     }
     private void setEvents(){
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -112,7 +139,7 @@ public class FeatureActivity extends AppCompatActivity{
                 switch(menuItem.getItemId()){
 
                     case R.id.item_profile:
-                        Toast.makeText(FeatureActivity.this, "Profile", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(FeatureActivity.this, ProfileActivity.class));
                         break;
                     case R.id.item_setting:
                         Toast.makeText(FeatureActivity.this, "Setting", Toast.LENGTH_SHORT).show();
@@ -139,21 +166,36 @@ public class FeatureActivity extends AppCompatActivity{
             }
         });
         if (user != null) {
-            if (!TextUtils.isEmpty(user.getEmail())){
-                Log.d("txtEmail", user.getEmail());
-                txtEmail.setText(user.getEmail());
-            }
-            if (!TextUtils.isEmpty(user.getDisplayName())){
-                Log.d("txtUsername", user.getDisplayName());
-                txtUsername.setText(user.getDisplayName());
-            }
 
-            if (user.getPhotoUrl() != null){
-                Log.d("imgAvatar", user.getPhotoUrl().toString());
-                Glide.with(imgAvatar).load(user.getPhotoUrl()).into(imgAvatar);
-            }else{
-                Log.d("NONE_URL", "NONE_URL");
-            }
+            mReference = FirebaseDatabase.getInstance().getReference("User").child(user.getUid());
+
+            mReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User detailUser = dataSnapshot.getValue(User.class);
+
+                    if (!TextUtils.isEmpty(detailUser.getEmail())){
+                        Log.d("txtEmail", detailUser.getEmail());
+                        txtEmail.setText(detailUser.getEmail());
+                    }
+
+                    if (!TextUtils.isEmpty(detailUser.getUsername())){
+                        Log.d("txtUsername", detailUser.getUsername());
+                        txtUsername.setText(detailUser.getUsername());
+                    }
+
+                    if (!TextUtils.isEmpty(detailUser.getLinkPhoto())){
+                        Log.d("imgAvatar", detailUser.getLinkPhoto());
+                        Glide.with(imgAvatar).load(detailUser.getLinkPhoto()).into(imgAvatar);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
         }
     }
     @Override
@@ -165,5 +207,11 @@ public class FeatureActivity extends AppCompatActivity{
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

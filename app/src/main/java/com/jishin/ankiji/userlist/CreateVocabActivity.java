@@ -26,6 +26,7 @@ import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
 import com.jishin.ankiji.utilities.LocalDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,6 +45,7 @@ public class CreateVocabActivity extends AppCompatActivity{
     private TextView txtWord;
     private boolean isKanji = true;
     private String mSetName = "", mUserID = "";
+    private String currentTime = "";
     private DatabaseService mData = DatabaseService.getInstance();
     private DatabaseReference mMojiSet = mData.createDatabase(Constants.MOJI_SET_NODE);
     private DatabaseReference mKanjiSet = mData.createDatabase(Constants.KANJI_SET_NODE);
@@ -66,8 +68,9 @@ public class CreateVocabActivity extends AppCompatActivity{
         initControl();
         setupRecyclerView();
         setEvents();
-        Date currentTime = Calendar.getInstance().getTime();
-        Toast.makeText(this, String.valueOf(currentTime), Toast.LENGTH_SHORT).show();
+        //Date currentTime = Calendar.getInstance().getTime();
+        currentTime = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
+        //Toast.makeText(this, String.valueOf(currentTime), Toast.LENGTH_SHORT).show();
     }
     private void initControl(){
         //create data sample
@@ -223,17 +226,17 @@ public class CreateVocabActivity extends AppCompatActivity{
         }
     }
     private void saveDatabase(){
-        Date currentTime = Calendar.getInstance().getTime();
+        //Date currentTime = Calendar.getInstance().getTime();
         if(!isKanji){
             String id = mMojiSet.push().getKey();
-            Set set = new Set(id, mSetName, String.valueOf(currentTime));
+            Set set = new Set(id, mSetName, currentTime);
             Map mojiMap = mLocalData.readData(Constants.MOJI_SET_NODE);
             Map setByUserMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
             mMojiSet.child(mUserID).child(id).setValue(set);
             mSetByUser.child(mUserID).child(id).setValue(mMojiList);
         }else{
             String id = mKanjiSet.push().getKey();
-            Set set = new Set(id, mSetName, String.valueOf(currentTime));
+            Set set = new Set(id, mSetName, currentTime);
             mKanjiSet.child(mUserID).child(id).setValue(set);
             mSetByUser.child(mUserID).child(id).setValue(mKanjiList);
         }

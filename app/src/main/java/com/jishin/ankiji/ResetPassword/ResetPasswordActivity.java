@@ -1,10 +1,12 @@
 package com.jishin.ankiji.ResetPassword;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -18,7 +20,7 @@ import com.jishin.ankiji.R;
 public class ResetPasswordActivity extends AppCompatActivity {
 
     private EditText inputEmail;
-    private Button btnReset, btnBack;
+    private Button btnReset;
     private FirebaseAuth auth;
     private ProgressBar progressBar;
 
@@ -29,22 +31,22 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
         inputEmail = findViewById(R.id.email);
         btnReset = findViewById(R.id.btn_reset_password);
-        btnBack = findViewById(R.id.btn_back);
+        //btnBack = findViewById(R.id.btn_back);
         progressBar = findViewById(R.id.progressBar);
 
         auth = FirebaseAuth.getInstance();
 
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+//        btnBack.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                finish();
+//            }
+//        });
 
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                hideKeyboard(v);
                 String email = inputEmail.getText().toString().trim();
 
                 if (TextUtils.isEmpty(email)) {
@@ -68,5 +70,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
                         });
             }
         });
+    }
+    private void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

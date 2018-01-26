@@ -88,6 +88,9 @@ public class LearnActivity extends AppCompatActivity {
                     contentList = kanjiList;
                 }
             }
+            if (contentList.size() != 0){
+                mProgressBar.setProgress(100 / contentList.size());
+            }
             mPagerAdapter.setContentList(contentList);
             mPagerAdapter.createCardList();
             mPagerAdapter.notifyDataSetChanged();

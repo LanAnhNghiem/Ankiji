@@ -61,7 +61,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_moji_test);
+        setContentView(R.layout.activity_test);
 
         Intent intent = getIntent();
 

@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +44,8 @@ public class SigninActivity extends AppCompatActivity {
     private ImageView imgGoogle;
     private TextView txtCreateAcount;
     private TextView txtForgotPass;
+    private ProgressBar progressBar;
+    private ImageView imgBottom;
     private LoginGoogle loginGoogle;
     private LoginFacebook loginFacebook;
     private LoginManager loginManager;
@@ -74,6 +77,8 @@ public class SigninActivity extends AppCompatActivity {
     }
 
     private void getControls() {
+        imgBottom = (ImageView) findViewById(R.id.img_bottom);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         edtUsername = (EditText) findViewById(R.id.edt_username);
         edtPassword = (EditText) findViewById(R.id.edt_password);
         btnLogin = (Button) findViewById(R.id.btnLogin);
@@ -97,8 +102,11 @@ public class SigninActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String username = edtUsername.getText().toString().trim();
                 String password = edtPassword.getText().toString().trim();
-                hideKeyboard(view);
+
                 if(!username.isEmpty() && !password.isEmpty()){
+                    hideKeyboard(view);
+                    progressBar.setVisibility(View.VISIBLE);
+                    imgBottom.setVisibility(View.GONE);
                     requestSignIn(username, password);
 
                 }else{
@@ -180,6 +188,8 @@ public class SigninActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                progressBar.setVisibility(View.GONE);
+                imgBottom.setVisibility(View.VISIBLE);
                 Toast.makeText(SigninActivity.this, R.string.login_failed, Toast.LENGTH_SHORT).show();
                 btnLogin.setEnabled(true);
                 btnLogin.setBackgroundColor(ContextCompat.getColor(getBaseContext(), R.color.colorPrimaryDark));

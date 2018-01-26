@@ -169,7 +169,6 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
                     public void onClick(DialogInterface dialog, int which) {
                         String setName = edtSetName.getText().toString().trim();
                         if(!setName.isEmpty()){
-                            //Toast.makeText(getContext(), "Click click", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getContext(), CreateVocabActivity.class);
                             intent.putExtra(Constants.CREATE, Constants.CREATE_KANJI);
                             intent.putExtra(Constants.NAME, setName);

@@ -1,5 +1,6 @@
 package com.jishin.ankiji.explores;
 
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -65,7 +66,7 @@ public class MojiExploresActivity extends AppCompatActivity {
 
 //        currentTime = Calendar.getInstance().getTime();
         currentTime = new SimpleDateFormat("dd-MM-yyyy")
-                          .format(Calendar.getInstance().getTime());
+                .format(Calendar.getInstance().getTime());
         userID = mData.getUserID();
         isAdded = false;
 
@@ -140,16 +141,19 @@ public class MojiExploresActivity extends AppCompatActivity {
 
     private void showData(DataSnapshot dataSnapshot) {
         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-
+            Log.d(TAG, "showData: ds: " + ds);
             Moji moji = ds.getValue(Moji.class);
+//            moji.setCachDocHira(ds.getValue(Moji.class).getCachDocHira());
+//            moji.setAmHan(ds.getValue(Moji.class).getAmHan());
             mojiList.add(moji);
-
+            Log.d(TAG, "showData: mojiList: " + mojiList);
         }
         mojiAdater.notifyDataSetChanged();
     }
 
     private void setReference(String topic) {
         mMojiRef = mData.getDatabase().child(Constants.MOJI_NODE).child(MOJI_SOUMATOME_KEY).child(topic);
+        Log.d(TAG, "setReference: Mojiref: " + mMojiRef);
     }
 
     private void checkStatus() {
@@ -192,7 +196,6 @@ public class MojiExploresActivity extends AppCompatActivity {
             showRemoveDialog();
         }
     }
-
 
 
     private void changeButtonAdd() {

@@ -122,13 +122,16 @@ public class RecentlyFragment extends Fragment implements RemoveDataCommunicator
 
     public void showData(DataSnapshot dataSnapshot) {
         topicList.clear();
-        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-            Log.d(TAG, "onDataChange: dsValue: " + ds.getValue(DateAccess.class).getType());
-            if (ds.getValue(DateAccess.class).getDate().equals(currentDay)) {
-                topicList.add(ds.getValue(DateAccess.class).getId());
+        if (dataSnapshot != null) {
+            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                Log.d(TAG, "onDataChange: dsValue: " + ds.getValue(DateAccess.class).getType());
+                if (ds.getValue(DateAccess.class).getDate().equals(currentDay)) {
+                    topicList.add(ds.getValue(DateAccess.class).getId());
+                }
             }
         }
-        
+
+
         topicAdapter.notifyDataSetChanged();
     }
 

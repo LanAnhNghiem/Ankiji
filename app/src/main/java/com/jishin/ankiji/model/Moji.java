@@ -7,55 +7,55 @@ import java.io.Serializable;
  */
 @SuppressWarnings("serial")
 public class Moji implements Serializable{
-    private String amHan;
-    private String cachDocHira;
-    private String nghiaTiengViet;
-    private String tuTiengNhat;
+    private String AmHan;
+    private String CachDocHira;
+    private String NghiaTiengViet;
+    private String TuTiengNhat;
 
     public Moji(String amHan, String cachDocHira, String nghiaTiengViet, String tuTiengNhat) {
-        this.amHan = amHan;
-        this.cachDocHira = cachDocHira;
-        this.nghiaTiengViet = nghiaTiengViet;
-        this.tuTiengNhat = tuTiengNhat;
+        this.AmHan = amHan;
+        this.CachDocHira = cachDocHira;
+        this.NghiaTiengViet = nghiaTiengViet;
+        this.TuTiengNhat = tuTiengNhat;
     }
     public Moji() {
 
     }
 
     public String getAmHan() {
-        return amHan;
+        return AmHan;
     }
       
     public void setAmHan(String amHan) {
-        this.amHan = amHan;
+        this.AmHan = amHan;
     }
     public String getCachDocHira() {
-        return cachDocHira;
+        return CachDocHira;
     }
 
     public void setCachDocHira(String cachDocHira) {
-        this.cachDocHira = cachDocHira;
+        this.CachDocHira = cachDocHira;
     }
     public String getNghiaTiengViet() {
-        return nghiaTiengViet;
+        return NghiaTiengViet;
     }
 
     public void setNghiaTiengViet(String nghiaTiengViet) {
-        this.nghiaTiengViet = nghiaTiengViet;
+        this.NghiaTiengViet = nghiaTiengViet;
     }
     public String getTuTiengNhat() {
-        return tuTiengNhat;
+        return TuTiengNhat;
     }
     public void setTuTiengNhat(String tuTiengNhat) {
-        this.tuTiengNhat = tuTiengNhat;
+        this.TuTiengNhat = tuTiengNhat;
     }
     @Override
     public String toString() {
         return "Moji{" +
-                "amHan='" + amHan + '\'' +
-                ", cachDocHira='" + cachDocHira + '\'' +
-                ", nghiaTiengViet='" + nghiaTiengViet + '\'' +
-                ", tuTiengNhat='" + tuTiengNhat + '\'' +
+                "AmHan='" + AmHan + '\'' +
+                ", CachDocHira='" + CachDocHira + '\'' +
+                ", NghiaTiengViet='" + NghiaTiengViet + '\'' +
+                ", TuTiengNhat='" + TuTiengNhat + '\'' +
                 '}';
     }
 }

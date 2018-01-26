@@ -82,7 +82,7 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicHolder>
             });
 
         } else if (FRAGMENT_TAG == "MOJI") {
-            int topicNum = position+1;
+            int topicNum = position + 1;
             holder.tvTitle.setText(Topic.get(position));
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override

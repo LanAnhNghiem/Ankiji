@@ -66,7 +66,7 @@ public class LearnActivity extends AppCompatActivity {
         Log.i(TAG, "onCreate: contextlistsize " + this.contentList.size());
         initControls();
         loadData();
-        //new fetchData().execute();
+        //322new fetchData().execute();
         Log.i(TAG, "onCreate: contextlistsize " + this.contentList.size());
         setEvents();
 

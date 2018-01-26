@@ -61,10 +61,10 @@ public class MapHelper {
 
         if(map.containsKey(id)){
             list= (ArrayList<Kanji>) map.get(id);
-//            Gson gson = new Gson();
-//            JSONObject jsonObj = new JSONObject(map.get(id).values());
-//            Type type = new TypeToken<MyDto>() {}.getType();
-//            servDto = gson.fromJson(jsonObj.toString(),type);
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<Kanji>>() {}.getType();
+            String json = gson.toJson(list, type);
+            list = gson.fromJson(json, type);
         }
         return list;
     }

@@ -69,7 +69,7 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
         }
 
         if (FRAGMENT_TAG.equals("MOJI")) {
-            if (this.mSetList.size() != 0){
+            if (this.mSetList.size() != 0) {
                 holder.set = this.mSetList.get(position);
                 holder.tvTitle.setText(holder.set.getName());
                 holder.tvItemCount.setText(holder.set.getDatetime());
@@ -84,7 +84,7 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
         }
 
         if (FRAGMENT_TAG.equals("KANJI")) {
-            if (this.mSetList.size() != 0){
+            if (this.mSetList.size() != 0) {
                 holder.set = this.mSetList.get(position);
                 holder.tvTitle.setText(holder.set.getName());
                 holder.tvItemCount.setText(holder.set.getDatetime());
@@ -101,7 +101,7 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
         holder.bmb.clearBuilders();
         int stringIndex = 0;
         for (int i = 0; i < holder.bmb.getPiecePlaceEnum().pieceNumber(); i++) {
-            switch (i){
+            switch (i) {
                 case 0:
                     stringIndex = R.string.text_outside_button_buider_learn;
                     break;
@@ -118,16 +118,17 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
             addBuilder(holder, stringIndex);
         }
     }
-    void showRemoveDialog(final String fragmentTag, final int position){
+
+    void showRemoveDialog(final String fragmentTag, final int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setMessage(R.string.remove_warning);
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(fragmentTag.equals("KANJI")){
+                if (fragmentTag.equals("KANJI")) {
                     communicator.removeData(mSetList.get(position).getId(), position);
                 }
-                if(fragmentTag.equals("MOJI")){
+                if (fragmentTag.equals("MOJI")) {
                     communicator.removeData(mSetList.get(position).getId(), position);
                 }
             }
@@ -139,6 +140,7 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
         });
         builder.show();
     }
+
     void addBuilder(final ItemViewHolder viewHolder, int stringIndex) {
         viewHolder.bmb.addBuilder(new TextOutsideCircleButton.Builder()
                 .normalImageRes(BuilderManager.getImageResource())
@@ -180,7 +182,7 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
         }
     }
 
-    public interface OnBoomMenuItemClicked{
+    public interface OnBoomMenuItemClicked {
         void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum, Set set);
     }
 

@@ -317,7 +317,7 @@ public class EditVocabActivity extends AppCompatActivity{
             myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
             String str = new Gson().toJson(myMap);
             mLocalData.writeToFile(Constants.DATA_FILE+mUserID, str, getBaseContext());
-            mLocalData.getmKanjiListener().loadData();
+            mLocalData.getmListener().loadData();
         }
     }
     private class LoadSetTask extends AsyncTask<Void, Void, Void>{

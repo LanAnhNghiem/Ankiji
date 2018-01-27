@@ -143,12 +143,12 @@ public class FeatureActivity extends AppCompatActivity implements NetworkListene
                         profileIntent.putExtra(Constants.USER_ID, mUserID);
                         startActivity(profileIntent);
                         break;
-                    case R.id.item_setting:
-                        Toast.makeText(FeatureActivity.this, "Setting", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.item_use:
-                        Toast.makeText(FeatureActivity.this, "How to use", Toast.LENGTH_SHORT).show();
-                        break;
+//                    case R.id.item_setting:
+//                        Toast.makeText(FeatureActivity.this, "Setting", Toast.LENGTH_SHORT).show();
+//                        break;
+//                    case R.id.item_use:
+//                        Toast.makeText(FeatureActivity.this, "How to use", Toast.LENGTH_SHORT).show();
+//                        break;
                     case R.id.about:
                         Intent aboutIntent = new Intent(FeatureActivity.this, AboutUsActivity.class);
                         startActivity(aboutIntent);

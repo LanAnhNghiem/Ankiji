@@ -17,4 +17,8 @@ public class Constants {
     public static final String DATA_TYPE = "DATA_TYPE";
     public static final String USER_ID = "userID";
     public static final String SET_BY_USER_NODE = "SetByUser";
+    public static final String CHART = "chart";
+    public static final String CORRECT_ANSWER = "Correct Answser";
+    public static final String TEST_TIMES = "Test Times";
+
 }

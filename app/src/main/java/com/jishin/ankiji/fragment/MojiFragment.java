@@ -22,14 +22,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.jishin.ankiji.feature_Test.TestActivity;
+import com.jishin.ankiji.CHART.ChartActivity;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
 import com.jishin.ankiji.explores.TopicMojiActivity;
+import com.jishin.ankiji.feature_Test.TestActivity;
 import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.learn.LearnActivity;
 import com.jishin.ankiji.model.DataTypeEnum;
@@ -68,6 +72,10 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
         this.mUserID = mUserID;
     }
 
+    private FirebaseUser user;
+    private long correctAnswer = 0;
+    private long testTimes = 0;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +108,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
     }
 
     private void addControl(View view){
+        user = FirebaseAuth.getInstance().getCurrentUser();
         mFABtn = view.findViewById(R.id.fabMoji);
         mFABAdd = view.findViewById(R.id.fabAdd);
         mFABCreate = view.findViewById(R.id.fabCreate);
@@ -196,7 +205,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
                         new CountItemTask(set).execute();
                         break;
                     case 2:
-
+                        new LoadNodeChart(set).execute();
                         break;
                     case 3:
 
@@ -308,6 +317,10 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
                 Intent intentTest = new Intent(getContext(), TestActivity.class);
                 intentTest.putExtra(Constants.SET_BY_USER, mMojiList);
                 intentTest.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
+                if (user != null) {
+                    intentTest.putExtra(Constants.USER_ID, user.getUid());
+                    intentTest.putExtra(Constants.KANJI_SET_NODE, mSet.getId());
+                }
                 startActivity(intentTest);
             }
             else{
@@ -316,4 +329,53 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator{
         }
     }
 
+    public class LoadNodeChart extends AsyncTask<Void, Void, Void> {
+        Set mSet = new Set();
+        DatabaseReference chartRef = FirebaseDatabase.getInstance().getReference().child(Constants.CHART)
+                .child(user.getUid()).child(mSet.getId());
+
+        public LoadNodeChart(Set set){
+            this.mSet = set;
+        }
+
+        @Override
+        protected Void doInBackground(final Void... voids) {
+            Log.d("USER_ID", user.getUid());
+            Log.d("SET_ID_MojiFrag", mSet.getId());
+            chartRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.child(Constants.CORRECT_ANSWER).getValue() == null){
+                        correctAnswer = 0;
+                        testTimes = 0;
+                    }else{
+                        correctAnswer = dataSnapshot.child(Constants.CORRECT_ANSWER).getValue(Long.class);
+                        testTimes = dataSnapshot.child(Constants.TEST_TIMES).getValue(Long.class);
+                    }
+                    onProgressUpdate();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            Intent intentChart = new Intent(getContext(), ChartActivity.class);
+            if (user != null) {
+                intentChart.putExtra(Constants.USER_ID, user.getUid());
+                Log.d("Set_ID", mSet.getId());
+                intentChart.putExtra(Constants.KANJI_SET_NODE, mSet.getId());
+                intentChart.putExtra("SIZE", mMojiList.size());
+                intentChart.putExtra(Constants.CORRECT_ANSWER, correctAnswer);
+                intentChart.putExtra(Constants.TEST_TIMES, testTimes);
+            }
+            startActivity(intentChart);
+        }
+    }
 }

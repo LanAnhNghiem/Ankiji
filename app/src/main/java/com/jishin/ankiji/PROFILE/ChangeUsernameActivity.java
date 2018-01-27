@@ -16,7 +16,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
 import com.jishin.ankiji.R;
+import com.jishin.ankiji.utilities.Constants;
+import com.jishin.ankiji.utilities.DatabaseService;
+import com.jishin.ankiji.utilities.LocalDatabase;
+
+import java.util.Map;
 
 public class ChangeUsernameActivity extends AppCompatActivity {
 
@@ -26,6 +32,8 @@ public class ChangeUsernameActivity extends AppCompatActivity {
     private Button btnCancel;
     private String userUid;
     private String currentName;
+    private LocalDatabase mLocalData = LocalDatabase.getInstance();
+    private DatabaseService mData = DatabaseService.getInstance();
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +49,7 @@ public class ChangeUsernameActivity extends AppCompatActivity {
                 Log.d("currentName", currentName);
             }
         }
+        mLocalData.init(this, userUid, mData);
         setControls();
         setEvents();
     }
@@ -70,6 +79,7 @@ public class ChangeUsernameActivity extends AppCompatActivity {
         Log.d("DATABASE", FirebaseDatabase.getInstance().getReference("User").child(userUid).child("username").toString());
         FirebaseDatabase.getInstance().getReference("User").child(userUid).child("username")
                 .setValue(dislayName);
+        saveUsername(dislayName);
     }
 
     private void setControls() {
@@ -123,5 +133,15 @@ public class ChangeUsernameActivity extends AppCompatActivity {
     private void hideKeyboard(View view) {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+    //save username to local data
+    private void saveUsername(String name){
+        Map myMap = mLocalData.readAllData();
+        Map userMap = mLocalData.readData(Constants.USER_NODE);
+        userMap.put("username", name);
+        myMap.put(Constants.USER_NODE, userMap);
+        String str = new Gson().toJson(myMap);
+        mLocalData.writeToFile(Constants.DATA_FILE+userUid, str, getBaseContext());
+        mLocalData.getmListener().loadData();
     }
 }

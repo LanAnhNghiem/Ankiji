@@ -36,6 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.ResetPassword.ResetPasswordActivity;
 import com.jishin.ankiji.utilities.Constants;
@@ -150,6 +151,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             {
                 String value = String.valueOf(entry.getValue());
                 totalOfWords += CountSubstring.countMatches(value, "cachDocHira=");
+                totalOfWords += CountSubstring.countMatches(value, "CachDocHira=");
+                totalOfWords += CountSubstring.countMatches(value, "amHan");
+                totalOfWords += CountSubstring.countMatches(value, "amhan");
             }
             txtTotalWord.setText("Total Of Words: "+ String.valueOf(totalOfWords));
         }
@@ -192,6 +196,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         //load username
         currentUsername = String.valueOf(profileMap.get("username"));
         txtusername.setText(currentUsername);
+        //load user id
+        currentUid = String.valueOf(profileMap.get("id"));
 //        mReference.addValueEventListener(new ValueEventListener() {
 //            @Override
 //            public void onDataChange(DataSnapshot dataSnapshot) {
@@ -437,8 +443,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(ProfileActivity.this, "Delete Old Profile Image failed",
-                                    Toast.LENGTH_LONG).show();
+//                            Toast.makeText(ProfileActivity.this, "Delete Old Profile Image failed",
+//                                    Toast.LENGTH_LONG).show();
                         }
                     });
         }else{
@@ -458,6 +464,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                             Uri downloadUri = taskSnapshot.getDownloadUrl();
                             imageUrlFromCloudStorage = downloadUri.toString();
                             Log.d("imageUrlCloud_Galery", imageUrlFromCloudStorage);
+                            savePhoto(imageUrlFromCloudStorage);
                             Toast.makeText(ProfileActivity.this, "Upload Image in Galery Successfully", Toast.LENGTH_LONG).show();
 
                             updateUserProfileImage(imageUrlFromCloudStorage);
@@ -473,6 +480,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             Log.d("URI NULL", "URI NULL");
         }
 
+    }
+    //save photo to local data
+    private void savePhoto(String url){
+        Map myMap = mLocalData.readAllData();
+        Map userMap = mLocalData.readData(Constants.USER_NODE);
+        userMap.put("linkPhoto", url);
+        myMap.put(Constants.USER_NODE, userMap);
+        String str = new Gson().toJson(myMap);
+        mLocalData.writeToFile(Constants.DATA_FILE+mUserID, str, getBaseContext());
+        mLocalData.getmListener().loadData();
     }
 
     private void uploadImageCaptureAndUpdateDB(Uri uri){

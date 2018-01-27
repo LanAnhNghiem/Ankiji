@@ -68,6 +68,8 @@
         <activity android:name=".testdata.TestDataActivity">
 
         </activity>
+
+        <activity android:name=".CHART.ChartActivity"></activity>
     </application>
 
 </manifest>

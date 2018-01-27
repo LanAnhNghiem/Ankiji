@@ -13,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -279,6 +278,9 @@ public class CreateVocabActivity extends AppCompatActivity{
                 setByUserMap.put(id, mMojiList);
                 myMap.put(Constants.MOJI_SET_NODE, mojiMap);
                 myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
+                String str = new Gson().toJson(myMap);
+                mLocalData.writeToFile(Constants.DATA_FILE, str, getBaseContext());
+                mLocalData.getmMojiListener().loadData();
             }
         }else{
             Map kanjiMap = mLocalData.readData(Constants.KANJI_SET_NODE);
@@ -288,13 +290,11 @@ public class CreateVocabActivity extends AppCompatActivity{
                 setByUserMap.put(id, mKanjiList);
                 myMap.put(Constants.KANJI_SET_NODE, kanjiMap);
                 myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
+                String str = new Gson().toJson(myMap);
+                mLocalData.writeToFile(Constants.DATA_FILE, str, getBaseContext());
+                mLocalData.getmKanjiListener().loadData();
             }
         }
-
-        String str = new Gson().toJson(myMap);
-        mLocalData.writeToFile(Constants.DATA_FILE, str, getBaseContext());
-        mLocalData.getmListener().loadData();
-        Log.d("", str);
     }
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager

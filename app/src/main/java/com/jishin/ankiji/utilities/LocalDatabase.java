@@ -11,6 +11,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jishin.ankiji.interfaces.LoadDataListener;
+import com.jishin.ankiji.interfaces.LoadKanjiListener;
+import com.jishin.ankiji.interfaces.LoadMojiListener;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -39,13 +41,18 @@ public class LocalDatabase {
     private static DatabaseService mData;
     private static DatabaseReference mUserRef, mSetByUserRef, mMojiSetRef, mKanjiSetRef;
     private static boolean isCompleted = false;//is load data completed
-
+    private static LoadMojiListener mMojiListener;
+    private static LoadDataListener mListener;
+    private static LoadKanjiListener mKanjiListener;
     public static LoadDataListener getmListener() {
         return mListener;
     }
-
-    private static LoadDataListener mListener;
-
+    public static LoadMojiListener getmMojiListener() {
+        return mMojiListener;
+    }
+    public static LoadKanjiListener getmKanjiListener() {
+        return mKanjiListener;
+    }
     protected LocalDatabase(){
 
     }
@@ -64,6 +71,28 @@ public class LocalDatabase {
         mMojiSetRef = mData.createDatabase(Constants.MOJI_SET_NODE).child(mUserID);
         mSetByUserRef = mData.createDatabase(Constants.SET_BY_USER_NODE).child(mUserID);
         mLocalData = new HashMap<>();
+    }
+    public static void init(Context context, String userID, DatabaseService data, LoadMojiListener listener){
+        mContext = context;
+        mUserID = userID;
+        mData = data;
+        mUserRef = mData.createDatabase(Constants.USER_NODE).child(mUserID);
+        mKanjiSetRef = mData.createDatabase(Constants.KANJI_SET_NODE).child(mUserID);
+        mMojiSetRef = mData.createDatabase(Constants.MOJI_SET_NODE).child(mUserID);
+        mSetByUserRef = mData.createDatabase(Constants.SET_BY_USER_NODE).child(mUserID);
+        mLocalData = new HashMap<>();
+        mMojiListener = listener;
+    }
+    public static void init(Context context, String userID, DatabaseService data, LoadKanjiListener listener){
+        mContext = context;
+        mUserID = userID;
+        mData = data;
+        mUserRef = mData.createDatabase(Constants.USER_NODE).child(mUserID);
+        mKanjiSetRef = mData.createDatabase(Constants.KANJI_SET_NODE).child(mUserID);
+        mMojiSetRef = mData.createDatabase(Constants.MOJI_SET_NODE).child(mUserID);
+        mSetByUserRef = mData.createDatabase(Constants.SET_BY_USER_NODE).child(mUserID);
+        mLocalData = new HashMap<>();
+        mKanjiListener = listener;
     }
     public static void init(Context context, String userID, DatabaseService data, LoadDataListener listener){
         mContext = context;
@@ -191,6 +220,8 @@ public class LocalDatabase {
                                             String str = new Gson().toJson(mLocalData);
                                             writeToFile(Constants.DATA_FILE, str, mContext);
                                             mListener.loadData();
+                                            mMojiListener.loadData();
+//                                            mKanjiListener.loadData();
                                         }
 
                                         @Override

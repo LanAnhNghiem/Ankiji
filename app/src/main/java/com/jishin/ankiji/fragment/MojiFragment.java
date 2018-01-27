@@ -29,12 +29,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.jishin.ankiji.Feature_Test.TestActivity;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
 import com.jishin.ankiji.edit.EditVocabActivity;
 import com.jishin.ankiji.explores.TopicMojiActivity;
-import com.jishin.ankiji.interfaces.LoadDataListener;
+import com.jishin.ankiji.interfaces.LoadMojiListener;
 import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.learn.LearnActivity;
 import com.jishin.ankiji.model.DataTypeEnum;
@@ -53,7 +54,7 @@ import java.util.Map;
  * Created by trungnguyeen on 12/27/17.
  */
 
-public class MojiFragment extends Fragment implements RemoveDataCommunicator, LoadDataListener{
+public class MojiFragment extends Fragment implements RemoveDataCommunicator, LoadMojiListener {
 
     private static final String TAG = MojiFragment.class.getSimpleName();
     private RecyclerView rvRecentlyList;
@@ -74,7 +75,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
     public void setmUserID(String mUserID) {
         this.mUserID = mUserID;
     }
-    private LocalDatabase mLocalData = LocalDatabase.getInstance();
+        private LocalDatabase mLocalData = LocalDatabase.getInstance();
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -193,8 +194,13 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
         mFABAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), TopicMojiActivity.class);
-                startActivity(intent);
+                if(isNetworkAvailable()){
+                    Intent intent = new Intent(getContext(), TopicMojiActivity.class);
+                    startActivity(intent);
+                }
+                else{
+                    Toast.makeText(getContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -283,6 +289,15 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
         mMojiSetRef.child(id).removeValue();
         mMojiSetList.remove(position);
         mSetByUser.child(id).removeValue();
+        Map myMap = mLocalData.readAllData();
+        Map mojiMap = mLocalData.readData(Constants.MOJI_SET_NODE);
+        Map setByUserMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
+        mojiMap.remove(id);
+        setByUserMap.remove(id);
+        myMap.put(Constants.MOJI_SET_NODE, mojiMap);
+        myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
+        String str = new Gson().toJson(myMap);
+        mLocalData.writeToFile(Constants.DATA_FILE, str, getContext());
         mItemsAdapter.notifyDataSetChanged();
     }
 

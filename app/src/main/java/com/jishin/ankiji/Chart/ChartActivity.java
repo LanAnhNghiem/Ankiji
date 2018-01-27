@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -46,7 +46,7 @@ public class ChartActivity extends AppCompatActivity {
         if (intent != null) {
             if (intent.hasExtra(Constants.USER_ID)){
                 userUid = intent.getExtras().getString(Constants.USER_ID);
-                setID = intent.getExtras().getString(Constants.KANJI_SET_NODE);
+                setID = intent.getExtras().getString(Constants.SET_BY_USER);
                 listSize = intent.getExtras().getInt("SIZE");
                 correctAnswer = intent.getExtras().getLong(Constants.CORRECT_ANSWER);
                 testTimes = intent.getExtras().getLong(Constants.TEST_TIMES);
@@ -55,7 +55,6 @@ public class ChartActivity extends AppCompatActivity {
                 Log.d("SIZE", String.valueOf(listSize));
             }
         }
-
         addControls();
 
         // ------------ data collection -------------
@@ -89,10 +88,10 @@ public class ChartActivity extends AppCompatActivity {
         // style of the label of entries
         // center text
 
-        Description desc = new Description();
-        desc.setText("Chỗ này là để chú giải");
-        desc.setTextSize(16);
-        chartPie.setDescription(desc);
+//        Description desc = new Description();
+//        desc.setText("Chỗ này là để chú giải");
+//        desc.setTextSize(16);
+//        chartPie.setDescription(desc);
 
 
         chartPie.setCenterText("Trung bình số câu đúng qua các lần Test");
@@ -134,6 +133,7 @@ public class ChartActivity extends AppCompatActivity {
         // ----------- binding view --------------
         chartPie = findViewById(R.id.test_chart);
         btnReset = findViewById(R.id.btnRetry);
+
     }
 
     @Override
@@ -148,28 +148,28 @@ public class ChartActivity extends AppCompatActivity {
         finish();
     }
 
-    class LoadNodeCharTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            getDataNodeChart();
-            return null;
-        }
-    }
-
-    private void getDataNodeChart() {
-        chartRef = FirebaseDatabase.getInstance().getReference(Constants.CHART).child(userUid).child(setID);
-        chartRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                correctAnswer = dataSnapshot.child(Constants.CORRECT_ANSWER).getValue(Long.class);
-                testTimes = dataSnapshot.child(Constants.TEST_TIMES).getValue(Long.class);
-                Log.d("read_data_correct", String.valueOf(correctAnswer));
-                Log.d("read_data_test", String.valueOf(testTimes));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
-    }
+//    class LoadNodeCharTask extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            getDataNodeChart();
+//            return null;
+//        }
+//    }
+//
+//    private void getDataNodeChart() {
+//        chartRef = FirebaseDatabase.getInstance().getReference(Constants.CHART).child(userUid).child(setID);
+//        chartRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                correctAnswer = dataSnapshot.child(Constants.CORRECT_ANSWER).getValue(Long.class);
+//                testTimes = dataSnapshot.child(Constants.TEST_TIMES).getValue(Long.class);
+//                Log.d("read_data_correct", String.valueOf(correctAnswer));
+//                Log.d("read_data_test", String.valueOf(testTimes));
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {}
+//        });
+//    }
 }

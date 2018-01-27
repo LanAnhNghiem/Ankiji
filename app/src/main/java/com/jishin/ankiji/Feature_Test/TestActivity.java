@@ -61,6 +61,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     Dialog settingsDialog = null;
     private ConstraintLayout layout_test;
     private LocalDatabase mLocalData = LocalDatabase.getInstance();
+    private static final String TAG = TestActivity.class.getSimpleName();
     //Intent refresh;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -122,9 +123,9 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
         //progressBar.setProgress(0);
 
-        btnMain.setVisibility(View.INVISIBLE);
-        btnRetry.setVisibility(View.INVISIBLE);
-        txtNotification.setVisibility(View.INVISIBLE);
+        btnMain.setVisibility(View.GONE);
+        btnRetry.setVisibility(View.GONE);
+        txtNotification.setVisibility(View.GONE);
     }
 
     @Override
@@ -425,8 +426,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
     public void checkTrueOrFalseAnswer(boolean check, final TextView answer_view) {
         if (check == true) {
-            new CountDownTimer(1000, 1000) {
-
+            new CountDownTimer(1100, 1000) {
                 public void onTick(long millisUntilFinished) {
                     Log.d("TAG", "onTick: " + "seconds remaining: " + millisUntilFinished / 1000);
 
@@ -442,20 +442,23 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                     layout_test.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            cancel();
+                            Log.d(TAG, "onClick: clicked layout_test");
                             onFinish();
+                            cancel();
                         }
                     });
                 }
                 public void onFinish() {
+                    Log.d(TAG, "onFinish: countdowntimer");
                     layout_test.setEnabled(false);
                     finishCheckAnswer(answer_view);
                 }
             }.start();
         }
         else {
-            new CountDownTimer(1000, 1000) {
+            new CountDownTimer(1100, 1000) {
                 public void onTick(long millisUntilFinished) {
+                    Log.d(TAG, "onTick");
                     Log.d("TAG", "onTick: " + "seconds remaining: " + millisUntilFinished / 1000);
                     answer_view.setBackgroundColor(Color.parseColor("#C62828"));
                     answer_view.setTextColor(Color.WHITE);
@@ -469,13 +472,15 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                     layout_test.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            cancel();
+                            Log.d(TAG, "onClick: clicked layout_test");
                             onFinish();
+                            cancel();
                         }
                     });
                 }
 
                 public void onFinish() {
+                    Log.d(TAG, "onFinish: countdowntimer");
                     layout_test.setEnabled(false);
                     finishCheckAnswer(answer_view);
                 }
@@ -485,6 +490,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public void finishCheckAnswer(TextView answer_view) {
+        Log.d(TAG, "finishCheckAnswer: isKanji" + isKanji);
         answer_view.setTextColor(Color.parseColor("#AB5E4F"));
         answer_view.setBackgroundResource(R.drawable.border);
         txtAnswerA.setEnabled(true);

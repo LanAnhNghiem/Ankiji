@@ -71,6 +71,7 @@ public class FeatureActivity extends AppCompatActivity implements NetworkListene
         }else{
             //Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
         }
+
         getControls();
         setEvents();
         Log.d(TAG,String.valueOf(mData.isSignIn()));

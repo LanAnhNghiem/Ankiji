@@ -5,12 +5,11 @@ package com.jishin.ankiji.model;
  */
 
 import java.io.Serializable;
-
 /**
  * Created by lana on 19/01/2018.
  */
 
-public class Set implements Serializable{
+public class Set implements Serializable {
     private String id;
     private String name;
     private String datetime;
@@ -40,7 +39,7 @@ public class Set implements Serializable{
         this.name = name;
     }
 
-    public String getDatetime(){
+    public String getDatetime() {
         return datetime;
     }
 

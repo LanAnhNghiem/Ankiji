@@ -73,8 +73,6 @@ public class CreateVocabActivity extends AppCompatActivity{
         setupRecyclerView();
         setEvents();
         currentTime = Calendar.getInstance().getTime();
-        //currentTime = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
-        //Toast.makeText(this, String.valueOf(currentTime), Toast.LENGTH_SHORT).show();
     }
     private void initControl(){
         //create data sample

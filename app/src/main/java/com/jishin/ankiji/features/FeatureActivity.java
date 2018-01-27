@@ -64,18 +64,19 @@ public class FeatureActivity extends AppCompatActivity implements NetworkListene
         registerReceiver(new ConnectivityChangeReceiver(this),
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         getUserID();
+        mLocalData.init(this,mUserID, mData, this);
         if(isNetworkAvailable()){
             Toast.makeText(this, R.string.connected, Toast.LENGTH_SHORT).show();
             loadLocalData();
         }else{
-            Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
         }
         getControls();
         setEvents();
         Log.d(TAG,String.valueOf(mData.isSignIn()));
     }
     private void loadLocalData(){
-        mLocalData.init(getApplicationContext(),mUserID, mData, this);
+
         if(!mLocalData.hasLocalData()){
             mLocalData.loadAllData();
         }
@@ -164,7 +165,7 @@ public class FeatureActivity extends AppCompatActivity implements NetworkListene
                 return true;
             }
         });
-        setProfileInfo();
+        //setProfileInfo();
 //        if (user != null) {
 //
 //            mReference = FirebaseDatabase.getInstance().getReference("User").child(user.getUid());
@@ -227,6 +228,9 @@ public class FeatureActivity extends AppCompatActivity implements NetworkListene
 
     @Override
     public void notConnected() {
+        if(mLocalData.hasLocalData()){
+            setProfileInfo();
+        }
         Toast.makeText(this, getResources().getText(R.string.not_connected), Toast.LENGTH_SHORT).show();
     }
     private void setProfileInfo(){

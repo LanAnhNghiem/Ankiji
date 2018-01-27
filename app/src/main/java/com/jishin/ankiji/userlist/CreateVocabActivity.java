@@ -292,7 +292,7 @@ public class CreateVocabActivity extends AppCompatActivity{
                 myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
                 String str = new Gson().toJson(myMap);
                 mLocalData.writeToFile(Constants.DATA_FILE, str, getBaseContext());
-                mLocalData.getmKanjiListener().loadData();
+                mLocalData.getmListener().loadData();
             }
         }
     }

@@ -90,6 +90,7 @@ public class MojiExploresActivity extends AppCompatActivity {
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mMojiRecycler = findViewById(R.id.mojiRecyclerView);
         mojiAdater = new MojiAdater();
         mojiAdater.setmMojiList(mojiList);
@@ -170,7 +171,7 @@ public class MojiExploresActivity extends AppCompatActivity {
                     Set mojiSet = new Set();
                     mojiSet.setName(ds.getValue(Set.class).getName());
                     Log.d(TAG, "onDataChange: mojiSet: " + mojiSet.getName());
-                    if (mojiSet.getName().equals(mTopic)) {
+                    if (mojiSet.getName()== mTopic) {
                         isAdded = true;
                         changeButtonAdd();
                         break;

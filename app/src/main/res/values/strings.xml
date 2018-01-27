@@ -61,6 +61,15 @@
     <string name="lbl_forgot_password">Forgot Password?</string>
 
     <string name="pick_picture">Pick your picture</string>
+  
+    <!--Profile Screen-->
+    <string name="profile_picture">Profile picture</string>
+    <string name="change_pass">Change password</string>
+    <string name="number_set">Number Of Sets: </string>
+    <string name="total_words">Total of Words</string>
+    <string name="save">SAVE</string>
+    <string name="cancel">CANCEL</string>
+
     <string name="connected">Your device is connected</string>
     <string name="not_connected">Your device is not connected</string>
     <string name="reset_chart">Reset</string>

@@ -72,7 +72,7 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
             if (this.mSetList.size() != 0) {
                 holder.set = this.mSetList.get(position);
                 holder.tvTitle.setText(holder.set.getName());
-                holder.tvItemCount.setText(holder.set.getDatetime());
+                holder.tvItemCount.setText(convertDatetime(holder.set.getDatetime()));
                 holder.dataType = DataTypeEnum.Moji;
                 holder.btnDeleteItem.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -87,7 +87,7 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
             if (this.mSetList.size() != 0) {
                 holder.set = this.mSetList.get(position);
                 holder.tvTitle.setText(holder.set.getName());
-                holder.tvItemCount.setText(holder.set.getDatetime());
+                holder.tvItemCount.setText(convertDatetime(holder.set.getDatetime()));
                 holder.dataType = DataTypeEnum.Kanji;
                 holder.btnDeleteItem.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -185,5 +185,14 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
     public interface OnBoomMenuItemClicked {
         void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum, Set set);
     }
-
+    private String convertDatetime(String datetime){
+        String result = datetime;
+        String gmt = result.substring(20, 29);
+        String year = result.substring(30);
+        result = result.replace(gmt, "").replace(year, "");
+        String part1 = result.substring(0, 10);
+        String part2 = result.substring(11,19);
+        result = part1+" "+year+" "+part2;
+        return result;
+    }
 }

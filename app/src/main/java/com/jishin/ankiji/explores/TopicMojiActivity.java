@@ -27,10 +27,7 @@ public class TopicMojiActivity extends AppCompatActivity {
     private RecyclerView mRv_MojiTopic;
     private TopicAdapter topicAdapter;
     private DatabaseReference mMojiTopicRef;
-
-
     private DatabaseService mData = DatabaseService.getInstance();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

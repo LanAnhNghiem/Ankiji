@@ -1,8 +1,11 @@
 package com.jishin.ankiji.userlist;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.KanjiItemAdapter;
 import com.jishin.ankiji.adapter.MojiItemAdapter;
@@ -26,7 +31,6 @@ import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
 import com.jishin.ankiji.utilities.LocalDatabase;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -45,7 +49,7 @@ public class CreateVocabActivity extends AppCompatActivity{
     private TextView txtWord;
     private boolean isKanji = true;
     private String mSetName = "", mUserID = "";
-    private String currentTime = "";
+    private Date currentTime;
     private DatabaseService mData = DatabaseService.getInstance();
     private DatabaseReference mMojiSet = mData.createDatabase(Constants.MOJI_SET_NODE);
     private DatabaseReference mKanjiSet = mData.createDatabase(Constants.KANJI_SET_NODE);
@@ -68,9 +72,7 @@ public class CreateVocabActivity extends AppCompatActivity{
         initControl();
         setupRecyclerView();
         setEvents();
-        //Date currentTime = Calendar.getInstance().getTime();
-        currentTime = new SimpleDateFormat("EEE MMM dd yyyy").format(Calendar.getInstance().getTime());
-        //Toast.makeText(this, String.valueOf(currentTime), Toast.LENGTH_SHORT).show();
+        currentTime = Calendar.getInstance().getTime();
     }
     private void initControl(){
         //create data sample
@@ -126,7 +128,8 @@ public class CreateVocabActivity extends AppCompatActivity{
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                saveDatabase();
+                //saveDatabase();
+                saveData();
                 finish();
             }
             }).setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -143,7 +146,8 @@ public class CreateVocabActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 Toast.makeText(CreateVocabActivity.this, "Done", Toast.LENGTH_SHORT).show();
-                saveDatabase();
+                //saveDatabase();
+                saveData();
                 finish();
             }
         });
@@ -225,29 +229,89 @@ public class CreateVocabActivity extends AppCompatActivity{
             rvVocab.setAdapter(mojiAdapter);
         }
     }
-    private void saveDatabase(){
+    private void saveData(){
+        String id = "";
+        if(isNetworkAvailable()){
+
+            if(!isKanji){
+                id = mMojiSet.push().getKey();
+
+            }else{
+                id = mKanjiSet.push().getKey();
+            }
+            saveDatabase(id, isKanji);
+            saveLocalDatabase(id, isKanji);
+        }else{
+            if(!isKanji){
+                id = mMojiSet.push().getKey();
+            }else{
+                id = mKanjiSet.push().getKey();
+            }
+            saveLocalDatabase(id, isKanji);
+        }
+    }
+    //save to Firebase
+    private void saveDatabase(String id, boolean isKanji){
         //Date currentTime = Calendar.getInstance().getTime();
+        Set set = new Set(id, mSetName, String.valueOf(currentTime));
         if(!isKanji){
-            String id = mMojiSet.push().getKey();
-            Set set = new Set(id, mSetName, currentTime);
-            Map mojiMap = mLocalData.readData(Constants.MOJI_SET_NODE);
-            Map setByUserMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
+            //String id = mMojiSet.push().getKey();
             mMojiSet.child(mUserID).child(id).setValue(set);
             mSetByUser.child(mUserID).child(id).setValue(mMojiList);
         }else{
-            String id = mKanjiSet.push().getKey();
-            Set set = new Set(id, mSetName, currentTime);
+            //String id = mKanjiSet.push().getKey();
             mKanjiSet.child(mUserID).child(id).setValue(set);
             mSetByUser.child(mUserID).child(id).setValue(mKanjiList);
         }
     }
-    private void saveLocalDatabase(){
-        Date currentTime = Calendar.getInstance().getTime();
+    //save in local
+    private void saveLocalDatabase(String id, boolean isKanji){
+
+        Set set = new Set(id, mSetName, String.valueOf(currentTime));
+        Map myMap = mLocalData.readAllData();
         if(!isKanji){
-
+            Map mojiMap = mLocalData.readData(Constants.MOJI_SET_NODE);
+            Map setByUserMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
+            if(setByUserMap == null){
+                setByUserMap = new LinkedTreeMap();
+                myMap.put(Constants.SET_BY_USER_NODE, null);
+            }
+            if(mojiMap == null){
+                mojiMap = new LinkedTreeMap();
+                myMap.put(Constants.MOJI_SET_NODE, null);
+            }
+            mojiMap.put(id, set);
+            setByUserMap.put(id, mMojiList);
+            myMap.put(Constants.MOJI_SET_NODE, mojiMap);
+            myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
+            String str = new Gson().toJson(myMap);
+            mLocalData.writeToFile(Constants.DATA_FILE+mUserID, str, getBaseContext());
+            mLocalData.getmMojiListener().loadData();
         }else{
-
+            Map kanjiMap = mLocalData.readData(Constants.KANJI_SET_NODE);
+            Map setByUserMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
+            if(setByUserMap == null){
+                setByUserMap = new LinkedTreeMap();
+                myMap.put(Constants.SET_BY_USER_NODE, null);
+            }
+            if(kanjiMap == null){
+                kanjiMap = new LinkedTreeMap();
+                myMap.put(Constants.MOJI_SET_NODE, null);
+            }
+            kanjiMap.put(id, set);
+            setByUserMap.put(id, mKanjiList);
+            myMap.put(Constants.KANJI_SET_NODE, kanjiMap);
+            myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
+            String str = new Gson().toJson(myMap);
+            mLocalData.writeToFile(Constants.DATA_FILE+mUserID, str, getBaseContext());
+            mLocalData.getmListener().loadData();
         }
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 //    @Override
 //    public void setData(Kanji kanji, int position) {

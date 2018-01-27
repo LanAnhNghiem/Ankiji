@@ -16,6 +16,7 @@ import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.TopicAdapter;
 import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
+import com.jishin.ankiji.utilities.LocalDatabase;
 
 import java.util.ArrayList;
 
@@ -29,7 +30,7 @@ public class TopicKanjiActivity extends AppCompatActivity {
     private RecyclerView mRv_KanjiTopic;
     private DatabaseReference mKanjiTopicRef;
     private DatabaseService mData = DatabaseService.getInstance();
-
+    private LocalDatabase mLocalData = LocalDatabase.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,6 @@ public class TopicKanjiActivity extends AppCompatActivity {
         topicAdapter.setTopic(kanjiTopicList);
         mRv_KanjiTopic.setAdapter(topicAdapter);
         mKanjiTopicRef = mData.getDatabase().child(Constants.KANJI_NODE);
-
     }
 
     @Override

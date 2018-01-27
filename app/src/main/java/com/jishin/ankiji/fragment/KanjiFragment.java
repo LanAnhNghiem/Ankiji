@@ -30,6 +30,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.Chart.ChartActivity;
+import com.google.gson.Gson;
 import com.jishin.ankiji.Feature_Test.TestActivity;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
@@ -54,7 +55,7 @@ import java.util.Map;
  * Created by trungnguyeen on 12/27/17.
  */
 
-public class KanjiFragment extends Fragment implements RemoveDataCommunicator, LoadDataListener{
+public class KanjiFragment extends Fragment implements RemoveDataCommunicator, LoadDataListener {
     private static final String TAG = KanjiFragment.class.getSimpleName();
     private ArrayList<Set> mKanjiSetList = new ArrayList<>();
     private ArrayList<Kanji> mKanjiList = new ArrayList<>();
@@ -197,8 +198,13 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
         mFABAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), TopicKanjiActivity.class);
-                startActivity(intent);
+                if(isNetworkAvailable()){
+                    Intent intent = new Intent(getContext(), TopicKanjiActivity.class);
+                    startActivity(intent);
+                }
+                else{
+                    Toast.makeText(getContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -240,7 +246,7 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
                     case 3:
                         Intent editIntent = new Intent(getContext(), EditVocabActivity.class);
                         editIntent.putExtra(Constants.SET_BY_USER, set);
-                        editIntent.putExtra(Constants.DATA_TYPE, dataTypeEnum);
+                        editIntent.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
                         editIntent.putExtra(Constants.USER_ID, mUserID);
                         startActivity(editIntent);
                         break;
@@ -286,6 +292,15 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
         mKanjiSetRef.child(id).removeValue();
         mKanjiSetList.remove(position);
         mSetByUser.child(id).removeValue();
+        Map myMap = mLocalData.readAllData();
+        Map kanjiMap = mLocalData.readData(Constants.KANJI_SET_NODE);
+        Map setByUserMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
+        kanjiMap.remove(id);
+        setByUserMap.remove(id);
+        myMap.put(Constants.KANJI_SET_NODE, kanjiMap);
+        myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
+        String str = new Gson().toJson(myMap);
+        mLocalData.writeToFile(Constants.DATA_FILE+mUserID, str, getContext());
         mItemsAdapter.notifyDataSetChanged();
     }
 

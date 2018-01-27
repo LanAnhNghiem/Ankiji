@@ -11,6 +11,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jishin.ankiji.interfaces.LoadDataListener;
+import com.jishin.ankiji.interfaces.LoadKanjiListener;
+import com.jishin.ankiji.interfaces.LoadMojiListener;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -31,12 +33,26 @@ public class LocalDatabase {
     private static LocalDatabase mInstance;
     private static Context mContext;
     private static String mUserID;
-    private static Map<String, Map> mUserData, mSetByUserData, mMojiSetData, mKanjiSetData, mLocalData;
+    private static Map<String, Map> mUserData;
+    private static Map<String, Map> mSetByUserData;
+    private static Map<String, Map> mKanjiSetData;
+    private static Map<String, Map> mMojiSetData;
+    private static Map<String, Map> mLocalData;
     private static DatabaseService mData;
     private static DatabaseReference mUserRef, mSetByUserRef, mMojiSetRef, mKanjiSetRef;
     private static boolean isCompleted = false;//is load data completed
+    private static LoadMojiListener mMojiListener;
     private static LoadDataListener mListener;
-
+    private static LoadKanjiListener mKanjiListener;
+    public static LoadDataListener getmListener() {
+        return mListener;
+    }
+    public static LoadMojiListener getmMojiListener() {
+        return mMojiListener;
+    }
+    public static LoadKanjiListener getmKanjiListener() {
+        return mKanjiListener;
+    }
     protected LocalDatabase(){
 
     }
@@ -56,6 +72,28 @@ public class LocalDatabase {
         mSetByUserRef = mData.createDatabase(Constants.SET_BY_USER_NODE).child(mUserID);
         mLocalData = new HashMap<>();
     }
+    public static void init(Context context, String userID, DatabaseService data, LoadMojiListener listener){
+        mContext = context;
+        mUserID = userID;
+        mData = data;
+        mUserRef = mData.createDatabase(Constants.USER_NODE).child(mUserID);
+        mKanjiSetRef = mData.createDatabase(Constants.KANJI_SET_NODE).child(mUserID);
+        mMojiSetRef = mData.createDatabase(Constants.MOJI_SET_NODE).child(mUserID);
+        mSetByUserRef = mData.createDatabase(Constants.SET_BY_USER_NODE).child(mUserID);
+        mLocalData = new HashMap<>();
+        mMojiListener = listener;
+    }
+    public static void init(Context context, String userID, DatabaseService data, LoadKanjiListener listener){
+        mContext = context;
+        mUserID = userID;
+        mData = data;
+        mUserRef = mData.createDatabase(Constants.USER_NODE).child(mUserID);
+        mKanjiSetRef = mData.createDatabase(Constants.KANJI_SET_NODE).child(mUserID);
+        mMojiSetRef = mData.createDatabase(Constants.MOJI_SET_NODE).child(mUserID);
+        mSetByUserRef = mData.createDatabase(Constants.SET_BY_USER_NODE).child(mUserID);
+        mLocalData = new HashMap<>();
+        mKanjiListener = listener;
+    }
     public static void init(Context context, String userID, DatabaseService data, LoadDataListener listener){
         mContext = context;
         mUserID = userID;
@@ -67,16 +105,17 @@ public class LocalDatabase {
         mLocalData = new HashMap<>();
         mListener = listener;
     }
+
     public static boolean isLoadCompleted(){
         return isCompleted;
     }
     public static void loadAllData(){
         new LoadAllDataTask().execute();
     }
-    public static void updateAllData(){
+    public static void syncData(){
         new SyncDataTask().execute();
     }
-    private static void writeToFile(String fileName, String data, Context context) {
+    public static void writeToFile(String fileName, String data, Context context) {
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
@@ -87,12 +126,11 @@ public class LocalDatabase {
         }
     }
 
-    private static String readFromFile(String fileName, Context context) {
+    public static String readFromFile(String fileName, Context context) {
 
         String ret = "";
 
         try {
-            Log.d(TAG, fileName);
             InputStream inputStream = context.openFileInput(fileName);
 
             if ( inputStream != null ) {
@@ -118,7 +156,7 @@ public class LocalDatabase {
         return ret;
     }
     public static boolean hasLocalData(){
-        String str = readFromFile(Constants.DATA_FILE, mContext);
+        String str = readFromFile(Constants.DATA_FILE+mUserID, mContext);
         if(!str.trim().isEmpty()){
             return true;
         }else{
@@ -127,7 +165,7 @@ public class LocalDatabase {
     }
     //access data through path
     public static Map<String, Map> readData(String path){
-        String str = readFromFile(Constants.DATA_FILE, mContext);
+        String str = readFromFile(Constants.DATA_FILE+mUserID, mContext);
         if(hasLocalData())
          {
             // ------- test parse feature -------
@@ -137,6 +175,19 @@ public class LocalDatabase {
             String aPath = path;
             Map result = MapHelper.getPath(readData, aPath);
             return result;
+        }
+        return null;
+    }
+    public static Map<String, Map> readAllData(){
+        String str = readFromFile(Constants.DATA_FILE+mUserID, mContext);
+        if(hasLocalData())
+        {
+            // ------- test parse feature -------
+            Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+            // readData is just like mainData, stored it in a different variable
+            Map<String, Map> readData = new Gson().fromJson(str, mapType);
+
+            return readData;
         }
         return null;
     }
@@ -165,7 +216,11 @@ public class LocalDatabase {
                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                             mSetByUserData = (Map<String, Map>)dataSnapshot.getValue();
                                             mLocalData.put(Constants.SET_BY_USER_NODE, mSetByUserData);
-                                            onProgressUpdate();
+                                            String str = new Gson().toJson(mLocalData);
+                                            writeToFile(Constants.DATA_FILE+mUserID, str, mContext);
+                                            mListener.loadData();
+                                            mMojiListener.loadData();
+//                                            mKanjiListener.loadData();
                                         }
 
                                         @Override
@@ -196,15 +251,6 @@ public class LocalDatabase {
             });
             return null;
         }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            super.onProgressUpdate(values);
-            // you need to compile Gson in build.gradle (app level)
-            String str = new Gson().toJson(mLocalData);
-            writeToFile(Constants.DATA_FILE, str, mContext);
-            mListener.loadData();
-        }
     }
     //Sync data from local to Firebase
     private static class SyncDataTask extends AsyncTask<Void, Void, Void>{
@@ -212,16 +258,28 @@ public class LocalDatabase {
         protected Void doInBackground(Void... voids) {
             //update SetByUser
             Map setByUserMap = readData(Constants.SET_BY_USER_NODE);
-            mSetByUserRef.setValue(setByUserMap);
+            Log.d(TAG, String.valueOf(setByUserMap));
+            if(setByUserMap != null){
+                mSetByUserRef.setValue(setByUserMap);
+            }
 
             //update MojiSet
             Map mojiMap = readData(Constants.MOJI_SET_NODE);
-            mMojiSetRef.setValue(mojiMap);
+            Log.d(TAG, String.valueOf(mojiMap));
+            if(mojiMap != null){
+                mMojiSetRef.setValue(mojiMap);
+            }
 
             //update KanjiSet
             Map kanjiMap = readData(Constants.KANJI_SET_NODE);
+            Log.d(TAG, String.valueOf(kanjiMap));
             mKanjiSetRef.setValue(kanjiMap);
 
+            //update Profile user
+            Map userMap = readData(Constants.USER_NODE);
+            if(userMap != null){
+                mUserRef.setValue(userMap);
+            }
             return null;
         }
     }

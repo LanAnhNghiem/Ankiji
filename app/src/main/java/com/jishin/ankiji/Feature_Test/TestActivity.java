@@ -22,12 +22,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
-import com.jishin.ankiji.features.FeatureActivity;
 import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.QuestionAnswer;
+import com.jishin.ankiji.model.Set;
 import com.jishin.ankiji.utilities.Constants;
-import com.jishin.ankiji.utilities.LocalDatabase;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -59,13 +58,14 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     private TextView txtCorrect;
     private TextView txtNumberQuestion;
     private ConstraintLayout layout;
-
+    private Set set;
     private TextView txtNotification;
     private Button btnMain;
     private Button btnRetry;
     private static boolean isKanji = false;
     Dialog settingsDialog = null;
     private ConstraintLayout layout_test;
+
     private LocalDatabase mLocalData = LocalDatabase.getInstance();
     private static final String TAG = TestActivity.class.getSimpleName();
 
@@ -75,7 +75,6 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
     private String correctAnswer = "0";
     private String testTimes = "0";
-    //Intent refresh;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +87,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             if(fragmentTag.equals("KANJI")){
                 isKanji = true;
                 kanjiList = (ArrayList<Kanji>) intent.getSerializableExtra(Constants.SET_BY_USER);
+
             }else{
                 isKanji = false;
                 mojiList = (ArrayList<Moji>) intent.getSerializableExtra(Constants.SET_BY_USER);
@@ -132,7 +132,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 //        QAList = new ArrayList<>();
 
         layout = findViewById(R.id.layoutTest);
-        
+
         btnMain = findViewById(R.id.btnMain);
         btnRetry = findViewById(R.id.btnRetry);
         txtNotification = findViewById(R.id.txtNotification);
@@ -156,17 +156,21 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         finish();
     }
 
     public void updateQuestionMoji (ArrayList<Moji> listMoji, ArrayList<String> listAnswer) {
+
+
+        ArrayList<String> listCurrentAnswer = new ArrayList<>(listAnswer);
+
+
         index_question++;
         //progressBar.setProgress(index_question * 100 / NUMBER_OF_QUESTION);
         txtNumberQuestion.setText("QUESTION: " + String.valueOf(index_question) + "/"
                 + String.valueOf(NUMBER_OF_QUESTION));
         txtRightCount.setText(String.valueOf(number_of_right_answer));        //Log.d("MOJI_SIZE", String.valueOf(mojiList.size()));
-        Log.d("ANSWER_SIZE", String.valueOf(listAnswer.size()));
+        Log.d("ANSWER_SIZE", String.valueOf(listCurrentAnswer.size()));
         int index_moji = 0;
         index_moji = new Random().nextInt(listMoji.size());
 
@@ -190,20 +194,20 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 // đánh dấu câu trả lời đúng của câu hỏi
                 answer_mojiRemove = listMoji.get(index_moji).getCachDocHira();
                 // remove khỏi list answer
-                listAnswer.remove(answer_mojiRemove);
+                listCurrentAnswer.remove(answer_mojiRemove);
 
 
-                index_one = new Random().nextInt(listAnswer.size());
-                answerRemove_1 = listAnswer.get(index_one);
+                index_one = new Random().nextInt(listCurrentAnswer.size());
+                answerRemove_1 = listCurrentAnswer.get(index_one);
                 txtAnswerB.setText(answerRemove_1);
-                listAnswer.remove(answerRemove_1);
-                index_two = new Random().nextInt(listAnswer.size());
-                answerRemove_2 = listAnswer.get(index_two);
+                listCurrentAnswer.remove(answerRemove_1);
+                index_two = new Random().nextInt(listCurrentAnswer.size());
+                answerRemove_2 = listCurrentAnswer.get(index_two);
 
                 txtAnswerC.setText(answerRemove_2);
-                listAnswer.remove(answerRemove_2);
-                index_three = new Random().nextInt(listAnswer.size());
-                txtAnswerD.setText(listAnswer.get(index_three));
+                listCurrentAnswer.remove(answerRemove_2);
+                index_three = new Random().nextInt(listCurrentAnswer.size());
+                txtAnswerD.setText(listCurrentAnswer.get(index_three));
 
                 Log.d("INDEX_ONE", String.valueOf(index_one));
                 Log.d("INDEX_TWO", String.valueOf(index_two));
@@ -213,21 +217,20 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             case 1:
                 txtAnswerB.setText(listMoji.get(index_moji).getCachDocHira());
                 answer_mojiRemove = listMoji.get(index_moji).getCachDocHira();
-                listAnswer.remove(answer_mojiRemove);
-                listAnswer.remove(listMoji.get(index_moji).getCachDocHira());
+                listCurrentAnswer.remove(answer_mojiRemove);
 
-                index_one = new Random().nextInt(listAnswer.size());
-                answerRemove_1 = listAnswer.get(index_one);
+                index_one = new Random().nextInt(listCurrentAnswer.size());
+                answerRemove_1 = listCurrentAnswer.get(index_one);
                 txtAnswerA.setText(answerRemove_1);
-                listAnswer.remove(answerRemove_1);
+                listCurrentAnswer.remove(answerRemove_1);
 
-                index_two = new Random().nextInt(listAnswer.size());
-                answerRemove_2 = listAnswer.get(index_two);
+                index_two = new Random().nextInt(listCurrentAnswer.size());
+                answerRemove_2 = listCurrentAnswer.get(index_two);
                 txtAnswerC.setText(answerRemove_2);
-                listAnswer.remove(answerRemove_2);
+                listCurrentAnswer.remove(answerRemove_2);
 
-                index_three = new Random().nextInt(listAnswer.size());
-                txtAnswerD.setText(listAnswer.get(index_three));
+                index_three = new Random().nextInt(listCurrentAnswer.size());
+                txtAnswerD.setText(listCurrentAnswer.get(index_three));
 
                 Log.d("INDEX_ONE", String.valueOf(index_one));
                 Log.d("INDEX_TWO", String.valueOf(index_two));
@@ -236,21 +239,20 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             case 2:
                 txtAnswerC.setText(listMoji.get(index_moji).getCachDocHira());
                 answer_mojiRemove = listMoji.get(index_moji).getCachDocHira();
-                listAnswer.remove(answer_mojiRemove);
-                listAnswer.remove(listMoji.get(index_moji).getCachDocHira());
+                listCurrentAnswer.remove(answer_mojiRemove);
 
-                index_one = new Random().nextInt(listAnswer.size());
-                answerRemove_1 = listAnswer.get(index_one);
+                index_one = new Random().nextInt(listCurrentAnswer.size());
+                answerRemove_1 = listCurrentAnswer.get(index_one);
                 txtAnswerA.setText(answerRemove_1);
-                listAnswer.remove(answerRemove_1);
+                listCurrentAnswer.remove(answerRemove_1);
 
-                index_two = new Random().nextInt(listAnswer.size());
-                answerRemove_2 = listAnswer.get(index_two);
+                index_two = new Random().nextInt(listCurrentAnswer.size());
+                answerRemove_2 = listCurrentAnswer.get(index_two);
                 txtAnswerB.setText(answerRemove_2);
-                listAnswer.remove(answerRemove_2);
+                listCurrentAnswer.remove(answerRemove_2);
 
-                index_three = new Random().nextInt(listAnswer.size());
-                txtAnswerD.setText(listAnswer.get(index_three));
+                index_three = new Random().nextInt(listCurrentAnswer.size());
+                txtAnswerD.setText(listCurrentAnswer.get(index_three));
                 Log.d("INDEX_ONE", String.valueOf(index_one));
                 Log.d("INDEX_TWO", String.valueOf(index_two));
                 Log.d("INDEX_THREE", String.valueOf(index_three));
@@ -259,21 +261,20 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             case 3:
                 txtAnswerD.setText(listMoji.get(index_moji).getCachDocHira());
                 answer_mojiRemove = listMoji.get(index_moji).getCachDocHira();
-                listAnswer.remove(answer_mojiRemove);
-                listAnswer.remove(listMoji.get(index_moji).getCachDocHira());
+                listCurrentAnswer.remove(answer_mojiRemove);
 
-                index_one = new Random().nextInt(listAnswer.size());
-                answerRemove_1 = listAnswer.get(index_one);
+                index_one = new Random().nextInt(listCurrentAnswer.size());
+                answerRemove_1 = listCurrentAnswer.get(index_one);
                 txtAnswerA.setText(answerRemove_1);
-                listAnswer.remove(answerRemove_1);
+                listCurrentAnswer.remove(answerRemove_1);
 
-                index_two = new Random().nextInt(listAnswer.size());
-                answerRemove_2 = listAnswer.get(index_two);
+                index_two = new Random().nextInt(listCurrentAnswer.size());
+                answerRemove_2 = listCurrentAnswer.get(index_two);
                 txtAnswerB.setText(answerRemove_2);
-                listAnswer.remove(answerRemove_2);
+                listCurrentAnswer.remove(answerRemove_2);
 
-                index_three = new Random().nextInt(listAnswer.size());
-                txtAnswerC.setText(listAnswer.get(index_three));
+                index_three = new Random().nextInt(listCurrentAnswer.size());
+                txtAnswerC.setText(listCurrentAnswer.get(index_three));
                 Log.d("INDEX_ONE", String.valueOf(index_one));
                 Log.d("INDEX_TWO", String.valueOf(index_two));
                 Log.d("INDEX_THREE", String.valueOf(index_three));
@@ -281,14 +282,13 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         listMoji.remove(listMoji.get(index_moji));
-        // RE ADD answer To ListAnswer
-        listAnswer.add(answer_mojiRemove);
-        listAnswer.add(answerRemove_1);
-        listAnswer.add(answerRemove_2);
-
-
     }
     public void updateQuestionKanji (ArrayList<Kanji> listKanji, ArrayList<String> listAnswer) {
+
+
+        ArrayList<String> listCurrentAnswer = new ArrayList<>(listAnswer);
+
+
         index_question++;
         //progressBar.setProgress(index_question * 100 / NUMBER_OF_QUESTION);
         String numberQuestion = "Question: " + String.valueOf(index_question) + "/"
@@ -297,7 +297,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         txtNumberQuestion.setText(numberQuestion);
         txtRightCount.setText(rightCount);
         //Log.d("MOJI_SIZE", String.valueOf(mojiList.size()));
-        Log.d("ANSWER_SIZE", String.valueOf(listAnswer.size()));
+        Log.d("ANSWER_SIZE", String.valueOf(listCurrentAnswer.size()));
         int index_kanji = 0;
         index_kanji = new Random().nextInt(listKanji.size());
 
@@ -321,20 +321,20 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 // đánh dấu câu trả lời đúng của câu hỏi
                 answer_kanjiRemove = listKanji.get(index_kanji).getAmhan();
                 // remove khỏi list answer
-                listAnswer.remove(answer_kanjiRemove);
+                listCurrentAnswer.remove(answer_kanjiRemove);
 
 
-                index_one = new Random().nextInt(listAnswer.size());
-                answerRemove_1 = listAnswer.get(index_one);
+                index_one = new Random().nextInt(listCurrentAnswer.size());
+                answerRemove_1 = listCurrentAnswer.get(index_one);
                 txtAnswerB.setText(answerRemove_1);
-                listAnswer.remove(answerRemove_1);
-                index_two = new Random().nextInt(listAnswer.size());
-                answerRemove_2 = listAnswer.get(index_two);
+                listCurrentAnswer.remove(answerRemove_1);
+                index_two = new Random().nextInt(listCurrentAnswer.size());
+                answerRemove_2 = listCurrentAnswer.get(index_two);
 
                 txtAnswerC.setText(answerRemove_2);
-                listAnswer.remove(answerRemove_2);
-                index_three = new Random().nextInt(listAnswer.size());
-                txtAnswerD.setText(listAnswer.get(index_three));
+                listCurrentAnswer.remove(answerRemove_2);
+                index_three = new Random().nextInt(listCurrentAnswer.size());
+                txtAnswerD.setText(listCurrentAnswer.get(index_three));
 
                 Log.d("INDEX_ONE", String.valueOf(index_one));
                 Log.d("INDEX_TWO", String.valueOf(index_two));
@@ -344,21 +344,20 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             case 1:
                 txtAnswerB.setText(listKanji.get(index_kanji).getAmhan());
                 answer_kanjiRemove = listKanji.get(index_kanji).getAmhan();
-                listAnswer.remove(answer_kanjiRemove);
-                listAnswer.remove(listKanji.get(index_kanji).getAmhan());
+                listCurrentAnswer.remove(answer_kanjiRemove);
 
-                index_one = new Random().nextInt(listAnswer.size());
-                answerRemove_1 = listAnswer.get(index_one);
+                index_one = new Random().nextInt(listCurrentAnswer.size());
+                answerRemove_1 = listCurrentAnswer.get(index_one);
                 txtAnswerA.setText(answerRemove_1);
-                listAnswer.remove(answerRemove_1);
+                listCurrentAnswer.remove(answerRemove_1);
 
-                index_two = new Random().nextInt(listAnswer.size());
-                answerRemove_2 = listAnswer.get(index_two);
+                index_two = new Random().nextInt(listCurrentAnswer.size());
+                answerRemove_2 = listCurrentAnswer.get(index_two);
                 txtAnswerC.setText(answerRemove_2);
-                listAnswer.remove(answerRemove_2);
+                listCurrentAnswer.remove(answerRemove_2);
 
-                index_three = new Random().nextInt(listAnswer.size());
-                txtAnswerD.setText(listAnswer.get(index_three));
+                index_three = new Random().nextInt(listCurrentAnswer.size());
+                txtAnswerD.setText(listCurrentAnswer.get(index_three));
 
                 Log.d("INDEX_ONE", String.valueOf(index_one));
                 Log.d("INDEX_TWO", String.valueOf(index_two));
@@ -367,21 +366,20 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             case 2:
                 txtAnswerC.setText(listKanji.get(index_kanji).getAmhan());
                 answer_kanjiRemove = listKanji.get(index_kanji).getAmhan();
-                listAnswer.remove(answer_kanjiRemove);
-                listAnswer.remove(listKanji.get(index_kanji).getAmhan());
+                listCurrentAnswer.remove(answer_kanjiRemove);
 
-                index_one = new Random().nextInt(listAnswer.size());
-                answerRemove_1 = listAnswer.get(index_one);
+                index_one = new Random().nextInt(listCurrentAnswer.size());
+                answerRemove_1 = listCurrentAnswer.get(index_one);
                 txtAnswerA.setText(answerRemove_1);
-                listAnswer.remove(answerRemove_1);
+                listCurrentAnswer.remove(answerRemove_1);
 
-                index_two = new Random().nextInt(listAnswer.size());
-                answerRemove_2 = listAnswer.get(index_two);
+                index_two = new Random().nextInt(listCurrentAnswer.size());
+                answerRemove_2 = listCurrentAnswer.get(index_two);
                 txtAnswerB.setText(answerRemove_2);
-                listAnswer.remove(answerRemove_2);
+                listCurrentAnswer.remove(answerRemove_2);
 
-                index_three = new Random().nextInt(listAnswer.size());
-                txtAnswerD.setText(listAnswer.get(index_three));
+                index_three = new Random().nextInt(listCurrentAnswer.size());
+                txtAnswerD.setText(listCurrentAnswer.get(index_three));
                 Log.d("INDEX_ONE", String.valueOf(index_one));
                 Log.d("INDEX_TWO", String.valueOf(index_two));
                 Log.d("INDEX_THREE", String.valueOf(index_three));
@@ -390,21 +388,20 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             case 3:
                 txtAnswerD.setText(listKanji.get(index_kanji).getAmhan());
                 answer_kanjiRemove = listKanji.get(index_kanji).getAmhan();
-                listAnswer.remove(answer_kanjiRemove);
-                listAnswer.remove(listKanji.get(index_kanji).getAmhan());
+                listCurrentAnswer.remove(answer_kanjiRemove);
 
-                index_one = new Random().nextInt(listAnswer.size());
-                answerRemove_1 = listAnswer.get(index_one);
+                index_one = new Random().nextInt(listCurrentAnswer.size());
+                answerRemove_1 = listCurrentAnswer.get(index_one);
                 txtAnswerA.setText(answerRemove_1);
-                listAnswer.remove(answerRemove_1);
+                listCurrentAnswer.remove(answerRemove_1);
 
-                index_two = new Random().nextInt(listAnswer.size());
-                answerRemove_2 = listAnswer.get(index_two);
+                index_two = new Random().nextInt(listCurrentAnswer.size());
+                answerRemove_2 = listCurrentAnswer.get(index_two);
                 txtAnswerB.setText(answerRemove_2);
-                listAnswer.remove(answerRemove_2);
+                listCurrentAnswer.remove(answerRemove_2);
 
-                index_three = new Random().nextInt(listAnswer.size());
-                txtAnswerC.setText(listAnswer.get(index_three));
+                index_three = new Random().nextInt(listCurrentAnswer.size());
+                txtAnswerC.setText(listCurrentAnswer.get(index_three));
                 Log.d("INDEX_ONE", String.valueOf(index_one));
                 Log.d("INDEX_TWO", String.valueOf(index_two));
                 Log.d("INDEX_THREE", String.valueOf(index_three));
@@ -412,12 +409,6 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         listKanji.remove(listKanji.get(index_kanji));
-        // RE ADD answer To ListAnswer
-        listAnswer.add(answer_kanjiRemove);
-        listAnswer.add(answerRemove_1);
-        listAnswer.add(answerRemove_2);
-
-
     }
     public void updateNumberOfRightAnswer () {
         txtRightCount.setText(String.valueOf(number_of_right_answer));
@@ -638,7 +629,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.btnMain:
                 getDataOfNodeChart();
-                startActivity(new Intent(TestActivity.this, FeatureActivity.class));
+                //startActivity(new Intent(TestActivity.this, FeatureActivity.class));
                 this.finish();
                 break;
 
@@ -669,7 +660,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 oldKanjiList.add(kanjiList.get(i));
                 answerList.add(kanjiList.get(i).getAmhan());
                 QAList.add(new QuestionAnswer(kanjiList.get(i).getKanji(),
-                                kanjiList.get(i).getAmhan()));
+                        kanjiList.get(i).getAmhan()));
             }
             NUMBER_OF_QUESTION = kanjiList.size();
             updateQuestionKanji(kanjiList, answerList);

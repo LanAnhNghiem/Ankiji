@@ -17,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardFragmentPagerAdapter;
 import com.jishin.ankiji.model.DataTypeEnum;
+import com.jishin.ankiji.model.DateAccess;
 import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.Set;
@@ -26,6 +27,8 @@ import com.jishin.ankiji.utilities.LocalDatabase;
 import com.jishin.ankiji.utilities.MapHelper;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 
 public class LearnActivity extends AppCompatActivity {
@@ -39,12 +42,16 @@ public class LearnActivity extends AppCompatActivity {
     private ArrayList<Moji> mojiList;
     private ArrayList<Kanji> kanjiList;
     private ArrayList<?> contentList = new ArrayList<>();
-    private Set set;
+    private Set set, dateSet;
     private DatabaseReference mSetByUserRef;
+    private DatabaseReference mDateSetRef;
     private Toolbar mToolbar;
     private DatabaseService mData = DatabaseService.getInstance();
     private LocalDatabase mLocalData = LocalDatabase.getInstance();
+    private DatabaseReference mDateSet = mData.createDatabase("DateSet");
     private String mUserID = "";
+    public String type;
+    public String topicName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +62,20 @@ public class LearnActivity extends AppCompatActivity {
         if (intent != null) {
             dataTypeEnum = (DataTypeEnum) intent.getSerializableExtra(Constants.DATA_TYPE);
             set = (Set) intent.getSerializableExtra(Constants.SET_BY_USER);
+            dateSet = set;
+            Date currentDate = Calendar.getInstance().getTime();
+            dateSet.setDatetime(String.valueOf(currentDate));
             mUserID = intent.getStringExtra(Constants.USER_ID);
+            Log.d(TAG, "onCreate: dataTypeEnum: " + dataTypeEnum);
+            Log.d(TAG, "onCreate: Set: " + set);
             if (dataTypeEnum == DataTypeEnum.Kanji) {
                 kanjiList = new ArrayList<Kanji>();
+                type = "Kanji";
             } else {
                 mojiList = new ArrayList<Moji>();
-            };
+                type = "Moji";
+            }
+            ;
         }
         //initParam();
         Log.i(TAG, "onCreate: contextlistsize " + this.contentList.size());
@@ -71,24 +86,29 @@ public class LearnActivity extends AppCompatActivity {
         setEvents();
 
     }
-    private void loadData(){
-        mLocalData.init(this,mUserID,mData);
+
+    private void loadData() {
+        mLocalData.init(this, mUserID, mData);
         String id = set.getId();
+        topicName = set.getName();
+        Log.d(TAG, "loadData: id: " + id);
+        Log.d(TAG, "loadData: topicName: " + topicName);
+        updateDate(id);
         Map learnMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
-        if(learnMap != null){
-            if (dataTypeEnum == DataTypeEnum.Moji){
-                if(learnMap.containsKey(id)){
+        if (learnMap != null) {
+            if (dataTypeEnum == DataTypeEnum.Moji) {
+                if (learnMap.containsKey(id)) {
                     mojiList = MapHelper.convertToMoji(learnMap, set.getId());
                     contentList = mojiList;
                 }
 
-            }else{
-                if(learnMap.containsKey(id)){
+            } else {
+                if (learnMap.containsKey(id)) {
                     kanjiList = MapHelper.convertToKanji(learnMap, set.getId());
                     contentList = kanjiList;
                 }
             }
-            if (contentList.size() != 0){
+            if (contentList.size() != 0) {
                 mProgressBar.setProgress(100 / contentList.size());
             }
             mPagerAdapter.setContentList(contentList);
@@ -96,12 +116,14 @@ public class LearnActivity extends AppCompatActivity {
             mPagerAdapter.notifyDataSetChanged();
         }
     }
+
     private void initParam() {
         mSetByUserRef = mData.getDatabase()
                 .child(Constants.SET_BY_USER)
                 .child(mUserID)
                 .child(set.getId());
         Log.d(TAG, "initParam: " + mSetByUserRef.getKey());
+        mDateSetRef = mData.getDatabase().child("DateSet");
     }
 
     public static boolean isFront() {
@@ -114,7 +136,7 @@ public class LearnActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mProgressBar = findViewById(R.id.progress_bar);
-        if (this.contentList.size() != 0){
+        if (this.contentList.size() != 0) {
             mProgressBar.setProgress(100 / contentList.size());
         }
 
@@ -146,11 +168,12 @@ public class LearnActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 int progressValue = 0;
-                if (contentList.size() != 0){
+                if (contentList.size() != 0) {
                     progressValue = ((position + 1) * 100) / contentList.size();
                 }
                 mProgressBar.setProgress(progressValue);
             }
+
             @Override
             public void onPageScrollStateChanged(int state) {
 
@@ -159,9 +182,20 @@ public class LearnActivity extends AppCompatActivity {
 
     }
 
+
+    private void setDateAccess(String topicId, String type, String date) {
+        String id = mDateSet.push().getKey();
+        DateAccess set = new DateAccess(type, topicId, date);
+        mDateSet.child(mUserID).child(id).setValue(set);
+    }
+
+    private void updateDate(String id) {
+        mDateSet.child(mUserID).child(id).setValue(dateSet);
+    }
+
     public class fetchData extends AsyncTask<Void, Void, Void> {
         @Override
-        protected Void doInBackground(Void...aVoids) {
+        protected Void doInBackground(Void... aVoids) {
             mSetByUserRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -199,4 +233,6 @@ public class LearnActivity extends AppCompatActivity {
             mPagerAdapter.notifyDataSetChanged();
         }
     }
+
+
 }

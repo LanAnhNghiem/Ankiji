@@ -22,4 +22,5 @@ public class Constants {
     public static final String CHART = "chart";
     public static final String CORRECT_ANSWER = "CorrectAnswser";
     public static final String TEST_TIMES = "TestTimes";
+    public static final String DATE_SET_NODE = "DateSet";
 }

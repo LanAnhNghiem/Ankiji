@@ -239,12 +239,6 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
                         break;
                     case 1:
                         new CountItemTask(set).execute();
-                        if(mKanjiList.size() >= 5){
-                            Intent intentTest= new Intent(getContext(), TestActivity.class);
-                            intentTest.putExtra(Constants.SET_BY_USER, set);
-                            intentTest.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
-                            startActivity(intentTest);
-                        }
                         break;
                     case 2:
                         new LoadDataForChart(mData.getUserID(), set.getId()).execute();

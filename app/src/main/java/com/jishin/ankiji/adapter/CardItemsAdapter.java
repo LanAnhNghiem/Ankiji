@@ -63,9 +63,21 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
     public void onBindViewHolder(final CardItemsAdapter.ItemViewHolder holder, final int position) {
 
         if (FRAGMENT_TAG.equals("RECENTLY")) {
-            holder.tvTitle.setText("MARUGOTO");
-            holder.tvItemCount.setText("10 items");
-            holder.dataType = DataTypeEnum.Kanji;
+            if(mSetList.size() != 0 && position < mSetList.size()){
+                holder.set = this.mSetList.get(position);
+                holder.tvTitle.setText(holder.set.getName());
+                holder.tvItemCount.setText(convertDatetime(holder.set.getDatetime()));
+                holder.dataType = DataTypeEnum.Moji;
+                holder.btnDeleteItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showRemoveDialog(FRAGMENT_TAG, position);
+                    }
+                });
+            }
+//            holder.tvTitle.setText("MARUGOTO");
+//            holder.tvItemCount.setText("10 items");
+//            holder.dataType = DataTypeEnum.Kanji;
         }
 
         if (FRAGMENT_TAG.equals("MOJI")) {

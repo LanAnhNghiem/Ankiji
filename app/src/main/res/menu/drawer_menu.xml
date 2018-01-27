@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/item_profile" android:title="Profile" android:icon="@drawable/ic_account_circle_black_24px"/>
-    <item android:id="@+id/item_setting" android:title="Setting" android:icon="@drawable/ic_settings_black_24px"></item>
-    <item android:id="@+id/item_use" android:title="How to use" android:icon="@drawable/ic_help_outline_black_24px"/>
+    <!--<item android:id="@+id/item_setting" android:title="Setting" android:icon="@drawable/ic_settings_black_24px"></item>-->
+    <!--<item android:id="@+id/item_use" android:title="How to use" android:icon="@drawable/ic_help_outline_black_24px"/>-->
     <item android:id="@+id/about" android:title="About us" android:icon="@drawable/ic_group_black_24px"/>
     <item android:id="@+id/log_out" android:title="Log out" android:icon="@drawable/ic_arrow_back_black_24px"/>
 </menu>

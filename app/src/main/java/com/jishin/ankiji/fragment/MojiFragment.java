@@ -82,7 +82,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
     public void setmUserID(String mUserID) {
         this.mUserID = mUserID;
     }
-        private LocalDatabase mLocalData = LocalDatabase.getInstance();
+    private LocalDatabase mLocalData = LocalDatabase.getInstance();
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -238,12 +238,6 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
                         break;
                     case 1:
                         new CountItemTask(set).execute();
-                        if(mMojiList.size() >= 5){
-                            Intent intentTest = new Intent(getContext(), TestActivity.class);
-                            intentTest.putExtra(Constants.SET_BY_USER, set);
-                            intentTest.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
-                            startActivity(intentTest);
-                        }
 
                         break;
                     case 2:

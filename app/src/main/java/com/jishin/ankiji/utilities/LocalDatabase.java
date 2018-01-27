@@ -155,8 +155,7 @@ public class LocalDatabase {
 
         return ret;
     }
-    public static boolean hasLocalData(){
-        String str = readFromFile(Constants.DATA_FILE+mUserID, mContext);
+    public static boolean hasLocalData(){String str = readFromFile(Constants.DATA_FILE+mUserID, mContext);
         if(!str.trim().isEmpty()){
             return true;
         }else{

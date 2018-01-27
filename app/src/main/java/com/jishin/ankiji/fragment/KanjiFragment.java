@@ -232,7 +232,6 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
                             intentTest.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
                             startActivity(intentTest);
                         }
-
                         break;
                     case 2:
 

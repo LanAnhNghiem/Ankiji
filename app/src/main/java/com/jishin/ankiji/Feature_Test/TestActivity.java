@@ -66,7 +66,6 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     Dialog settingsDialog = null;
     private ConstraintLayout layout_test;
 
-    private LocalDatabase mLocalData = LocalDatabase.getInstance();
     private static final String TAG = TestActivity.class.getSimpleName();
 
     private String userID;

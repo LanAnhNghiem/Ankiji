@@ -433,7 +433,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
         @Override
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
-            if (testTimes != null || testTimes.equals("0")){
+            if (testTimes != null || testTimes == "0"){
                 Log.d(TAG, "onDataChange: Correct Answer: " + correctAnswer);
                 Log.d(TAG, "onDataChange: TestTimes: " + testTimes);
                 Log.d(TAG, "onDataChange: SetID: " + this.setId);

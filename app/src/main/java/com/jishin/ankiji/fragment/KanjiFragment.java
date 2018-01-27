@@ -25,11 +25,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.jishin.ankiji.Chart.ChartActivity;
 import com.jishin.ankiji.Feature_Test.TestActivity;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
@@ -68,6 +71,9 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
     private DatabaseReference mSetByUser;
     private String mUserID = "";
     private boolean isScrollDown = false;
+    private FirebaseUser user;
+    private String correctAnswer = "0";
+    private String testTimes = "0";
     public String getmUserID() {
         return mUserID;
     }
@@ -134,6 +140,7 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
 
 
     private void addControl(View view){
+        user = FirebaseAuth.getInstance().getCurrentUser();
         mFABtn = view.findViewById(R.id.fabKanji);
         mFABAdd = view.findViewById(R.id.fabAdd);
         mFABCreate = view.findViewById(R.id.fabCreate);
@@ -234,7 +241,7 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
                         new CountItemTask(set).execute();
                         break;
                     case 2:
-
+                        new LoadDataForChart(mData.getUserID(), set.getId()).execute();
                         break;
                     case 3:
                         Intent editIntent = new Intent(getContext(), EditVocabActivity.class);
@@ -357,6 +364,10 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
                 Intent intentTest = new Intent(getContext(), TestActivity.class);
                 intentTest.putExtra(Constants.SET_BY_USER, mKanjiList);
                 intentTest.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
+                if (user != null) {
+                    intentTest.putExtra(Constants.USER_ID, user.getUid());
+                    intentTest.putExtra(Constants.KANJI_SET_NODE, mSet.getId());
+                }
                 startActivity(intentTest);
             }
             else{
@@ -394,4 +405,69 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
 //        }
 //        mItemsAdapter.notifyDataSetChanged();
 //    }
+
+    public class LoadDataForChart extends AsyncTask<Void, Void, Void>{
+
+        String userId;
+        String setId;
+        DatabaseReference chartRef;
+        String correctAnswer;
+        String testTimes;
+        public LoadDataForChart(String userId, String setId){
+            this.userId = userId;
+            this.setId = setId;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            dataRef();
+            chartRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    correctAnswer = (String) dataSnapshot.child(Constants.CORRECT_ANSWER).getValue();
+                    testTimes = (String) dataSnapshot.child(Constants.TEST_TIMES).getValue();
+                    onProgressUpdate();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            if (testTimes != null && !testTimes.equals("0")){
+                Log.d(TAG, "onDataChange: Correct Answer: " + correctAnswer);
+                Log.d(TAG, "onDataChange: TestTimes: " + testTimes);
+                Log.d(TAG, "onDataChange: SetID: " + this.setId);
+                Log.d(TAG, "onDataChange: UserID: " + this.userId);
+                Log.d(TAG, "onDataChange: ListSize: " + mKanjiList.size());
+                Intent chartIntent = new Intent(getContext(), ChartActivity.class);
+                chartIntent.putExtra(Constants.USER_ID, this.userId);
+                chartIntent.putExtra(Constants.SET_BY_USER,this.setId);
+                chartIntent.putExtra("SIZE", mKanjiList.size());
+                chartIntent.putExtra(Constants.CORRECT_ANSWER, correctAnswer);
+                chartIntent.putExtra(Constants.TEST_TIMES, testTimes);
+                startActivity(chartIntent);
+            }
+            else {
+                Toast.makeText(getContext(), "Test times: 0", Toast.LENGTH_SHORT).show();
+//                correctAnswer = "0";
+//                testTimes = "0";
+            }
+        }
+
+        public void dataRef(){
+            if(!mData.getUserID().isEmpty()){
+                chartRef = mData.getDatabase()
+                        .child(Constants.CHART)
+                        .child(mData.getUserID())
+                        .child(this.setId);
+            }
+        }
+    }
 }

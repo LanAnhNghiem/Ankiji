@@ -3,6 +3,7 @@ package com.jishin.ankiji.Feature_Test;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
@@ -15,6 +16,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.model.Moji;
@@ -60,6 +66,15 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     Dialog settingsDialog = null;
     private ConstraintLayout layout_test;
 
+    private LocalDatabase mLocalData = LocalDatabase.getInstance();
+    private static final String TAG = TestActivity.class.getSimpleName();
+
+    private String userID;
+    private String setID;
+    private DatabaseReference chartRef;
+
+    private String correctAnswer = "0";
+    private String testTimes = "0";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +92,9 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 isKanji = false;
                 mojiList = (ArrayList<Moji>) intent.getSerializableExtra(Constants.SET_BY_USER);
             }
+            userID = intent.getExtras().getString(Constants.USER_ID);
+            setID = intent.getExtras().getString(Constants.KANJI_SET_NODE);
+
         }
         addControls();
         initData(isKanji);
@@ -121,9 +139,13 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
         //progressBar.setProgress(0);
 
-        btnMain.setVisibility(View.INVISIBLE);
-        btnRetry.setVisibility(View.INVISIBLE);
-        txtNotification.setVisibility(View.INVISIBLE);
+        btnMain.setVisibility(View.GONE);
+        btnRetry.setVisibility(View.GONE);
+        txtNotification.setVisibility(View.GONE);
+
+        chartRef = FirebaseDatabase.getInstance().getReference(Constants.CHART).child(userID).child(setID);
+        Log.d("chartRef", chartRef.toString());
+        new LoadNodeCharTask().execute();
     }
 
     @Override
@@ -415,8 +437,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
     public void checkTrueOrFalseAnswer(boolean check, final TextView answer_view) {
         if (check == true) {
-            new CountDownTimer(1000, 1000) {
-
+            new CountDownTimer(1100, 1000) {
                 public void onTick(long millisUntilFinished) {
                     Log.d("TAG", "onTick: " + "seconds remaining: " + millisUntilFinished / 1000);
 
@@ -432,20 +453,23 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                     layout_test.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            cancel();
+                            Log.d(TAG, "onClick: clicked layout_test");
                             onFinish();
+                            cancel();
                         }
                     });
                 }
                 public void onFinish() {
+                    Log.d(TAG, "onFinish: countdowntimer");
                     layout_test.setEnabled(false);
                     finishCheckAnswer(answer_view);
                 }
             }.start();
         }
         else {
-            new CountDownTimer(1000, 1000) {
+            new CountDownTimer(1100, 1000) {
                 public void onTick(long millisUntilFinished) {
+                    Log.d(TAG, "onTick");
                     Log.d("TAG", "onTick: " + "seconds remaining: " + millisUntilFinished / 1000);
                     answer_view.setBackgroundColor(Color.parseColor("#C62828"));
                     answer_view.setTextColor(Color.WHITE);
@@ -459,13 +483,15 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                     layout_test.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            cancel();
+                            Log.d(TAG, "onClick: clicked layout_test");
                             onFinish();
+                            cancel();
                         }
                     });
                 }
 
                 public void onFinish() {
+                    Log.d(TAG, "onFinish: countdowntimer");
                     layout_test.setEnabled(false);
                     finishCheckAnswer(answer_view);
                 }
@@ -475,6 +501,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public void finishCheckAnswer(TextView answer_view) {
+        Log.d(TAG, "finishCheckAnswer: isKanji" + isKanji);
         answer_view.setTextColor(Color.parseColor("#AB5E4F"));
         answer_view.setBackgroundResource(R.drawable.border);
         txtAnswerA.setEnabled(true);
@@ -601,6 +628,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.btnMain:
+                getDataOfNodeChart();
                 //startActivity(new Intent(TestActivity.this, FeatureActivity.class));
                 this.finish();
                 break;
@@ -608,6 +636,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btnRetry:
 //                startActivity(getIntent());
 //                finish();
+                getDataOfNodeChart();
                 Intent refresh = new Intent(this, TestActivity.class);
                 if (isKanji) {
                     Log.d("test", String.valueOf(kanjiList.size()));
@@ -646,6 +675,46 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             NUMBER_OF_QUESTION = mojiList.size();
             updateQuestionMoji(mojiList, answerList);
         }
+    }
+
+    private void getDataOfNodeChart() {
+        Log.d("correctAnswer", correctAnswer);
+        Log.d("testTimes", testTimes);
+
+        int temp = Integer.parseInt(correctAnswer) + number_of_right_answer;
+        FirebaseDatabase.getInstance().getReference(Constants.CHART)
+                .child(userID).child(setID).child(Constants.CORRECT_ANSWER).setValue(String.valueOf(temp));
+
+        temp = Integer.parseInt(testTimes) + 1;
+        FirebaseDatabase.getInstance().getReference(Constants.CHART)
+                .child(userID).child(setID).child(Constants.TEST_TIMES).setValue(String.valueOf(temp));
+    }
+
+    class LoadNodeCharTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (chartRef == null){
+                Log.d("NULL_DAY_NE", "NULL_DAY_NE");
+            }
+            chartRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.child(Constants.CORRECT_ANSWER).getValue() == null){
+                        correctAnswer = "0";
+                        testTimes = "0";
+                    }else{
+                        correctAnswer = dataSnapshot.child(Constants.CORRECT_ANSWER).getValue(String.class);
+                        testTimes = dataSnapshot.child(Constants.TEST_TIMES).getValue(String.class);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {}
+            });
+            return null;
+        }
+
     }
 //    class LoadDataTask extends AsyncTask<Void, Void, Void>{
 //

@@ -25,4 +25,7 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textColorPrimaryInverse">@android:color/white</item>
     </style>
+    <style name="MyTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+    </style>
 </resources>

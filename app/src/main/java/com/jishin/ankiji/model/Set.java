@@ -40,12 +40,11 @@ public class Set implements Serializable{
         this.name = name;
     }
 
-    public String getDatetime() {
+    public String getDatetime(){
         return datetime;
     }
 
     public void setDatetime(String datetime) {
         this.datetime = datetime;
     }
-
 }

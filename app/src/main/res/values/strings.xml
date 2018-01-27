@@ -63,4 +63,5 @@
     <string name="pick_picture">Pick your picture</string>
     <string name="connected">Your device is connected</string>
     <string name="not_connected">Your device is not connected</string>
+    <string name="reset_chart">Reset</string>
 </resources>

@@ -1,15 +1,14 @@
-package com.jishin.ankiji.CHART;
+package com.jishin.ankiji.Chart;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -22,6 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
+import com.jishin.ankiji.features.FeatureActivity;
 import com.jishin.ankiji.utilities.Constants;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import java.util.List;
 
 public class ChartActivity extends AppCompatActivity {
     private PieChart chartPie;
-    private FloatingActionButton btnFab;
+    private Button btnReset;
     private String userUid;
     private String setID;
     private int listSize;
@@ -103,13 +103,23 @@ public class ChartActivity extends AppCompatActivity {
         // refresh the chart
         chartPie.invalidate();
 
-        btnFab.setOnClickListener(new View.OnClickListener() {
+        btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Chỉ có già - chả có gì", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                resetNodeChart();
+                startActivity(new Intent(ChartActivity.this, FeatureActivity.class));
+                finish();
             }
         });
+
+    }
+
+    private void resetNodeChart() {
+        FirebaseDatabase.getInstance()
+                .getReference(Constants.CHART)
+                .child(userUid).child(setID).child(Constants.CORRECT_ANSWER).setValue("0");
+        FirebaseDatabase.getInstance().getReference(Constants.CHART)
+                .child(userUid).child(setID).child(Constants.TEST_TIMES).setValue("0");
     }
 
     private void addControls() {
@@ -123,8 +133,7 @@ public class ChartActivity extends AppCompatActivity {
 
         // ----------- binding view --------------
         chartPie = findViewById(R.id.test_chart);
-
-        btnFab = findViewById(R.id.fab);
+        btnReset = findViewById(R.id.btnRetry);
     }
 
     @Override

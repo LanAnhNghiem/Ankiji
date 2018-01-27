@@ -42,7 +42,7 @@ public class RecentlyFragment extends Fragment implements RemoveDataCommunicator
     String currentDay;
     private DatabaseService mData = DatabaseService.getInstance();
     private DatabaseReference mDateRef = mData.getDatabase().child("DateSet");
-    String userID = mData.getUserID();
+    String userID = "";
     private ArrayList<String> topicList = new ArrayList<>();
 
     public String getmUserID() {
@@ -60,6 +60,10 @@ public class RecentlyFragment extends Fragment implements RemoveDataCommunicator
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy");
         currentDay = String.valueOf(dateFormat.format(cal.getTime()));
+        userID = mData.getUserID();
+        if(userID.isEmpty()){
+            userID = getmUserID();
+        }
         initRecycler(view);
 
         return view;

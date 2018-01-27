@@ -31,10 +31,19 @@ public class LocalDatabase {
     private static LocalDatabase mInstance;
     private static Context mContext;
     private static String mUserID;
-    private static Map<String, Map> mUserData, mSetByUserData, mMojiSetData, mKanjiSetData, mLocalData;
+    private static Map<String, Map> mUserData;
+    private static Map<String, Map> mSetByUserData;
+    private static Map<String, Map> mKanjiSetData;
+    private static Map<String, Map> mMojiSetData;
+    private static Map<String, Map> mLocalData;
     private static DatabaseService mData;
     private static DatabaseReference mUserRef, mSetByUserRef, mMojiSetRef, mKanjiSetRef;
     private static boolean isCompleted = false;//is load data completed
+
+    public static LoadDataListener getmListener() {
+        return mListener;
+    }
+
     private static LoadDataListener mListener;
 
     protected LocalDatabase(){
@@ -67,16 +76,17 @@ public class LocalDatabase {
         mLocalData = new HashMap<>();
         mListener = listener;
     }
+
     public static boolean isLoadCompleted(){
         return isCompleted;
     }
     public static void loadAllData(){
         new LoadAllDataTask().execute();
     }
-    public static void updateAllData(){
+    public static void syncData(){
         new SyncDataTask().execute();
     }
-    private static void writeToFile(String fileName, String data, Context context) {
+    public static void writeToFile(String fileName, String data, Context context) {
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
@@ -87,7 +97,7 @@ public class LocalDatabase {
         }
     }
 
-    private static String readFromFile(String fileName, Context context) {
+    public static String readFromFile(String fileName, Context context) {
 
         String ret = "";
 
@@ -137,6 +147,19 @@ public class LocalDatabase {
             String aPath = path;
             Map result = MapHelper.getPath(readData, aPath);
             return result;
+        }
+        return null;
+    }
+    public static Map<String, Map> readAllData(){
+        String str = readFromFile(Constants.DATA_FILE, mContext);
+        if(hasLocalData())
+        {
+            // ------- test parse feature -------
+            Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+            // readData is just like mainData, stored it in a different variable
+            Map<String, Map> readData = new Gson().fromJson(str, mapType);
+
+            return readData;
         }
         return null;
     }
@@ -205,16 +228,23 @@ public class LocalDatabase {
         protected Void doInBackground(Void... voids) {
             //update SetByUser
             Map setByUserMap = readData(Constants.SET_BY_USER_NODE);
+            Log.d(TAG, String.valueOf(setByUserMap));
             mSetByUserRef.setValue(setByUserMap);
 
             //update MojiSet
             Map mojiMap = readData(Constants.MOJI_SET_NODE);
+            Log.d(TAG, String.valueOf(mojiMap));
             mMojiSetRef.setValue(mojiMap);
 
             //update KanjiSet
             Map kanjiMap = readData(Constants.KANJI_SET_NODE);
+            Log.d(TAG, String.valueOf(kanjiMap));
             mKanjiSetRef.setValue(kanjiMap);
 
+            //update Profile user
+            Map userMap = readData(Constants.USER_NODE);
+            mUserRef.setValue(userMap);
+            Log.d(TAG, String.valueOf(userMap));
             return null;
         }
     }

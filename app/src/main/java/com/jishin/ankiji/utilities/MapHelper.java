@@ -51,7 +51,11 @@ public class MapHelper {
             list= (ArrayList<Moji>) map.get(id);
             Gson gson = new Gson();
             Type type = new TypeToken<ArrayList<Moji>>() {}.getType();
-            String json = gson.toJson(list, type);
+            String json = gson.toJson(list, type)
+                    .replace("cachDocHira", "CachDocHira")
+                    .replace("tuTiengNhat", "TuTiengNhat")
+                    .replace("nghiaTiengViet", "NghiaTiengViet")
+                    .replace("amHan", "AmHan");
             list = gson.fromJson(json, type);
         }
         return list;

@@ -78,7 +78,7 @@ public class FeatureActivity extends AppCompatActivity{
         if(!mLocalData.hasLocalData()){
             mLocalData.loadAllData();
         }else{
-            mLocalData.updateAllData();
+            mLocalData.syncData();
         }
     }
 

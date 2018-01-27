@@ -1,8 +1,11 @@
 package com.jishin.ankiji.edit;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -11,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,10 +24,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.KanjiItemAdapter;
 import com.jishin.ankiji.adapter.MojiItemAdapter;
-import com.jishin.ankiji.model.DataTypeEnum;
 import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.Set;
@@ -31,10 +35,13 @@ import com.jishin.ankiji.userlist.SwipeController;
 import com.jishin.ankiji.userlist.SwipeControllerActions;
 import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
+import com.jishin.ankiji.utilities.LocalDatabase;
+import com.jishin.ankiji.utilities.MapHelper;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 public class EditVocabActivity extends AppCompatActivity{
     private static final String TAG = EditVocabActivity.class.getSimpleName();
@@ -51,27 +58,30 @@ public class EditVocabActivity extends AppCompatActivity{
     private boolean isKanji = true;
     private String mSetName = "", mUserID = "", mSetID = "";
     private Set mSet = new Set();
+    private Date currentTime;
     private DatabaseService mData = DatabaseService.getInstance();
     private DatabaseReference mMojiSet = mData.createDatabase(Constants.MOJI_SET_NODE);
     private DatabaseReference mKanjiSet = mData.createDatabase(Constants.KANJI_SET_NODE);
     private DatabaseReference mSetByUser = mData.createDatabase(Constants.SET_BY_USER_NODE);
+    private LocalDatabase mLocalData = LocalDatabase.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_vocab);
-
         getIntentData();
         initControl();
+        loadData();
         setupRecyclerView();
         setEvents();
-        Date currentTime = Calendar.getInstance().getTime();
+        currentTime = Calendar.getInstance().getTime();
         Toast.makeText(this, String.valueOf(currentTime), Toast.LENGTH_SHORT).show();
     }
     private void getIntentData(){
         Intent intent = getIntent();
         if(intent.hasExtra(Constants.USER_ID)){
-            DataTypeEnum dataTypeEnum = (DataTypeEnum) intent.getSerializableExtra(Constants.DATA_TYPE);
-            if(dataTypeEnum.equals(DataTypeEnum.Moji)){
+            //DataTypeEnum dataTypeEnum = (DataTypeEnum) intent.getSerializableExtra(Constants.DATA_TYPE);
+            String type = intent.getStringExtra(Constants.DATA_TYPE);
+            if(type.equals("MOJI")){
                 isKanji = false;
             }
             mSet = (Set) intent.getSerializableExtra(Constants.SET_BY_USER);
@@ -84,7 +94,7 @@ public class EditVocabActivity extends AppCompatActivity{
     }
     private void initControl(){
         //load data set
-        new LoadSetTask().execute();
+        //new LoadSetTask().execute();
         //controller
         toolbar = findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.create_vocab_menu);
@@ -94,7 +104,23 @@ public class EditVocabActivity extends AppCompatActivity{
         txtWord = findViewById(R.id.txt_vocab);
         btnDone = findViewById(R.id.btn_done);
         btnAdd = findViewById(R.id.btn_add);
-
+    }
+    private void loadData(){
+        //init local data
+        mLocalData.init(getBaseContext(),mUserID, mData);
+        Map editMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
+        if(editMap != null){
+            if(isKanji){
+                if(editMap.containsKey(mSetID)){
+                    mKanjiList = MapHelper.convertToKanji(editMap, mSetID);
+                }
+            }
+            else{
+                if(editMap.containsKey(mSetID)){
+                    mMojiList = MapHelper.convertToMoji(editMap, mSetID);
+                }
+            }
+        }
     }
 
     @Override
@@ -131,7 +157,7 @@ public class EditVocabActivity extends AppCompatActivity{
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                saveDatabase();
+                saveData();
                 finish();
             }
             }).setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -148,7 +174,7 @@ public class EditVocabActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 Toast.makeText(EditVocabActivity.this, "Done", Toast.LENGTH_SHORT).show();
-                saveDatabase();
+                saveData();
                 finish();
             }
         });
@@ -225,13 +251,23 @@ public class EditVocabActivity extends AppCompatActivity{
         if(isKanji){
             kanjiAdapter = new KanjiItemAdapter(mKanjiList, getBaseContext());
             rvVocab.setAdapter(kanjiAdapter);
+            txtWord.setText("Từ vựng ("+mKanjiList.size()+")");
         }else{
             mojiAdapter = new MojiItemAdapter(mMojiList, getBaseContext());
             rvVocab.setAdapter(mojiAdapter);
+            txtWord.setText("Từ vựng ("+mMojiList.size()+")");
         }
     }
-    private void saveDatabase(){
-        Date currentTime = Calendar.getInstance().getTime();
+    private void saveData(){
+        if(isNetworkAvailable()){
+            saveDatabase(isKanji);
+            saveLocalDatabase(isKanji);
+        }else{
+            saveLocalDatabase(isKanji);
+        }
+    }
+    //save to Firebase
+    private void saveDatabase(boolean isKanji){
         if(!isKanji){
             Set set = new Set(mSetID, mSetName, String.valueOf(currentTime));
             mMojiSet.child(mUserID).child(mSetID).setValue(set);
@@ -241,6 +277,35 @@ public class EditVocabActivity extends AppCompatActivity{
             mKanjiSet.child(mUserID).child(mSetID).setValue(set);
             mSetByUser.child(mUserID).child(mSetID).setValue(mKanjiList);
         }
+    }
+    //save in local
+    private void saveLocalDatabase(boolean isKanji){
+        Set set = new Set(mSetID, mSetName, String.valueOf(currentTime));
+        Map myMap = mLocalData.readAllData();
+        if(!isKanji){
+            Map mojiMap = mLocalData.readData(Constants.MOJI_SET_NODE);
+            Map setByUserMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
+            if(mojiMap != null){
+                mojiMap.put(mSetID, set);
+                setByUserMap.put(mSetID, mMojiList);
+                myMap.put(Constants.MOJI_SET_NODE, mojiMap);
+                myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
+            }
+        }else{
+            Map kanjiMap = mLocalData.readData(Constants.KANJI_SET_NODE);
+            Map setByUserMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
+            if(kanjiMap!= null){
+                kanjiMap.put(mSetID, set);
+                setByUserMap.put(mSetID, mKanjiList);
+                myMap.put(Constants.KANJI_SET_NODE, kanjiMap);
+                myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
+            }
+        }
+
+        String str = new Gson().toJson(myMap);
+        mLocalData.writeToFile(Constants.DATA_FILE, str, getBaseContext());
+        mLocalData.getmListener().loadData();
+        Log.d("", str);
     }
     private class LoadSetTask extends AsyncTask<Void, Void, Void>{
 
@@ -279,5 +344,11 @@ public class EditVocabActivity extends AppCompatActivity{
                 txtWord.setText("Từ vựng ("+mMojiList.size()+")");
             }
         }
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

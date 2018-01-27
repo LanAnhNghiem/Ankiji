@@ -25,12 +25,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.jishin.ankiji.Chart.ChartActivity;
 import com.google.gson.Gson;
+import com.jishin.ankiji.Chart.ChartActivity;
 import com.jishin.ankiji.Feature_Test.TestActivity;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
@@ -69,6 +71,9 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
     private DatabaseReference mSetByUser;
     private String mUserID = "";
     private boolean isScrollDown = false;
+    private FirebaseUser user;
+    private String correctAnswer = "0";
+    private String testTimes = "0";
     public String getmUserID() {
         return mUserID;
     }
@@ -135,6 +140,7 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
 
 
     private void addControl(View view){
+        user = FirebaseAuth.getInstance().getCurrentUser();
         mFABtn = view.findViewById(R.id.fabKanji);
         mFABAdd = view.findViewById(R.id.fabAdd);
         mFABCreate = view.findViewById(R.id.fabCreate);
@@ -364,6 +370,10 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
                 Intent intentTest = new Intent(getContext(), TestActivity.class);
                 intentTest.putExtra(Constants.SET_BY_USER, mKanjiList);
                 intentTest.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
+                if (user != null) {
+                    intentTest.putExtra(Constants.USER_ID, user.getUid());
+                    intentTest.putExtra(Constants.KANJI_SET_NODE, mSet.getId());
+                }
                 startActivity(intentTest);
             }
             else{
@@ -452,6 +462,8 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
             }
             else {
                 Toast.makeText(getContext(), "Test times: 0", Toast.LENGTH_SHORT).show();
+//                correctAnswer = "0";
+//                testTimes = "0";
             }
         }
 

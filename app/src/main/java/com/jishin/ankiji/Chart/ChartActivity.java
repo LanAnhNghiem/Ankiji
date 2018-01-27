@@ -2,26 +2,19 @@ package com.jishin.ankiji.Chart;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.Button;
 
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
-import com.jishin.ankiji.features.FeatureActivity;
 import com.jishin.ankiji.utilities.Constants;
 
 import java.util.ArrayList;
@@ -34,13 +27,25 @@ public class ChartActivity extends AppCompatActivity {
     private String setID;
     private int listSize;
     private DatabaseReference chartRef;
-    private long correctAnswer = 0;
-    private long testTimes = 0;
+    private String correctAnswer = "0";
+    private String testTimes = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chart);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("Chart");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+//        new LoadNodeCharTask().execute();
+
+        // ----------- binding view --------------
+        chartPie = findViewById(R.id.test_chart);
+        btnReset = findViewById(R.id.btnRetry);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -48,21 +53,21 @@ public class ChartActivity extends AppCompatActivity {
                 userUid = intent.getExtras().getString(Constants.USER_ID);
                 setID = intent.getExtras().getString(Constants.SET_BY_USER);
                 listSize = intent.getExtras().getInt("SIZE");
-                correctAnswer = intent.getExtras().getLong(Constants.CORRECT_ANSWER);
-                testTimes = intent.getExtras().getLong(Constants.TEST_TIMES);
+                correctAnswer = intent.getExtras().getString(Constants.CORRECT_ANSWER);
+                testTimes = intent.getExtras().getString(Constants.TEST_TIMES);
                 Log.d("Chart_UserID", userUid);
                 Log.d("Chart_SetID", setID);
                 Log.d("SIZE", String.valueOf(listSize));
             }
         }
-        addControls();
 
         // ------------ data collection -------------
         List<PieEntry> pieEntries = new ArrayList<>();
         Log.d("Outcorrect", String.valueOf(correctAnswer));
         Log.d("Outtest", String.valueOf(testTimes));
-        pieEntries.add(new PieEntry(correctAnswer / testTimes, "Từ đã thuộc\n"));
-        pieEntries.add(new PieEntry(listSize - correctAnswer, "Từ chưa thuộc\n"));
+
+        pieEntries.add(new PieEntry(Integer.parseInt(correctAnswer) / Integer.parseInt(testTimes), "Từ đã thuộc\n"));
+        pieEntries.add(new PieEntry(listSize - Integer.parseInt(correctAnswer), "Từ chưa thuộc\n"));
         PieDataSet dataSet = new PieDataSet(pieEntries, "");
         // ------------ styling of data collection -----------
         // style of the value of entries
@@ -102,14 +107,14 @@ public class ChartActivity extends AppCompatActivity {
         // refresh the chart
         chartPie.invalidate();
 
-        btnReset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                resetNodeChart();
-                startActivity(new Intent(ChartActivity.this, FeatureActivity.class));
-                finish();
-            }
-        });
+//        btnReset.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                resetNodeChart();
+//                startActivity(new Intent(ChartActivity.this, FeatureActivity.class));
+//                finish();
+//            }
+//        });
 
     }
 
@@ -119,21 +124,6 @@ public class ChartActivity extends AppCompatActivity {
                 .child(userUid).child(setID).child(Constants.CORRECT_ANSWER).setValue("0");
         FirebaseDatabase.getInstance().getReference(Constants.CHART)
                 .child(userUid).child(setID).child(Constants.TEST_TIMES).setValue("0");
-    }
-
-    private void addControls() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Chart");
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
-//        new LoadNodeCharTask().execute();
-
-        // ----------- binding view --------------
-        chartPie = findViewById(R.id.test_chart);
-        btnReset = findViewById(R.id.btnRetry);
-
     }
 
     @Override

@@ -131,7 +131,6 @@ public class LocalDatabase {
         String ret = "";
 
         try {
-            Log.d(TAG, fileName);
             InputStream inputStream = context.openFileInput(fileName);
 
             if ( inputStream != null ) {
@@ -275,7 +274,6 @@ public class LocalDatabase {
             //update Profile user
             Map userMap = readData(Constants.USER_NODE);
             mUserRef.setValue(userMap);
-            Log.d(TAG, String.valueOf(userMap));
             return null;
         }
     }

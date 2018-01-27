@@ -3,10 +3,13 @@ package com.jishin.ankiji.PROFILE;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,29 +31,30 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.ResetPassword.ResetPasswordActivity;
-import com.jishin.ankiji.model.User;
+import com.jishin.ankiji.utilities.Constants;
+import com.jishin.ankiji.utilities.CountSubstring;
+import com.jishin.ankiji.utilities.DatabaseService;
+import com.jishin.ankiji.utilities.LocalDatabase;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener{
-
+    private static final String TAG = ProfileActivity.class.getSimpleName();
     private Toolbar toolbar;
     private ConstraintLayout layoutProfileImg;
     private ConstraintLayout layoutUsername;
@@ -84,13 +88,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private int totalOfWords = 0;
     private int totalOfSets = 0;
-
-
+    private String mUserID = "";
+    private LocalDatabase mLocalData = LocalDatabase.getInstance();
+    private DatabaseService mData = DatabaseService.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
+        Intent intent = getIntent();
+        if(intent.hasExtra(Constants.USER_ID)){
+            mUserID = intent.getStringExtra(Constants.USER_ID);
+        }
+        mLocalData.init(this, mUserID, mData);
         setControls();
         setEvents();
     }
@@ -126,66 +135,86 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         user = FirebaseAuth.getInstance().getCurrentUser() ;
 
-
         mReference = FirebaseDatabase.getInstance().getReference("User").child(user.getUid());
         getUserDetail();
         getNumberOfSetsAndWords();
     }
 
     private void getNumberOfSetsAndWords() {
-        mReference = FirebaseDatabase.getInstance().getReference("SetByUser");
-        mReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren()){
-                    if (data.getKey().equalsIgnoreCase(user.getUid())){
-                        totalOfSets += data.getChildrenCount();
-                        for (DataSnapshot word : data.getChildren()){
-                            totalOfWords += word.getChildrenCount();
-                        }
-                    }
-                }
-                txtNumberOfSet.setText("Number Of Sets: " + String.valueOf(totalOfSets));
-                txtTotalWord.setText("Total Of Words: " + String.valueOf(totalOfWords));
-            }
+        Map<String, Map> profileMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
+        totalOfSets = profileMap.size();
+        txtNumberOfSet.setText("Number Of Sets: " + String.valueOf(totalOfSets));
+       
+        for (Map.Entry<String, Map> entry : profileMap.entrySet())
+        {
+            String value = String.valueOf(entry.getValue());
+            totalOfWords += CountSubstring.countMatches(value, "cachDocHira=");
+        }
+        txtTotalWord.setText("Total Of Words: "+ String.valueOf(totalOfWords));
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+//        mReference = FirebaseDatabase.getInstance().getReference("SetByUser");
+//        mReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot data : dataSnapshot.getChildren()){
+//                    if (data.getKey().equalsIgnoreCase(user.getUid())){
+//                        totalOfSets += data.getChildrenCount();
+//                        for (DataSnapshot word : data.getChildren()){
+//                            totalOfWords += word.getChildrenCount();
+//                        }
+//                    }
+//                }
+//                txtNumberOfSet.setText("Number Of Sets: " + String.valueOf(totalOfSets));
+//                txtTotalWord.setText("Total Of Words: " + String.valueOf(totalOfWords));
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
     }
 
     public void getUserDetail() {
-        mReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User detailUser = dataSnapshot.getValue(User.class);
-
-                if (!TextUtils.isEmpty(detailUser.getLinkPhoto())){
-                    currentPhotoUrl = detailUser.getLinkPhoto();
-                    Log.d("imgAvatar", currentPhotoUrl);
-                    Glide.with(imgProfileImg).load(currentPhotoUrl).into(imgProfileImg);
-                }
-
-                if (!TextUtils.isEmpty(detailUser.getUsername())){
-                    currentUsername = detailUser.getUsername();
-                    Log.d("Username", currentUsername);
-                    txtusername.setText(detailUser.getUsername());
-                }
-                if (!TextUtils.isEmpty(detailUser.getEmail())){
-                    currentEmail = detailUser.getEmail();
-                    Log.d("Emai", currentEmail);
-                    txtEmail.setText(detailUser.getEmail());
-                }
-                currentUid = detailUser.getId();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        Map profileMap = mLocalData.readData(Constants.USER_NODE);
+        //load photo
+        currentPhotoUrl = String.valueOf(profileMap.get("linkPhoto"));
+        Glide.with(imgProfileImg).load(currentPhotoUrl).into(imgProfileImg);
+        //load email
+        currentEmail = String.valueOf(profileMap.get("email"));
+        txtEmail.setText(currentEmail);
+        //load username
+        currentUsername = String.valueOf(profileMap.get("username"));
+        txtusername.setText(currentUsername);
+//        mReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                User detailUser = dataSnapshot.getValue(User.class);
+//
+//                if (!TextUtils.isEmpty(detailUser.getLinkPhoto())){
+//                    currentPhotoUrl = detailUser.getLinkPhoto();
+//                    Log.d("imgAvatar", currentPhotoUrl);
+//                    Glide.with(imgProfileImg).load(currentPhotoUrl).into(imgProfileImg);
+//                }
+//
+//                if (!TextUtils.isEmpty(detailUser.getUsername())){
+//                    currentUsername = detailUser.getUsername();
+//                    Log.d("Username", currentUsername);
+//                    txtusername.setText(detailUser.getUsername());
+//                }
+//                if (!TextUtils.isEmpty(detailUser.getEmail())){
+//                    currentEmail = detailUser.getEmail();
+//                    Log.d("Emai", currentEmail);
+//                    txtEmail.setText(detailUser.getEmail());
+//                }
+//                currentUid = detailUser.getId();
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
     }
 
     @Override
@@ -204,19 +233,34 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.layoutProfileImg:
-                selectImage();
+                if(isNetworkAvailable()){
+                    selectImage();
+                }
+                else{
+                    Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.layoutUsername:
-                Intent intentChangeName = new Intent(ProfileActivity.this, ChangeUsernameActivity.class);
-                intentChangeName.putExtra("currentUid", currentUid);
-                intentChangeName.putExtra("currentUsername", currentUsername);
-                startActivity(intentChangeName);
+                if(isNetworkAvailable()){
+                    Intent intentChangeName = new Intent(ProfileActivity.this, ChangeUsernameActivity.class);
+                    intentChangeName.putExtra("currentUid", currentUid);
+                    intentChangeName.putExtra("currentUsername", currentUsername);
+                    startActivity(intentChangeName);
+                }
+                else{
+                    Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.layoutEmail:
                 break;
             case R.id.layoutChangePass:
-                Intent intentChangePass = new Intent(this, ResetPasswordActivity.class);
-                startActivity(intentChangePass);
+                if(isNetworkAvailable()){
+                    Intent intentChangePass = new Intent(this, ResetPasswordActivity.class);
+                    startActivity(intentChangePass);
+                }
+                else{
+                    Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+                }
                 break;
 
         }
@@ -455,6 +499,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 .setValue(newImageUrl);
     }
 
-
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
 }

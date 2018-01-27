@@ -139,7 +139,9 @@ public class FeatureActivity extends AppCompatActivity implements NetworkListene
                 switch(menuItem.getItemId()){
 
                     case R.id.item_profile:
-                        startActivity(new Intent(FeatureActivity.this, ProfileActivity.class));
+                        Intent profileIntent = new Intent(FeatureActivity.this, ProfileActivity.class);
+                        profileIntent.putExtra(Constants.USER_ID, mUserID);
+                        startActivity(profileIntent);
                         break;
                     case R.id.item_setting:
                         Toast.makeText(FeatureActivity.this, "Setting", Toast.LENGTH_SHORT).show();

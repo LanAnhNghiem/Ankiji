@@ -17,14 +17,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
-import com.jishin.ankiji.adapter.TopicAdapter;
 import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.model.DataTypeEnum;
-import com.jishin.ankiji.model.DateAccess;
 import com.jishin.ankiji.model.Set;
 import com.jishin.ankiji.utilities.DatabaseService;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -38,12 +35,12 @@ public class RecentlyFragment extends Fragment implements RemoveDataCommunicator
     private CardItemsAdapter mItemsAdapter;
     public String FRAGMENT_TAG = "RECENTLY";
     private String mUserID = "";
-    private TopicAdapter topicAdapter;
-    String currentDay;
+//    private TopicAdapter topicAdapter;
+    String[] currentDay;
     private DatabaseService mData = DatabaseService.getInstance();
     private DatabaseReference mDateRef = mData.getDatabase().child("DateSet");
     String userID = "";
-    private ArrayList<String> topicList = new ArrayList<>();
+    private ArrayList<Set> topicList = new ArrayList<>();
 
     public String getmUserID() {
         return mUserID;
@@ -57,11 +54,12 @@ public class RecentlyFragment extends Fragment implements RemoveDataCommunicator
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recently, container, false);
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy");
-        currentDay = String.valueOf(dateFormat.format(cal.getTime()));
+//        Calendar cal = Calendar.getInstance();
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy");
+        currentDay = String.valueOf(Calendar.getInstance().getTime()).split("\\s");
+        Log.d(TAG, "onCreateView: currentDay: " + currentDay[0]);
         userID = mData.getUserID();
-        if(userID.isEmpty()){
+        if (userID.isEmpty()) {
             userID = getmUserID();
         }
         initRecycler(view);
@@ -99,13 +97,11 @@ public class RecentlyFragment extends Fragment implements RemoveDataCommunicator
             }
         });
         getData();
-        topicAdapter = new TopicAdapter("KANJI");
-        topicAdapter.setTopic(topicList);
+//        topicAdapter = new TopicAdapter("KANJI");
+        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG, getContext(), this);
+        mItemsAdapter.setSetList(this.topicList);
         rvRecentlyList.setItemAnimator(new DefaultItemAnimator());
-        //rvRecentlyList.setAdapter(mItemsAdapter);
-        rvRecentlyList.setAdapter(topicAdapter);
-
-
+        rvRecentlyList.setAdapter(mItemsAdapter);
     }
 
     @Override
@@ -116,27 +112,29 @@ public class RecentlyFragment extends Fragment implements RemoveDataCommunicator
     @Override
     public void onPause() {
         super.onPause();
-        getData();
-        topicAdapter = new TopicAdapter("KANJI");
-        topicAdapter.setTopic(topicList);
-        rvRecentlyList.setItemAnimator(new DefaultItemAnimator());
-        //rvRecentlyList.setAdapter(mItemsAdapter);
-        rvRecentlyList.setAdapter(topicAdapter);
+//        getData();
+////        topicAdapter = new TopicAdapter("KANJI");
+////        topicAdapter.setTopic(topicList);
+//        rvRecentlyList.setItemAnimator(new DefaultItemAnimator());
+//        rvRecentlyList.setAdapter(mItemsAdapter);
+//        //rvRecentlyList.setAdapter(topicAdapter);
     }
 
     public void showData(DataSnapshot dataSnapshot) {
         topicList.clear();
         if (dataSnapshot != null) {
             for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                Log.d(TAG, "onDataChange: dsValue: " + ds.getValue(DateAccess.class).getType());
-                if (ds.getValue(DateAccess.class).getDate().equals(currentDay)) {
-                    topicList.add(ds.getValue(DateAccess.class).getId());
+                String[] date = ds.getValue(Set.class).getDatetime().split("\\s");
+                Log.d(TAG, "showData: currentDay: "+date[0]);
+                if (date[0].equals(currentDay[0]) && date[1].equals(currentDay[1]) && date[2].equals(currentDay[2])) {
+                    topicList.add(ds.getValue(Set.class));
+                    Log.d(TAG, "showData: topicList "+topicList);
                 }
             }
         }
 
 
-        topicAdapter.notifyDataSetChanged();
+         mItemsAdapter.notifyDataSetChanged();
     }
 
     private void getData() {
@@ -144,7 +142,7 @@ public class RecentlyFragment extends Fragment implements RemoveDataCommunicator
             mDateRef.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-//                    Log.d(TAG, "onDataChange: dsValue: "+ds.getValue(DateAccess.class).getType());
+                    Log.d(TAG, "onDataChange: dsValue: " + dataSnapshot.getValue(Set.class));
                     showData(dataSnapshot);
                 }
 

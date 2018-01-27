@@ -19,4 +19,5 @@ public class Constants {
     public static final String NAME = "name";
     public static final String USER_NODE = "User";
     public static final String DATA_FILE = "data.json";
+    public static final String DATE_SET_NODE = "DateSet";
 }

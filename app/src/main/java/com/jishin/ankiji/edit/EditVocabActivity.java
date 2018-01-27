@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.KanjiItemAdapter;
 import com.jishin.ankiji.adapter.MojiItemAdapter;
@@ -284,27 +285,39 @@ public class EditVocabActivity extends AppCompatActivity{
         if(!isKanji){
             Map mojiMap = mLocalData.readData(Constants.MOJI_SET_NODE);
             Map setByUserMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
-            if(mojiMap != null){
-                mojiMap.put(mSetID, set);
-                setByUserMap.put(mSetID, mMojiList);
-                myMap.put(Constants.MOJI_SET_NODE, mojiMap);
-                myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
-                String str = new Gson().toJson(myMap);
-                mLocalData.writeToFile(Constants.DATA_FILE, str, getBaseContext());
-                mLocalData.getmMojiListener().loadData();
+            if(setByUserMap == null){
+                setByUserMap = new LinkedTreeMap();
+                myMap.put(Constants.SET_BY_USER_NODE, null);
             }
+            if(mojiMap == null){
+                mojiMap = new LinkedTreeMap();
+                myMap.put(Constants.MOJI_SET_NODE, null);
+            }
+            mojiMap.put(mSetID, set);
+            setByUserMap.put(mSetID, mMojiList);
+            myMap.put(Constants.MOJI_SET_NODE, mojiMap);
+            myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
+            String str = new Gson().toJson(myMap);
+            mLocalData.writeToFile(Constants.DATA_FILE+mUserID, str, getBaseContext());
+            mLocalData.getmMojiListener().loadData();
         }else{
             Map kanjiMap = mLocalData.readData(Constants.KANJI_SET_NODE);
             Map setByUserMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
-            if(kanjiMap!= null){
-                kanjiMap.put(mSetID, set);
-                setByUserMap.put(mSetID, mKanjiList);
-                myMap.put(Constants.KANJI_SET_NODE, kanjiMap);
-                myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
-                String str = new Gson().toJson(myMap);
-                mLocalData.writeToFile(Constants.DATA_FILE, str, getBaseContext());
-                mLocalData.getmKanjiListener().loadData();
+            if(setByUserMap == null){
+                setByUserMap = new LinkedTreeMap();
+                myMap.put(Constants.SET_BY_USER_NODE, null);
             }
+            if(kanjiMap == null){
+                kanjiMap = new LinkedTreeMap();
+                myMap.put(Constants.KANJI_SET_NODE, null);
+            }
+            kanjiMap.put(mSetID, set);
+            setByUserMap.put(mSetID, mKanjiList);
+            myMap.put(Constants.KANJI_SET_NODE, kanjiMap);
+            myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
+            String str = new Gson().toJson(myMap);
+            mLocalData.writeToFile(Constants.DATA_FILE+mUserID, str, getBaseContext());
+            mLocalData.getmKanjiListener().loadData();
         }
     }
     private class LoadSetTask extends AsyncTask<Void, Void, Void>{

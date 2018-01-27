@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.MojiAdater;
 import com.jishin.ankiji.model.DateAccess;
@@ -204,15 +205,21 @@ public class MojiExploresActivity extends AppCompatActivity {
         Map myMap = mLocalData.readAllData();
         Map mojiMap = mLocalData.readData(Constants.MOJI_SET_NODE);
         Map setByUserMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
-        if(mojiMap != null){
-            mojiMap.put(id, set);
-            setByUserMap.put(id, mojiList);
-            myMap.put(Constants.MOJI_SET_NODE, mojiMap);
-            myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
-            String str = new Gson().toJson(myMap);
-            mLocalData.writeToFile(Constants.DATA_FILE, str, getBaseContext());
-            mLocalData.getmMojiListener().loadData();
+        if(setByUserMap == null){
+            setByUserMap = new LinkedTreeMap();
+            myMap.put(Constants.SET_BY_USER_NODE, null);
         }
+        if(mojiMap == null){
+            mojiMap = new LinkedTreeMap();
+            myMap.put(Constants.MOJI_SET_NODE, null);
+        }
+        mojiMap.put(id, set);
+        setByUserMap.put(id, mojiList);
+        myMap.put(Constants.MOJI_SET_NODE, mojiMap);
+        myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
+        String str = new Gson().toJson(myMap);
+        mLocalData.writeToFile(Constants.DATA_FILE+userID, str, getBaseContext());
+        mLocalData.getmMojiListener().loadData();
     }
 
     private void changeButtonAdd() {

@@ -142,15 +142,21 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private void getNumberOfSetsAndWords() {
         Map<String, Map> profileMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
-        totalOfSets = profileMap.size();
-        txtNumberOfSet.setText("Number Of Sets: " + String.valueOf(totalOfSets));
-       
-        for (Map.Entry<String, Map> entry : profileMap.entrySet())
-        {
-            String value = String.valueOf(entry.getValue());
-            totalOfWords += CountSubstring.countMatches(value, "cachDocHira=");
+        if(profileMap != null){
+            totalOfSets = profileMap.size();
+            txtNumberOfSet.setText("Number Of Sets: " + String.valueOf(totalOfSets));
+
+            for (Map.Entry<String, Map> entry : profileMap.entrySet())
+            {
+                String value = String.valueOf(entry.getValue());
+                totalOfWords += CountSubstring.countMatches(value, "cachDocHira=");
+            }
+            txtTotalWord.setText("Total Of Words: "+ String.valueOf(totalOfWords));
         }
-        txtTotalWord.setText("Total Of Words: "+ String.valueOf(totalOfWords));
+        else{
+            txtNumberOfSet.setText("Number Of Sets: 0");
+            txtTotalWord.setText("Total Of Words: 0");
+        }
 
 //        mReference = FirebaseDatabase.getInstance().getReference("SetByUser");
 //        mReference.addValueEventListener(new ValueEventListener() {

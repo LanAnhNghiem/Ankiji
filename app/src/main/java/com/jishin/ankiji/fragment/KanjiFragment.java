@@ -300,7 +300,7 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
         myMap.put(Constants.KANJI_SET_NODE, kanjiMap);
         myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
         String str = new Gson().toJson(myMap);
-        mLocalData.writeToFile(Constants.DATA_FILE, str, getContext());
+        mLocalData.writeToFile(Constants.DATA_FILE+mUserID, str, getContext());
         mItemsAdapter.notifyDataSetChanged();
     }
 

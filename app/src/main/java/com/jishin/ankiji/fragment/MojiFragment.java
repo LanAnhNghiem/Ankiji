@@ -297,7 +297,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
         myMap.put(Constants.MOJI_SET_NODE, mojiMap);
         myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
         String str = new Gson().toJson(myMap);
-        mLocalData.writeToFile(Constants.DATA_FILE, str, getContext());
+        mLocalData.writeToFile(Constants.DATA_FILE+mUserID, str, getContext());
         mItemsAdapter.notifyDataSetChanged();
     }
 

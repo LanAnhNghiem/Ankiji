@@ -120,6 +120,7 @@ public class LoginGoogle {
             }
         });
     }
+
     private static void showProgress(){
         //progressDialog.setCancelable(false);
         progressDialog.show();

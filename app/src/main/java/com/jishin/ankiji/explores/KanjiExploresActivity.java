@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.KanjiAdapter;
 import com.jishin.ankiji.model.Kanji;
@@ -197,15 +198,21 @@ public class KanjiExploresActivity extends AppCompatActivity {
         Map myMap = mLocalData.readAllData();
         Map kanjiMap = mLocalData.readData(Constants.KANJI_SET_NODE);
         Map setByUserMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
-        if(kanjiMap!= null){
-            kanjiMap.put(id, set);
-            setByUserMap.put(id, kanjiList);
-            myMap.put(Constants.KANJI_SET_NODE, kanjiMap);
-            myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
-            String str = new Gson().toJson(myMap);
-            mLocalData.writeToFile(Constants.DATA_FILE, str, getBaseContext());
-            mLocalData.getmListener().loadData();
+        if(setByUserMap == null){
+            setByUserMap = new LinkedTreeMap();
+            myMap.put(Constants.SET_BY_USER_NODE, null);
         }
+        if(kanjiMap == null){
+            kanjiMap = new LinkedTreeMap();
+            myMap.put(Constants.KANJI_SET_NODE, null);
+        }
+        kanjiMap.put(id, set);
+        setByUserMap.put(id, kanjiList);
+        myMap.put(Constants.KANJI_SET_NODE, kanjiMap);
+        myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
+        String str = new Gson().toJson(myMap);
+        mLocalData.writeToFile(Constants.DATA_FILE+userID, str, getBaseContext());
+        mLocalData.getmListener().loadData();
     }
     private void changeButtonAdd() {
         if (isAdded) {
@@ -271,7 +278,7 @@ public class KanjiExploresActivity extends AppCompatActivity {
             myMap.put(Constants.KANJI_SET_NODE, kanjiMap);
             myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
             String str = new Gson().toJson(myMap);
-            mLocalData.writeToFile(Constants.DATA_FILE, str, getBaseContext());
+            mLocalData.writeToFile(Constants.DATA_FILE+userID, str, getBaseContext());
             mLocalData.getmListener().loadData();
         }
     }

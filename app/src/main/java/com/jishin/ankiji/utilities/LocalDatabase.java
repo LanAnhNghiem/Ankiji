@@ -156,7 +156,7 @@ public class LocalDatabase {
         return ret;
     }
     public static boolean hasLocalData(){
-        String str = readFromFile(Constants.DATA_FILE, mContext);
+        String str = readFromFile(Constants.DATA_FILE+mUserID, mContext);
         if(!str.trim().isEmpty()){
             return true;
         }else{
@@ -165,7 +165,7 @@ public class LocalDatabase {
     }
     //access data through path
     public static Map<String, Map> readData(String path){
-        String str = readFromFile(Constants.DATA_FILE, mContext);
+        String str = readFromFile(Constants.DATA_FILE+mUserID, mContext);
         if(hasLocalData())
          {
             // ------- test parse feature -------
@@ -179,7 +179,7 @@ public class LocalDatabase {
         return null;
     }
     public static Map<String, Map> readAllData(){
-        String str = readFromFile(Constants.DATA_FILE, mContext);
+        String str = readFromFile(Constants.DATA_FILE+mUserID, mContext);
         if(hasLocalData())
         {
             // ------- test parse feature -------
@@ -217,7 +217,7 @@ public class LocalDatabase {
                                             mSetByUserData = (Map<String, Map>)dataSnapshot.getValue();
                                             mLocalData.put(Constants.SET_BY_USER_NODE, mSetByUserData);
                                             String str = new Gson().toJson(mLocalData);
-                                            writeToFile(Constants.DATA_FILE, str, mContext);
+                                            writeToFile(Constants.DATA_FILE+mUserID, str, mContext);
                                             mListener.loadData();
                                             mMojiListener.loadData();
 //                                            mKanjiListener.loadData();
@@ -259,12 +259,16 @@ public class LocalDatabase {
             //update SetByUser
             Map setByUserMap = readData(Constants.SET_BY_USER_NODE);
             Log.d(TAG, String.valueOf(setByUserMap));
-            mSetByUserRef.setValue(setByUserMap);
+            if(setByUserMap != null){
+                mSetByUserRef.setValue(setByUserMap);
+            }
 
             //update MojiSet
             Map mojiMap = readData(Constants.MOJI_SET_NODE);
             Log.d(TAG, String.valueOf(mojiMap));
-            mMojiSetRef.setValue(mojiMap);
+            if(mojiMap != null){
+                mMojiSetRef.setValue(mojiMap);
+            }
 
             //update KanjiSet
             Map kanjiMap = readData(Constants.KANJI_SET_NODE);
@@ -273,7 +277,9 @@ public class LocalDatabase {
 
             //update Profile user
             Map userMap = readData(Constants.USER_NODE);
-            mUserRef.setValue(userMap);
+            if(userMap != null){
+                mUserRef.setValue(userMap);
+            }
             return null;
         }
     }

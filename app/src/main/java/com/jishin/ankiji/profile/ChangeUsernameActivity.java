@@ -1,4 +1,4 @@
-package com.jishin.ankiji.PROFILE;
+package com.jishin.ankiji.profile;
 
 import android.app.Activity;
 import android.content.Context;

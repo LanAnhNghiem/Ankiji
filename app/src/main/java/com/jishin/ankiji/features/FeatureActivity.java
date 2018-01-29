@@ -1,5 +1,6 @@
 package com.jishin.ankiji.features;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -23,7 +24,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DatabaseReference;
-import com.jishin.ankiji.PROFILE.ProfileActivity;
+import com.jishin.ankiji.profile.ProfileActivity;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.about_us.AboutUsActivity;
 import com.jishin.ankiji.adapter.FragmentAdapter;
@@ -56,12 +57,15 @@ public class FeatureActivity extends AppCompatActivity implements NetworkListene
     LocalDatabase mLocalData = LocalDatabase.getInstance();
 
     private DatabaseReference mReference;
+    private BroadcastReceiver mHandleMessageReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_features);
-        registerReceiver(new ConnectivityChangeReceiver(this),
+
+        mHandleMessageReceiver = new ConnectivityChangeReceiver(this);
+        registerReceiver(mHandleMessageReceiver,
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         getUserID();
         mLocalData.init(this,mUserID, mData, this);
@@ -76,6 +80,19 @@ public class FeatureActivity extends AppCompatActivity implements NetworkListene
         setEvents();
         Log.d(TAG,String.valueOf(mData.isSignIn()));
     }
+
+    @Override
+    protected void onDestroy() {
+        try {
+            if (mHandleMessageReceiver != null){
+                unregisterReceiver(mHandleMessageReceiver);
+            }
+        }catch (Exception e){
+            e.getMessage();
+        }
+        super.onDestroy();
+    }
+
     private void loadLocalData(){
 
         if(!mLocalData.hasLocalData()){

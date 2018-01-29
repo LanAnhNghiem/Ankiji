@@ -32,8 +32,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
-import com.jishin.ankiji.Chart.ChartActivity;
-import com.jishin.ankiji.Feature_Test.TestActivity;
+import com.jishin.ankiji.chart.ChartActivity;
+import com.jishin.ankiji.feature_test.TestActivity;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
 import com.jishin.ankiji.edit.EditVocabActivity;
@@ -74,8 +74,6 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
     private boolean isScrollDown = false;
 
     private FirebaseUser user;
-    private String correctAnswer = "0";
-    private String testTimes = "0";
     public String getmUserID() {
         return mUserID;
     }
@@ -427,6 +425,9 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
 
                 }
             });
+            mMojiList.clear();
+            Map map = mLocalData.readData(Constants.SET_BY_USER_NODE);
+            mMojiList = MapHelper.convertToMoji(map, setId);
             return null;
         }
 

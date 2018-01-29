@@ -32,7 +32,7 @@
         <activity android:name=".explores.MojiExploresActivity" />
         <activity android:name=".explores.KanjiExploresActivity" />
         <activity android:name=".userlist.CreateVocabActivity" />
-        <activity android:name=".Feature_Test.TestActivity" />
+        <activity android:name=".feature_test.TestActivity" />
 
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -54,9 +54,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ResetPassword.ResetPasswordActivity" />
-        <activity android:name=".PROFILE.ProfileActivity" />
-        <activity android:name=".PROFILE.ChangeUsernameActivity" />
+        <activity android:name=".resetpassword.ResetPasswordActivity" />
+        <activity android:name=".profile.ProfileActivity" />
+        <activity android:name=".profile.ChangeUsernameActivity" />
 
         <activity android:name=".learn.LearnActivity" />
         <activity android:name=".about_us.AboutUsActivity"
@@ -67,7 +67,7 @@
         <activity android:name=".testdata.TestDataActivity">
 
         </activity>
-        <activity android:name=".Chart.ChartActivity">
+        <activity android:name=".chart.ChartActivity">
 
         </activity>
     </application>

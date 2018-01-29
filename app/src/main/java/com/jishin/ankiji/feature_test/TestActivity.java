@@ -1,4 +1,4 @@
-package com.jishin.ankiji.Feature_Test;
+package com.jishin.ankiji.feature_test;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -27,6 +27,7 @@ import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.QuestionAnswer;
 import com.jishin.ankiji.model.Set;
 import com.jishin.ankiji.utilities.Constants;
+import com.jishin.ankiji.utilities.DatabaseService;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -71,6 +72,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     private String userID;
     private String setID;
     private DatabaseReference chartRef;
+    private DatabaseService mData = DatabaseService.getInstance();
 
     private String correctAnswer = "0";
     private String testTimes = "0";
@@ -282,6 +284,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
         listMoji.remove(listMoji.get(index_moji));
     }
+
     public void updateQuestionKanji (ArrayList<Kanji> listKanji, ArrayList<String> listAnswer) {
 
 
@@ -409,6 +412,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
         listKanji.remove(listKanji.get(index_kanji));
     }
+
     public void updateNumberOfRightAnswer () {
         txtRightCount.setText(String.valueOf(number_of_right_answer));
     }
@@ -498,7 +502,6 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-
     public void finishCheckAnswer(TextView answer_view) {
         Log.d(TAG, "finishCheckAnswer: isKanji" + isKanji);
         answer_view.setTextColor(Color.parseColor("#AB5E4F"));
@@ -526,8 +529,6 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
-
-
 
     @Override
     public void finish() {
@@ -627,26 +628,26 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.btnMain:
-                getDataOfNodeChart();
-                //startActivity(new Intent(TestActivity.this, FeatureActivity.class));
+                setDataOfNodeChart();
                 this.finish();
                 break;
 
             case R.id.btnRetry:
-//                startActivity(getIntent());
-//                finish();
-                getDataOfNodeChart();
+                setDataOfNodeChart();
                 Intent refresh = new Intent(this, TestActivity.class);
                 if (isKanji) {
                     Log.d("test", String.valueOf(kanjiList.size()));
 
                     refresh.putExtra(Constants.SET_BY_USER, oldKanjiList);
                     refresh.putExtra(Constants.DATA_TYPE, "KANJI");
+
                 } else {
 
                     refresh.putExtra(Constants.SET_BY_USER, oldMojiList);
                     refresh.putExtra(Constants.DATA_TYPE, "MOJI");
                 }
+                refresh.putExtra(Constants.USER_ID, mData.getUserID());
+                refresh.putExtra(Constants.KANJI_SET_NODE, setID);
                 startActivity(refresh);
                 this.finish();
                 break;
@@ -676,7 +677,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void getDataOfNodeChart() {
+    private void setDataOfNodeChart() {
         Log.d("correctAnswer", correctAnswer);
         Log.d("testTimes", testTimes);
 
@@ -692,7 +693,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     class LoadNodeCharTask extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(final Void... voids) {
             if (chartRef == null){
                 Log.d("NULL_DAY_NE", "NULL_DAY_NE");
             }
@@ -700,20 +701,69 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.child(Constants.CORRECT_ANSWER).getValue() == null){
+                        Log.d("Khong co gi", "Khong co correct");
                         correctAnswer = "0";
                         testTimes = "0";
                     }else{
                         correctAnswer = dataSnapshot.child(Constants.CORRECT_ANSWER).getValue(String.class);
                         testTimes = dataSnapshot.child(Constants.TEST_TIMES).getValue(String.class);
+                        Log.d("COrrect", correctAnswer);
+                        Log.d("TestTimesf ", testTimes);
                     }
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {}
             });
+            publishProgress();
             return null;
         }
 
+    }
+    public class LoadDataForChart extends AsyncTask<Void, Void, Void>{
+
+        String userId;
+        String setId;
+        DatabaseReference chartRef;
+        String correctAnswer;
+        String testTimes;
+        public LoadDataForChart(String userId, String setId){
+            this.userId = userId;
+            this.setId = setId;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            dataRef();
+            chartRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    correctAnswer = (String) dataSnapshot.child(Constants.CORRECT_ANSWER).getValue();
+                    testTimes = (String) dataSnapshot.child(Constants.TEST_TIMES).getValue();
+                    onProgressUpdate();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+        }
+
+        public void dataRef(){
+            if(!mData.getUserID().isEmpty()){
+                chartRef = mData.getDatabase()
+                        .child(Constants.CHART)
+                        .child(mData.getUserID())
+                        .child(this.setId);
+            }
+        }
     }
 //    class LoadDataTask extends AsyncTask<Void, Void, Void>{
 //

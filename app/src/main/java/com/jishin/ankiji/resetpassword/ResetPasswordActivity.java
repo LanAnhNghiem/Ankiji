@@ -1,4 +1,4 @@
-package com.jishin.ankiji.ResetPassword;
+package com.jishin.ankiji.resetpassword;
 
 import android.app.Activity;
 import android.os.Bundle;

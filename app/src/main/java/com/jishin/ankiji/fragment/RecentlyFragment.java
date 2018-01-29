@@ -101,7 +101,7 @@ public class RecentlyFragment extends Fragment implements RemoveDataCommunicator
                         new CountItemTask(set).execute();
                         break;
                     case 2:
-                        //TODO Start Activity Chart
+                        //TODO Start Activity chart
                         break;
                     case 3:
                         //TODO Start Activity Edit Item

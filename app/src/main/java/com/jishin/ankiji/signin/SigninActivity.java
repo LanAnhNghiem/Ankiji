@@ -28,7 +28,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.jishin.ankiji.R;
-import com.jishin.ankiji.ResetPassword.ResetPasswordActivity;
+import com.jishin.ankiji.resetpassword.ResetPasswordActivity;
 import com.jishin.ankiji.features.FeatureActivity;
 import com.jishin.ankiji.signup.SignupActivity;
 import com.jishin.ankiji.utilities.Constants;

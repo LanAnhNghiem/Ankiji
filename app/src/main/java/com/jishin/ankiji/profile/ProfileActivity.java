@@ -1,4 +1,4 @@
-package com.jishin.ankiji.PROFILE;
+package com.jishin.ankiji.profile;
 
 import android.Manifest;
 import android.app.Activity;
@@ -38,7 +38,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.jishin.ankiji.R;
-import com.jishin.ankiji.ResetPassword.ResetPasswordActivity;
+import com.jishin.ankiji.resetpassword.ResetPasswordActivity;
 import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.CountSubstring;
 import com.jishin.ankiji.utilities.DatabaseService;

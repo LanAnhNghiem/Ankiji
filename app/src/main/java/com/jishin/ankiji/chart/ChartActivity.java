@@ -1,4 +1,4 @@
-package com.jishin.ankiji.Chart;
+package com.jishin.ankiji.chart;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -29,6 +29,7 @@ public class ChartActivity extends AppCompatActivity {
     private DatabaseReference chartRef;
     private String correctAnswer = "0";
     private String testTimes = "0";
+    private final String TAG = ChartActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class ChartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chart);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Chart");
+        toolbar.setTitle("chart");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -57,17 +58,23 @@ public class ChartActivity extends AppCompatActivity {
                 testTimes = intent.getExtras().getString(Constants.TEST_TIMES);
                 Log.d("Chart_UserID", userUid);
                 Log.d("Chart_SetID", setID);
-                Log.d("SIZE", String.valueOf(listSize));
+                Log.d(TAG, String.valueOf(listSize));
+                Log.d(TAG, correctAnswer.toString());
+                Log.d(TAG, testTimes.toString());
             }
         }
 
         // ------------ data collection -------------
         List<PieEntry> pieEntries = new ArrayList<>();
-        Log.d("Outcorrect", String.valueOf(correctAnswer));
-        Log.d("Outtest", String.valueOf(testTimes));
 
-        pieEntries.add(new PieEntry(Integer.parseInt(correctAnswer) / Integer.parseInt(testTimes), "Từ đã thuộc\n"));
-        pieEntries.add(new PieEntry(listSize - Integer.parseInt(correctAnswer), "Từ chưa thuộc\n"));
+        int correct = round(Integer.valueOf(correctAnswer) / Integer.valueOf(testTimes));
+        int wrong = listSize - correct;
+
+        Log.d("ROUND", String.valueOf(correct));
+        Log.d("ROUND_TestTimes", String.valueOf(wrong));
+
+        pieEntries.add(new PieEntry(correct, "Từ đã thuộc\n"));
+        pieEntries.add(new PieEntry(wrong, "Từ chưa thuộc\n"));
         PieDataSet dataSet = new PieDataSet(pieEntries, "");
         // ------------ styling of data collection -----------
         // style of the value of entries
@@ -118,13 +125,13 @@ public class ChartActivity extends AppCompatActivity {
 
     }
 
-    private void resetNodeChart() {
-        FirebaseDatabase.getInstance()
-                .getReference(Constants.CHART)
-                .child(userUid).child(setID).child(Constants.CORRECT_ANSWER).setValue("0");
-        FirebaseDatabase.getInstance().getReference(Constants.CHART)
-                .child(userUid).child(setID).child(Constants.TEST_TIMES).setValue("0");
-    }
+//    private void resetNodeChart() {
+//        FirebaseDatabase.getInstance()
+//                .getReference(Constants.CHART)
+//                .child(userUid).child(setID).child(Constants.CORRECT_ANSWER).setValue("0");
+//        FirebaseDatabase.getInstance().getReference(Constants.CHART)
+//                .child(userUid).child(setID).child(Constants.TEST_TIMES).setValue("0");
+//    }
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -138,28 +145,15 @@ public class ChartActivity extends AppCompatActivity {
         finish();
     }
 
-//    class LoadNodeCharTask extends AsyncTask<Void, Void, Void> {
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            getDataNodeChart();
-//            return null;
-//        }
-//    }
-//
-//    private void getDataNodeChart() {
-//        chartRef = FirebaseDatabase.getInstance().getReference(Constants.CHART).child(userUid).child(setID);
-//        chartRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                correctAnswer = dataSnapshot.child(Constants.CORRECT_ANSWER).getValue(Long.class);
-//                testTimes = dataSnapshot.child(Constants.TEST_TIMES).getValue(Long.class);
-//                Log.d("read_data_correct", String.valueOf(correctAnswer));
-//                Log.d("read_data_test", String.valueOf(testTimes));
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {}
-//        });
-//    }
+    private int round(double d){
+        double dAbs = Math.abs(d);
+        int i = (int) dAbs;
+        double result = dAbs - (double) i;
+        if(result<0.5){
+            return d<0 ? -i : i;
+        }else{
+            return d<0 ? -(i+1) : i+1;
+        }
+    }
+
 }

@@ -32,8 +32,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
-import com.jishin.ankiji.Chart.ChartActivity;
-import com.jishin.ankiji.Feature_Test.TestActivity;
+import com.jishin.ankiji.chart.ChartActivity;
+import com.jishin.ankiji.feature_test.TestActivity;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.adapter.CardItemsAdapter;
 import com.jishin.ankiji.edit.EditVocabActivity;
@@ -434,6 +434,9 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
 
                 }
             });
+            mKanjiList.clear();
+            Map map = mLocalData.readData(Constants.SET_BY_USER_NODE);
+            mKanjiList = MapHelper.convertToKanji(map, setId);
             return null;
         }
 
@@ -456,8 +459,6 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
             }
             else {
                 Toast.makeText(getContext(), "Test times: 0", Toast.LENGTH_SHORT).show();
-//                correctAnswer = "0";
-//                testTimes = "0";
             }
         }
 

@@ -290,13 +290,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 if (items[i].equals("Take Photo")){
-                    if (checkCamPermission()){
+                    if (checkCamPermission())
                         cameraIntent();
-                        Toast.makeText(ProfileActivity.this, "Camera Accept", Toast.LENGTH_LONG).show();
-                    }else{
-                        Toast.makeText(ProfileActivity.this, "Camera denied", Toast.LENGTH_LONG).show();
-                    }
-
                 }else if (items[i].equals("Choose from Library")) {
                     if (checkGaleryPermission())
                         galleryIntent();
@@ -359,10 +354,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode){
             case REQUEST_CAMERA:
-                if (grantResults[0] != PackageManager.PERMISSION_GRANTED){
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                             == PackageManager.PERMISSION_GRANTED){
-
                         cameraIntent();
                     }
                 }

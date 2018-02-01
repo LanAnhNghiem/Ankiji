@@ -39,7 +39,6 @@ import com.jishin.ankiji.adapter.CardItemsAdapter;
 import com.jishin.ankiji.edit.EditVocabActivity;
 import com.jishin.ankiji.explores.TopicMojiActivity;
 import com.jishin.ankiji.interfaces.LoadMojiListener;
-import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.learn.LearnActivity;
 import com.jishin.ankiji.model.DataTypeEnum;
 import com.jishin.ankiji.model.Moji;
@@ -57,7 +56,7 @@ import java.util.Map;
  * Created by trungnguyeen on 12/27/17.
  */
 
-public class MojiFragment extends Fragment implements RemoveDataCommunicator, LoadMojiListener {
+public class MojiFragment extends Fragment implements LoadMojiListener {
 
     private static final String TAG = MojiFragment.class.getSimpleName();
     private RecyclerView rvRecentlyList;
@@ -221,13 +220,13 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         rvRecentlyList.setLayoutManager(layoutManager);
 
-        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG, getContext(), this);
+        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG, getContext());
         mItemsAdapter.setSetList(this.mMojiSetList);
         rvRecentlyList.setItemAnimator(new DefaultItemAnimator());
         rvRecentlyList.setAdapter(mItemsAdapter);
         mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {
             @Override
-            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum, Set set) {
+            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum, Set set, int position) {
                 switch (classIndex) {
                     case 0:
                         Intent intent = new Intent(getContext(), LearnActivity.class);
@@ -250,6 +249,11 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
                         editIntent.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
                         editIntent.putExtra(Constants.USER_ID, mUserID);
                         startActivity(editIntent);
+                        break;
+
+                    case 4:
+//                        Toast.makeText(getContext(), "Delete", Toast.LENGTH_SHORT).show();
+                        showRemoveDialog(set, position);
                         break;
                 }
             }
@@ -287,16 +291,33 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
         });
     }
 
-    @Override
-    public void removeData(final String id, int position) {
-        mMojiSetRef.child(id).removeValue();
+
+    public void showRemoveDialog(final Set set, final int position){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(R.string.remove_warning);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                    removeData(set.getId(), position);
+                }
+        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.show();
+    }
+
+    public void removeData(final String setId, int position) {
+        mMojiSetRef.child(setId).removeValue();
         mMojiSetList.remove(position);
-        mSetByUser.child(id).removeValue();
+        mSetByUser.child(setId).removeValue();
         Map myMap = mLocalData.readAllData();
         Map mojiMap = mLocalData.readData(Constants.MOJI_SET_NODE);
         Map setByUserMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
-        mojiMap.remove(id);
-        setByUserMap.remove(id);
+        mojiMap.remove(setId);
+        setByUserMap.remove(setId);
         myMap.put(Constants.MOJI_SET_NODE, mojiMap);
         myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
         String str = new Gson().toJson(myMap);

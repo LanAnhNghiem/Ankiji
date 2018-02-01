@@ -8,7 +8,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -46,6 +48,7 @@ public class LearnActivity extends AppCompatActivity {
     private DatabaseReference mSetByUserRef;
     private DatabaseReference mDateSetRef;
     private Toolbar mToolbar;
+    private TextView txtNext, txtForward, txtNumber;
     private DatabaseService mData = DatabaseService.getInstance();
     private LocalDatabase mLocalData = LocalDatabase.getInstance();
     private DatabaseReference mDateSet = mData.createDatabase("DateSet");
@@ -131,6 +134,9 @@ public class LearnActivity extends AppCompatActivity {
     }
 
     private void initControls() {
+        txtNext = findViewById(R.id.txt_next);
+        txtForward = findViewById(R.id.txt_forward);
+        txtNumber = findViewById(R.id.txt_item_number);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitle("Learn");
         setSupportActionBar(mToolbar);
@@ -172,6 +178,8 @@ public class LearnActivity extends AppCompatActivity {
                     progressValue = ((position + 1) * 100) / contentList.size();
                 }
                 mProgressBar.setProgress(progressValue);
+
+                txtNumber.setText("" + (position + 1) + "/" + contentList.size());
             }
 
             @Override
@@ -180,6 +188,19 @@ public class LearnActivity extends AppCompatActivity {
             }
         });
 
+        txtForward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
+            }
+        });
+
+        txtNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1);
+            }
+        });
     }
 
 

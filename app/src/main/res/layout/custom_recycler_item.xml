@@ -14,6 +14,8 @@
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:foreground="?attr/selectableItemBackground"
+        android:clickable="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,9 +35,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:bmb_buttonEnum="textOutsideCircle"
-                app:bmb_buttonPlaceEnum="buttonPlace_sc_4_1"
+                app:bmb_buttonPlaceEnum="buttonPlace_sc_5_1"
                 app:bmb_inList="true"
-                app:bmb_piecePlaceEnum="piecePlace_dot_4_2"
+                app:bmb_piecePlaceEnum="piecePlace_dot_5_2"
                 app:layout_constraintTop_toTopOf="parent"
                 card_view:layout_constraintStart_toStartOf="parent"
                 card_view:layout_constraintBottom_toBottomOf="parent"/>
@@ -73,25 +75,28 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:textSize="14sp"/>
 
-            <ImageButton
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:src="@drawable/ic_action_cancel"
-                android:tint="@android:color/darker_gray"
-                card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintTop_toTopOf="parent"
-                android:layout_marginEnd="5dp"
-                android:layout_marginTop="5dp"></ImageButton>
-            <ImageButton
-                android:id="@+id/btn_delete_item"
-                android:layout_width="23dp"
-                android:layout_height="23dp"
-                android:padding="15dp"
-                android:tint="@android:color/darker_gray"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:background="?attr/selectableItemBackgroundBorderless">
-            </ImageButton>
+            <!--<ImageButton-->
+                <!--android:id="@+id/btn_delete_item"-->
+                <!--android:layout_width="23dp"-->
+                <!--android:layout_height="23dp"-->
+                <!--android:padding="15dp"-->
+                <!--android:tint="@android:color/darker_gray"-->
+                <!--card_view:layout_constraintTop_toTopOf="parent"-->
+                <!--card_view:layout_constraintEnd_toEndOf="parent"-->
+                <!--android:background="?attr/selectableItemBackgroundBorderless">-->
+            <!--</ImageButton>-->
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/btn_delete_item"-->
+                <!--android:padding="5dp"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:src="@drawable/ic_delete"-->
+                <!--android:background="?attr/selectableItemBackgroundBorderless"-->
+                <!--android:tint="@android:color/darker_gray"-->
+                <!--card_view:layout_constraintTop_toTopOf="parent"-->
+                <!--card_view:layout_constraintEnd_toEndOf="parent">-->
+            <!--</ImageButton>-->
 
 
         </android.support.constraint.ConstraintLayout>

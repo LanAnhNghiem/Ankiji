@@ -222,13 +222,13 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         rvRecentlyList.setLayoutManager(layoutManager);
 
-        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG, getContext(), this);
+        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG, getContext());
         mItemsAdapter.setSetList(this.mKanjiSetList);
         rvRecentlyList.setItemAnimator(new DefaultItemAnimator());
         rvRecentlyList.setAdapter(mItemsAdapter);
         mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {
             @Override
-            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum, Set set) {
+            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum, Set set, int position) {
                 switch (classIndex) {
                     case 0:
                         Intent intent = new Intent(getContext(), LearnActivity.class);
@@ -249,6 +249,9 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
                         editIntent.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
                         editIntent.putExtra(Constants.USER_ID, mUserID);
                         startActivity(editIntent);
+                        break;
+                    case 4:
+                        showRemoveDialog(set, position);
                         break;
                 }
             }
@@ -286,8 +289,23 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
         });
     }
 
+    public void showRemoveDialog(final Set set, final int position){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(R.string.remove_warning);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                removeData(set.getId(), position);
+            }
+        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
-    @Override
+            }
+        });
+        builder.show();
+    }
+
     public void removeData(String id, int position) {
         mKanjiSetRef.child(id).removeValue();
         mKanjiSetList.remove(position);

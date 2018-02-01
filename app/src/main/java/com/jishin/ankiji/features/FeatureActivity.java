@@ -114,8 +114,6 @@ public class FeatureActivity extends AppCompatActivity implements NetworkListene
         txtEmail = hView.findViewById(R.id.txtEmail_PF);
 
         //user = FirebaseAuth.getInstance().getCurrentUser();
-
-
     }
     private void setEvents(){
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

@@ -1,5 +1,6 @@
 package com.jishin.ankiji.adapter;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -16,6 +17,7 @@ public class FragmentAdapter extends FragmentPagerAdapter{
 
     public final static int FRAGMENT_COUNT = 3;
     private String mUserID = "";
+    private Context mContext;
 
     public FragmentAdapter(FragmentManager fm, String userID) {
         super(fm);

@@ -80,13 +80,13 @@ public class RecentlyFragment extends Fragment implements RemoveDataCommunicator
         rvRecentlyList = (RecyclerView) view.findViewById(R.id.lv_recently);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         rvRecentlyList.setLayoutManager(layoutManager);
-        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG, getContext(), this);
+        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG, getContext());
         mItemsAdapter.setSetList(topicList);
         rvRecentlyList.setItemAnimator(new DefaultItemAnimator());
         rvRecentlyList.setAdapter(mItemsAdapter);
         mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {
             @Override
-            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum, Set set) {
+            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum, Set set, int position) {
                 switch (classIndex) {
                     case 0: {
                         Intent intent = new Intent(getContext(), LearnActivity.class);
@@ -105,6 +105,9 @@ public class RecentlyFragment extends Fragment implements RemoveDataCommunicator
                         break;
                     case 3:
                         //TODO Start Activity Edit Item
+                        break;
+                    case 4:
+                        //TODO DELETE SET
                         break;
                 }
             }

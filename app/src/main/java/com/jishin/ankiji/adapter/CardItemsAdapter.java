@@ -14,12 +14,14 @@ import com.jishin.ankiji.R;
 import com.jishin.ankiji.animation.BuilderManager;
 import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.model.DataTypeEnum;
+import com.jishin.ankiji.model.MojiSet;
 import com.jishin.ankiji.model.Set;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
 import com.nightonke.boommenu.BoomButtons.TextOutsideCircleButton;
 import com.nightonke.boommenu.BoomMenuButton;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by trungnguyeen on 12/27/17.
@@ -29,6 +31,7 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
 
     private final static String TAG = CardFragmentPagerAdapter.class.getSimpleName();
     private ArrayList<Set> mSetList = new ArrayList<>();
+    private List<MojiSet> mMojiSet = new ArrayList<>();
     private String FRAGMENT_TAG;
     private OnBoomMenuItemClicked mListener;
     private Context mContext;
@@ -48,6 +51,10 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
         this.mSetList = mSetList;
         notifyDataSetChanged();
     }
+    public void setMojiSetList(List<MojiSet> mSetList) {
+        this.mMojiSet = mSetList;
+        notifyDataSetChanged();
+    }
 
     @Override
     public CardItemsAdapter.ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -62,27 +69,24 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
     @Override
     public void onBindViewHolder(final CardItemsAdapter.ItemViewHolder holder, final int position) {
 
-        if (FRAGMENT_TAG.equals("RECENTLY")) {
-            if(mSetList.size() != 0 && position < mSetList.size()){
-                holder.set = this.mSetList.get(position);
-                holder.tvTitle.setText(holder.set.getName());
-                holder.tvItemCount.setText(convertDatetime(holder.set.getDatetime()));
-                holder.dataType = DataTypeEnum.Moji;
-                holder.btnDeleteItem.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showRemoveDialog(FRAGMENT_TAG, position);
-                    }
-                });
-            }
-//            holder.tvTitle.setText("MARUGOTO");
-//            holder.tvItemCount.setText("10 items");
-//            holder.dataType = DataTypeEnum.Kanji;
-        }
+//        if (FRAGMENT_TAG.equals("RECENTLY")) {
+//            if(mSetList.size() != 0 && position < mSetList.size()){
+//                holder.set = this.mSetList.get(position);
+//                holder.tvTitle.setText(holder.set.getName());
+//                holder.tvItemCount.setText(convertDatetime(holder.set.getDatetime()));
+//                holder.dataType = DataTypeEnum.Moji;
+//                holder.btnDeleteItem.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        showRemoveDialog(FRAGMENT_TAG, position);
+//                    }
+//                });
+//            }
+//        }
 
         if (FRAGMENT_TAG.equals("MOJI")) {
-            if (this.mSetList.size() != 0) {
-                holder.set = this.mSetList.get(position);
+            if (this.mMojiSet.size() != 0) {
+                holder.set = mMojiSet.get(position);
                 holder.tvTitle.setText(holder.set.getName());
                 holder.tvItemCount.setText(convertDatetime(holder.set.getDatetime()));
                 holder.dataType = DataTypeEnum.Moji;
@@ -95,20 +99,20 @@ public class CardItemsAdapter extends RecyclerView.Adapter<CardItemsAdapter.Item
             }
         }
 
-        if (FRAGMENT_TAG.equals("KANJI")) {
-            if (this.mSetList.size() != 0) {
-                holder.set = this.mSetList.get(position);
-                holder.tvTitle.setText(holder.set.getName());
-                holder.tvItemCount.setText(convertDatetime(holder.set.getDatetime()));
-                holder.dataType = DataTypeEnum.Kanji;
-                holder.btnDeleteItem.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showRemoveDialog(FRAGMENT_TAG, position);
-                    }
-                });
-            }
-        }
+//        if (FRAGMENT_TAG.equals("KANJI")) {
+//            if (this.mSetList.size() != 0) {
+//                holder.set = this.mSetList.get(position);
+//                holder.tvTitle.setText(holder.set.getName());
+//                holder.tvItemCount.setText(convertDatetime(holder.set.getDatetime()));
+//                holder.dataType = DataTypeEnum.Kanji;
+//                holder.btnDeleteItem.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        showRemoveDialog(FRAGMENT_TAG, position);
+//                    }
+//                });
+//            }
+//        }
 
         holder.bmb.clearBuilders();
         int stringIndex = 0;

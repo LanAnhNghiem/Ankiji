@@ -1,17 +1,25 @@
 package com.jishin.ankiji.model;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 
 /**
  * Created by lana on 16/01/2018.
  */
+@Entity(tableName = "kanji")
 @SuppressWarnings("serial")
 public class Kanji implements Serializable {
+    @PrimaryKey
+    @NonNull
     private String id;
     private String amhan;
     private String kanji;
     private String tuvung;
-
+    @Ignore
     public Kanji(String id, String amhan, String kanji, String tuvung) {
         this.id = id;
         this.amhan = amhan;

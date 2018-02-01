@@ -81,7 +81,7 @@ public class RecentlyFragment extends Fragment implements RemoveDataCommunicator
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         rvRecentlyList.setLayoutManager(layoutManager);
         mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG, getContext(), this);
-        mItemsAdapter.setSetList(topicList);
+        //mItemsAdapter.setSetList(topicList);
         rvRecentlyList.setItemAnimator(new DefaultItemAnimator());
         rvRecentlyList.setAdapter(mItemsAdapter);
         mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {

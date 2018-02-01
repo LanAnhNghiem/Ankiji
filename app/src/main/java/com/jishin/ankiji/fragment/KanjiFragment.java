@@ -1,6 +1,7 @@
 package com.jishin.ankiji.fragment;
 
 import android.app.AlertDialog;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,38 +32,35 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.jishin.ankiji.chart.ChartActivity;
-import com.jishin.ankiji.feature_test.TestActivity;
 import com.jishin.ankiji.R;
-import com.jishin.ankiji.adapter.CardItemsAdapter;
+import com.jishin.ankiji.adapter.KanjiSetAdapter;
+import com.jishin.ankiji.chart.ChartActivity;
 import com.jishin.ankiji.edit.EditVocabActivity;
 import com.jishin.ankiji.explores.TopicKanjiActivity;
-import com.jishin.ankiji.interfaces.LoadDataListener;
+import com.jishin.ankiji.feature_test.TestActivity;
 import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.learn.LearnActivity;
 import com.jishin.ankiji.model.DataTypeEnum;
 import com.jishin.ankiji.model.Kanji;
-import com.jishin.ankiji.model.Set;
+import com.jishin.ankiji.model.KanjiSet;
 import com.jishin.ankiji.userlist.CreateVocabActivity;
+import com.jishin.ankiji.utilities.AppDatabase;
 import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
-import com.jishin.ankiji.utilities.LocalDatabase;
-import com.jishin.ankiji.utilities.MapHelper;
 
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.List;
 
 /**
  * Created by trungnguyeen on 12/27/17.
  */
 
-public class KanjiFragment extends Fragment implements RemoveDataCommunicator, LoadDataListener {
+public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
     private static final String TAG = KanjiFragment.class.getSimpleName();
-    private ArrayList<Set> mKanjiSetList = new ArrayList<>();
+    private List<KanjiSet> mKanjiSetList = new ArrayList<>();
     private ArrayList<Kanji> mKanjiList = new ArrayList<>();
     private RecyclerView rvRecentlyList;
-    private CardItemsAdapter mItemsAdapter;
+    private KanjiSetAdapter mItemsAdapter;
     public String FRAGMENT_TAG = "KANJI";
     private FloatingActionButton mFABtn, mFABCreate, mFABAdd;
     private boolean isStable = true;
@@ -74,6 +72,7 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
     private FirebaseUser user;
     private String correctAnswer = "0";
     private String testTimes = "0";
+    private AppDatabase db;
     public String getmUserID() {
         return mUserID;
     }
@@ -82,30 +81,11 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
         this.mUserID = mUserID;
     }
 
-    private LocalDatabase mLocalData = LocalDatabase.getInstance();
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initAppData();
         initParam();
-        if(isNetworkAvailable()){
-            //Toast.makeText(getContext(), R.string.connected, Toast.LENGTH_SHORT).show();
-
-        }else{
-            //Toast.makeText(getContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-        }
-
-        //new LoadMojiDataTask().execute();
-    }
-    //Load local data
-    private void loadLocalData(){
-        Map myMap = mLocalData.readData(Constants.KANJI_SET_NODE);
-        if(myMap != null){
-            mKanjiSetList = MapHelper.convertToSet(myMap);
-            if(mKanjiSetList!=null)
-                mItemsAdapter.setSetList(mKanjiSetList);
-        }
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -114,14 +94,15 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_kanji, container, false);
         addControl(view);
-        initRecycler(view);
-        //load Local data
-        loadLocalData();
+        new LoadKanjiSetTask().execute();
         return view;
     }
+    private void initAppData(){
+        db = Room.databaseBuilder(getContext(),
+                AppDatabase.class, Constants.DATABASE_NAME).allowMainThreadQueries().build();
 
+    }
     private void initParam() {
-        mLocalData.init(getContext(),mUserID, mData, this);
         if(!mData.getUserID().isEmpty()){
             mKanjiSetRef = mData.getDatabase()
                     .child(Constants.KANJI_SET_NODE)
@@ -141,6 +122,7 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
 
     private void addControl(View view){
         user = FirebaseAuth.getInstance().getCurrentUser();
+        rvRecentlyList = (RecyclerView) view.findViewById(R.id.recycle_view);
         mFABtn = view.findViewById(R.id.fabKanji);
         mFABAdd = view.findViewById(R.id.fabAdd);
         mFABCreate = view.findViewById(R.id.fabCreate);
@@ -216,36 +198,34 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    private void initRecycler(View view) {
-        rvRecentlyList = (RecyclerView) view.findViewById(R.id.recycle_view);
-
+    private void initRecycler() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         rvRecentlyList.setLayoutManager(layoutManager);
 
-        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG, getContext(), this);
-        mItemsAdapter.setSetList(this.mKanjiSetList);
+        mItemsAdapter = new KanjiSetAdapter(mKanjiSetList, getContext(), this);
         rvRecentlyList.setItemAnimator(new DefaultItemAnimator());
         rvRecentlyList.setAdapter(mItemsAdapter);
-        mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {
+        mItemsAdapter.setOnBoomMenuItemClick(new KanjiSetAdapter.OnBoomMenuItemClicked() {
             @Override
-            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum, Set set) {
+            public void OnMenuItemClicked(int classIndex) {
+                String setID = mKanjiSetList.get(classIndex).getId();
                 switch (classIndex) {
                     case 0:
                         Intent intent = new Intent(getContext(), LearnActivity.class);
-                        intent.putExtra(Constants.SET_BY_USER, set);
-                        intent.putExtra(Constants.DATA_TYPE, dataTypeEnum);
+                        intent.putExtra(Constants.SET_BY_USER, setID);
+                        intent.putExtra(Constants.DATA_TYPE,  DataTypeEnum.Kanji);
                         intent.putExtra(Constants.USER_ID, mUserID);
                         startActivity(intent);
                         break;
                     case 1:
-                        new CountItemTask(set).execute();
+                        new CountItemTask(classIndex).execute();
                         break;
                     case 2:
-                        new LoadDataForChart(mData.getUserID(), set.getId()).execute();
+                        new LoadDataForChart(mData.getUserID(), setID, classIndex).execute();
                         break;
                     case 3:
                         Intent editIntent = new Intent(getContext(), EditVocabActivity.class);
-                        editIntent.putExtra(Constants.SET_BY_USER, set);
+                        editIntent.putExtra(Constants.SET_BY_USER, setID);
                         editIntent.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
                         editIntent.putExtra(Constants.USER_ID, mUserID);
                         startActivity(editIntent);
@@ -292,67 +272,35 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
         mKanjiSetRef.child(id).removeValue();
         mKanjiSetList.remove(position);
         mSetByUser.child(id).removeValue();
-        Map myMap = mLocalData.readAllData();
-        Map kanjiMap = mLocalData.readData(Constants.KANJI_SET_NODE);
-        Map setByUserMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
-        kanjiMap.remove(id);
-        setByUserMap.remove(id);
-        myMap.put(Constants.KANJI_SET_NODE, kanjiMap);
-        myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
-        String str = new Gson().toJson(myMap);
-        mLocalData.writeToFile(Constants.DATA_FILE+mUserID, str, getContext());
         mItemsAdapter.notifyDataSetChanged();
     }
 
 
-    @Override
-    public void loadData() {
-        loadLocalData();
-    }
-
     //Load kanji set
-    public class LoadKanjiDataTask extends AsyncTask<Void, Void, Void> {
+    public class LoadKanjiSetTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
-            mKanjiSetRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    mKanjiSetList.clear();
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        mKanjiSetList.add(ds.getValue(Set.class));
-                        Log.d(TAG, ds.getKey()+"/"+String.valueOf(ds.getValue()));
-                    }
-                    publishProgress();
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
+            mKanjiSetList = db.kanjiSetDao().loadKanjiSet();
+            publishProgress();
             return null;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
-            mItemsAdapter.notifyDataSetChanged();
+            initRecycler();
         }
     }
-
-    //Load moji list
+    //Load kanji list
     public class CountItemTask extends AsyncTask<Void, Void, Void>{
-        Set mSet = new Set();
-        public CountItemTask(Set set){
-            this.mSet = set;
+        int index;
+        public CountItemTask(int index){
+            this.index = index;
         }
         @Override
         protected Void doInBackground(Void... voids) {
-
             mKanjiList.clear();
-            Map map = mLocalData.readData(Constants.SET_BY_USER_NODE);
-            mKanjiList = MapHelper.convertToKanji(map, mSet.getId());
             publishProgress();
             return null;
         }
@@ -362,11 +310,11 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
             super.onProgressUpdate(values);
             if(mKanjiList.size() >= 5){
                 Intent intentTest = new Intent(getContext(), TestActivity.class);
-                intentTest.putExtra(Constants.SET_BY_USER, mKanjiList);
+                intentTest.putExtra(Constants.SET_BY_USER, index);
                 intentTest.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
                 if (user != null) {
                     intentTest.putExtra(Constants.USER_ID, user.getUid());
-                    intentTest.putExtra(Constants.KANJI_SET_NODE, mSet.getId());
+                    intentTest.putExtra(Constants.KANJI_SET_NODE, mKanjiSetList.get(index).getId());
                 }
                 startActivity(intentTest);
             }
@@ -383,39 +331,17 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-//    private void getKanjiSet() {
-//        mKanjiSetRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                showData(dataSnapshot);
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-//    }
-//
-//    private void showData(DataSnapshot dataSnapshot) {
-//        mKanjiSetList.clear();
-//        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-//            mKanjiSetList.add(ds.getValue(Set.class));
-//            Log.d(TAG, ds.getKey()+"/"+String.valueOf(ds.getValue()));
-//        }
-//        mItemsAdapter.notifyDataSetChanged();
-//    }
-
     public class LoadDataForChart extends AsyncTask<Void, Void, Void>{
-
+        int index;
         String userId;
         String setId;
         DatabaseReference chartRef;
         String correctAnswer;
         String testTimes;
-        public LoadDataForChart(String userId, String setId){
+        public LoadDataForChart(String userId, String setId, int index){
             this.userId = userId;
             this.setId = setId;
+            this.index = index;
         }
 
         @Override
@@ -435,8 +361,7 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator, L
                 }
             });
             mKanjiList.clear();
-            Map map = mLocalData.readData(Constants.SET_BY_USER_NODE);
-            mKanjiList = MapHelper.convertToKanji(map, setId);
+            mKanjiList = mKanjiSetList.get(index).getList();
             return null;
         }
 

@@ -1,6 +1,7 @@
 package com.jishin.ankiji.fragment;
 
 import android.app.AlertDialog;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,27 +32,25 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.jishin.ankiji.chart.ChartActivity;
-import com.jishin.ankiji.feature_test.TestActivity;
 import com.jishin.ankiji.R;
-import com.jishin.ankiji.adapter.CardItemsAdapter;
+import com.jishin.ankiji.adapter.MojiSetAdapter;
+import com.jishin.ankiji.chart.ChartActivity;
 import com.jishin.ankiji.edit.EditVocabActivity;
 import com.jishin.ankiji.explores.TopicMojiActivity;
+import com.jishin.ankiji.feature_test.TestActivity;
 import com.jishin.ankiji.interfaces.LoadMojiListener;
 import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.learn.LearnActivity;
 import com.jishin.ankiji.model.DataTypeEnum;
 import com.jishin.ankiji.model.Moji;
-import com.jishin.ankiji.model.Set;
+import com.jishin.ankiji.model.MojiSet;
 import com.jishin.ankiji.userlist.CreateVocabActivity;
+import com.jishin.ankiji.utilities.AppDatabase;
 import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
-import com.jishin.ankiji.utilities.LocalDatabase;
-import com.jishin.ankiji.utilities.MapHelper;
 
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.List;
 
 /**
  * Created by trungnguyeen on 12/27/17.
@@ -61,8 +60,8 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
 
     private static final String TAG = MojiFragment.class.getSimpleName();
     private RecyclerView rvRecentlyList;
-    private CardItemsAdapter mItemsAdapter;
-    private ArrayList<Set> mMojiSetList = new ArrayList<>();
+    private MojiSetAdapter mItemsAdapter;
+    private List<MojiSet> mMojiSetList = new ArrayList<>();
     private ArrayList<Moji> mMojiList = new ArrayList<>();
     private FloatingActionButton mFABtn, mFABCreate, mFABAdd;
     public String FRAGMENT_TAG = "MOJI";
@@ -72,7 +71,6 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
     private DatabaseReference mSetByUser;
     private String mUserID = "";
     private boolean isScrollDown = false;
-
     private FirebaseUser user;
     public String getmUserID() {
         return mUserID;
@@ -80,29 +78,13 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
     public void setmUserID(String mUserID) {
         this.mUserID = mUserID;
     }
-    private LocalDatabase mLocalData = LocalDatabase.getInstance();
+    private AppDatabase db;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initAppData();
         initParam();
-        if(isNetworkAvailable()){
-            //Toast.makeText(getContext(), R.string.connected, Toast.LENGTH_SHORT).show();
-
-        }else{
-            //Toast.makeText(getContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-        }
-
-        //new LoadMojiDataTask().execute();
-    }
-    //Load local data
-    private void loadLocalData(){
-        Map myMap = mLocalData.readData(Constants.MOJI_SET_NODE);
-        if(myMap != null){
-            mMojiSetList = MapHelper.convertToSet(myMap);
-            if(mMojiSetList!=null)
-                mItemsAdapter.setSetList(mMojiSetList);
-        }
-
     }
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
@@ -110,14 +92,16 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_moji, container, false);
         addControl(view);
-        initRecycler(view);
-        //load Local data
-        loadLocalData();
+        new LoadMojiSetTask().execute();
         return view;
     }
+    private void initAppData(){
+        db = Room.databaseBuilder(getContext(),
+                AppDatabase.class, Constants.DATABASE_NAME).allowMainThreadQueries().build();
 
+    }
     private void initParam() {
-        mLocalData.init(getContext(),mUserID, mData, this);
+        //mLocalData.init(getContext(),mUserID, mData, this);
         if(!mData.getUserID().isEmpty()){
             mMojiSetRef = mData.getDatabase()
                     .child(Constants.MOJI_SET_NODE)
@@ -136,6 +120,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
 
     private void addControl(View view){
         user = FirebaseAuth.getInstance().getCurrentUser();
+        rvRecentlyList = (RecyclerView) view.findViewById(R.id.recycle_view);
         mFABtn = view.findViewById(R.id.fabMoji);
         mFABAdd = view.findViewById(R.id.fabAdd);
         mFABCreate = view.findViewById(R.id.fabCreate);
@@ -213,38 +198,36 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    private void initRecycler(View view) {
-        rvRecentlyList = (RecyclerView) view.findViewById(R.id.recycle_view);
+    private void initRecycler() {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         rvRecentlyList.setLayoutManager(layoutManager);
-
-        mItemsAdapter = new CardItemsAdapter(FRAGMENT_TAG, getContext(), this);
-        mItemsAdapter.setSetList(this.mMojiSetList);
+        mItemsAdapter = new MojiSetAdapter(mMojiSetList, getContext(), this);
         rvRecentlyList.setItemAnimator(new DefaultItemAnimator());
         rvRecentlyList.setAdapter(mItemsAdapter);
-        mItemsAdapter.setOnBoomMenuItemClick(new CardItemsAdapter.OnBoomMenuItemClicked() {
+        mItemsAdapter.setOnBoomMenuItemClick(new MojiSetAdapter.OnBoomMenuItemClicked() {
             @Override
-            public void OnMenuItemClicked(int classIndex, DataTypeEnum dataTypeEnum, Set set) {
+            public void OnMenuItemClicked(int classIndex) {
+                String setID = mMojiSetList.get(classIndex).getId();
                 switch (classIndex) {
                     case 0:
                         Intent intent = new Intent(getContext(), LearnActivity.class);
-                        intent.putExtra(Constants.SET_BY_USER, set);
-                        intent.putExtra(Constants.DATA_TYPE, dataTypeEnum);
+                        intent.putExtra(Constants.SET_BY_USER, setID);
+                        intent.putExtra(Constants.DATA_TYPE, DataTypeEnum.Moji);
                         intent.putExtra(Constants.USER_ID, mUserID);
                         startActivity(intent);
                         break;
                     case 1:
-                        new CountItemTask(set).execute();
+                        new CountItemTask(classIndex).execute();
 
                         break;
                     case 2:
-                        new LoadDataForChart(mData.getUserID(), set.getId()).execute();
+                        new LoadDataForChart(mData.getUserID(), setID, classIndex).execute();
 
                         break;
                     case 3:
                         Intent editIntent = new Intent(getContext(), EditVocabActivity.class);
-                        editIntent.putExtra(Constants.SET_BY_USER, set);
+                        editIntent.putExtra(Constants.SET_BY_USER, setID);
                         editIntent.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
                         editIntent.putExtra(Constants.USER_ID, mUserID);
                         startActivity(editIntent);
@@ -290,80 +273,38 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
         mMojiSetRef.child(id).removeValue();
         mMojiSetList.remove(position);
         mSetByUser.child(id).removeValue();
-        Map myMap = mLocalData.readAllData();
-        Map mojiMap = mLocalData.readData(Constants.MOJI_SET_NODE);
-        Map setByUserMap = mLocalData.readData(Constants.SET_BY_USER_NODE);
-        mojiMap.remove(id);
-        setByUserMap.remove(id);
-        myMap.put(Constants.MOJI_SET_NODE, mojiMap);
-        myMap.put(Constants.SET_BY_USER_NODE, setByUserMap);
-        String str = new Gson().toJson(myMap);
-        mLocalData.writeToFile(Constants.DATA_FILE+mUserID, str, getContext());
         mItemsAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void loadData() {
-        loadLocalData();
+//        loadLocalData();
     }
-
     //Load moji set
-    public class LoadMojiDataTask extends AsyncTask<Void, Void, Void> {
+    public class LoadMojiSetTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
-            mMojiSetRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    mMojiSetList.clear();
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        mMojiSetList.add(ds.getValue(Set.class));
-                        Log.d(TAG, ds.getKey()+"/"+String.valueOf(ds.getValue()));
-                    }
-                    publishProgress();
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
+            mMojiSetList = db.mojiSetDao().loadMojiSet();
+            publishProgress();
             return null;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
-            mItemsAdapter.notifyDataSetChanged();
+            initRecycler();
         }
     }
     //Load moji list
-    public class CountItemTask extends AsyncTask<Void, Void, Void>{
-        Set mSet = new Set();
-        public CountItemTask(Set set){
-            this.mSet = set;
+    class CountItemTask extends AsyncTask<Void, Void, Void>{
+        private int index ;
+        public CountItemTask(int index){
+            this.index = index;
         }
         @Override
         protected Void doInBackground(Void... voids) {
-//            mSetByUser.child(mSet.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(DataSnapshot dataSnapshot) {
-//                    mMojiList.clear();
-//                    for(DataSnapshot data: dataSnapshot.getChildren()){
-//                        mMojiList.add(data.getValue(Moji.class));
-//                        Log.d(TAG, data.getKey()+" "+data.getValue());
-//                    }
-//                    onProgressUpdate();
-//                }
-//
-//                @Override
-//                public void onCancelled(DatabaseError databaseError) {
-//
-//                }
-//            });
-            mMojiList.clear();
-            Map map = mLocalData.readData(Constants.SET_BY_USER_NODE);
-            mMojiList = MapHelper.convertToMoji(map, mSet.getId());
+            mMojiList = mMojiSetList.get(index).getList();
             publishProgress();
             return null;
         }
@@ -377,7 +318,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
                 intentTest.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
                 if (user != null) {
                     intentTest.putExtra(Constants.USER_ID, user.getUid());
-                    intentTest.putExtra(Constants.KANJI_SET_NODE, mSet.getId());
+                    intentTest.putExtra(Constants.KANJI_SET_NODE, mMojiSetList.get(index).getId());
                 }
                 startActivity(intentTest);
             }
@@ -402,9 +343,11 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
         DatabaseReference chartRef;
         String correctAnswer;
         String testTimes;
-        public LoadDataForChart(String userId, String setId){
+        int index;
+        public LoadDataForChart(String userId, String setId, int index){
             this.userId = userId;
             this.setId = setId;
+            this.index = index;
         }
 
         @Override
@@ -416,7 +359,6 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     correctAnswer = (String) dataSnapshot.child(Constants.CORRECT_ANSWER).getValue();
                     testTimes = (String) dataSnapshot.child(Constants.TEST_TIMES).getValue();
-
                     onProgressUpdate();
                 }
 
@@ -426,8 +368,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
                 }
             });
             mMojiList.clear();
-            Map map = mLocalData.readData(Constants.SET_BY_USER_NODE);
-            mMojiList = MapHelper.convertToMoji(map, setId);
+            mMojiList = mMojiSetList.get(index).getList();
             return null;
         }
 

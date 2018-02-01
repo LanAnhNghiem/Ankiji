@@ -1,11 +1,13 @@
 package com.jishin.ankiji.features;
 
+import android.arch.persistence.room.Room;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -16,6 +18,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,24 +26,32 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.jishin.ankiji.profile.ProfileActivity;
+import com.google.firebase.database.ValueEventListener;
 import com.jishin.ankiji.R;
 import com.jishin.ankiji.about_us.AboutUsActivity;
 import com.jishin.ankiji.adapter.FragmentAdapter;
-import com.jishin.ankiji.interfaces.LoadDataListener;
+import com.jishin.ankiji.model.Kanji;
+import com.jishin.ankiji.model.KanjiSet;
+import com.jishin.ankiji.model.Moji;
+import com.jishin.ankiji.model.MojiSet;
+import com.jishin.ankiji.model.Set;
+import com.jishin.ankiji.model.User;
+import com.jishin.ankiji.profile.ProfileActivity;
 import com.jishin.ankiji.signin.SigninActivity;
+import com.jishin.ankiji.utilities.AppDatabase;
 import com.jishin.ankiji.utilities.ConnectivityChangeReceiver;
 import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
-import com.jishin.ankiji.utilities.LocalDatabase;
 import com.jishin.ankiji.utilities.NetworkListener;
 
-import java.util.Map;
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class FeatureActivity extends AppCompatActivity implements NetworkListener, LoadDataListener{
+public class FeatureActivity extends AppCompatActivity implements NetworkListener{
     private static final String TAG = FeatureActivity.class.getSimpleName();
     private TabLayout tabLayout;
     private Toolbar toolbar;
@@ -53,10 +64,14 @@ public class FeatureActivity extends AppCompatActivity implements NetworkListene
     private CircleImageView imgAvatar;
     private TextView txtUsername;
     private TextView txtEmail;
+    private AppDatabase db;
+    private User mUser;
+    private ArrayList<Moji> mMojiList = new ArrayList<>();
+    private ArrayList<Kanji> mKanjiList = new ArrayList<>();
     //private FirebaseUser user;
-    LocalDatabase mLocalData = LocalDatabase.getInstance();
+    //LocalDatabase mLocalData = LocalDatabase.getInstance();
 
-    private DatabaseReference mReference;
+    private DatabaseReference mUserRef, mUserListRef, mMojiSetRef, mKanjiSetRef;
     private BroadcastReceiver mHandleMessageReceiver;
 
     @Override
@@ -68,17 +83,19 @@ public class FeatureActivity extends AppCompatActivity implements NetworkListene
         registerReceiver(mHandleMessageReceiver,
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         getUserID();
-        mLocalData.init(this,mUserID, mData, this);
+        initAppData();
+        initReferences();
+        new LoadAllUserData().execute();
+        new LoadUserTask().execute();
         if(isNetworkAvailable()){
             Toast.makeText(this, R.string.connected, Toast.LENGTH_SHORT).show();
-            loadLocalData();
+            //loadLocalData();
         }else{
             //Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
         }
 
         getControls();
         setEvents();
-        Log.d(TAG,String.valueOf(mData.isSignIn()));
     }
 
     @Override
@@ -92,13 +109,17 @@ public class FeatureActivity extends AppCompatActivity implements NetworkListene
         }
         super.onDestroy();
     }
+    private void initAppData(){
+        db = Room.databaseBuilder(FeatureActivity.this,
+                AppDatabase.class, Constants.DATABASE_NAME).allowMainThreadQueries().build();
 
-    private void loadLocalData(){
-
-        if(!mLocalData.hasLocalData()){
-            mLocalData.loadAllData();
-        }
     }
+//    private void loadLocalData(){
+//
+//        if(!mLocalData.hasLocalData()){
+//            mLocalData.loadAllData();
+//        }
+//    }
 
     private void getUserID(){
         Intent intent = getIntent();
@@ -129,9 +150,6 @@ public class FeatureActivity extends AppCompatActivity implements NetworkListene
         imgAvatar = hView.findViewById(R.id.imgAvatar);
         txtUsername = hView.findViewById(R.id.txtUsername_PF);
         txtEmail = hView.findViewById(R.id.txtEmail_PF);
-
-        //user = FirebaseAuth.getInstance().getCurrentUser();
-
 
     }
     private void setEvents(){
@@ -185,39 +203,6 @@ public class FeatureActivity extends AppCompatActivity implements NetworkListene
                 return true;
             }
         });
-        //setProfileInfo();
-//        if (user != null) {
-//
-//            mReference = FirebaseDatabase.getInstance().getReference("User").child(user.getUid());
-//
-//            mReference.addValueEventListener(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(DataSnapshot dataSnapshot) {
-//                    User detailUser = dataSnapshot.getValue(User.class);
-//
-//                    if (!TextUtils.isEmpty(detailUser.getEmail())){
-//                        Log.d("txtEmail", detailUser.getEmail());
-//                        txtEmail.setText(detailUser.getEmail());
-//                    }
-//
-//                    if (!TextUtils.isEmpty(detailUser.getUsername())){
-//                        Log.d("txtUsername", detailUser.getUsername());
-//                        txtUsername.setText(detailUser.getUsername());
-//                    }
-//
-//                    if (!TextUtils.isEmpty(detailUser.getLinkPhoto())){
-//                        Log.d("imgAvatar", detailUser.getLinkPhoto());
-//                        Glide.with(imgAvatar).load(detailUser.getLinkPhoto()).into(imgAvatar);
-//                    }
-//                }
-//
-//                @Override
-//                public void onCancelled(DatabaseError databaseError) {
-//
-//                }
-//            });
-//
-//        }
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -238,35 +223,181 @@ public class FeatureActivity extends AppCompatActivity implements NetworkListene
 
     @Override
     public void connected() {
-        if(mLocalData.hasLocalData()){
-            mLocalData.syncData();
-            setProfileInfo();
-            Toast.makeText(this, "Sync data successfully", Toast.LENGTH_SHORT).show();
-        }
+//        if(mLocalData.hasLocalData()){
+//            mLocalData.syncData();
+//            setProfileInfo();
+//            Toast.makeText(this, "Sync data successfully", Toast.LENGTH_SHORT).show();
+//        }
 
     }
 
     @Override
     public void notConnected() {
-        if(mLocalData.hasLocalData()){
-            setProfileInfo();
-        }
-        Toast.makeText(this, getResources().getText(R.string.not_connected), Toast.LENGTH_SHORT).show();
-    }
-    private void setProfileInfo(){
-        Map userMap = mLocalData.readData(Constants.USER_NODE);
-        if(userMap != null){
-            String email = String.valueOf(userMap.get("email"));
-            String userName = String.valueOf(userMap.get("username"));
-            String linkPhoto = String.valueOf(userMap.get("linkPhoto"));
-            txtEmail.setText(email);
-            txtUsername.setText(userName);
-            Glide.with(imgAvatar).load(linkPhoto).into(imgAvatar);
-        }
+//        if(mLocalData.hasLocalData()){
+//            setProfileInfo();
+//        }
+//        Toast.makeText(this, getResources().getText(R.string.not_connected), Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void loadData() {
-        setProfileInfo();
+    private void setProfileInfo(){
+
+        if (!TextUtils.isEmpty(mUser.getEmail())){
+            Log.d("txtEmail", mUser.getEmail());
+            txtEmail.setText(mUser.getEmail());
+        }
+
+        if (!TextUtils.isEmpty(mUser.getUsername())){
+            Log.d("txtUsername", mUser.getUsername());
+            txtUsername.setText(mUser.getUsername());
+        }
+
+        if (!TextUtils.isEmpty(mUser.getLinkPhoto())){
+            Log.d("imgAvatar", mUser.getLinkPhoto());
+            Glide.with(imgAvatar).load(mUser.getLinkPhoto()).into(imgAvatar);
+        }
     }
+    private void initReferences(){
+        mUserRef = mData.createDatabase(Constants.USER_NODE).child(mUserID);
+        mUserListRef = mData.createDatabase(Constants.USER_LIST_NODE).child(mUserID);
+        mMojiSetRef = mData.createDatabase(Constants.MOJI_SETS_NODE).child(mUserID);
+        mKanjiSetRef = mData.createDatabase(Constants.KANJI_SETS_NODE).child(mUserID);
+    }
+    private class LoadUserTask extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            mUser = db.userDao().loadUser(mUserID);
+            publishProgress();
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            setProfileInfo();
+        }
+    }
+    private class LoadAllUserData extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            final String id = mUserID;
+            if(!id.isEmpty()){
+                mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        //add User
+                        db.userDao().insertUser(dataSnapshot.getValue(User.class));
+                        mUser = db.userDao().loadUser(id);
+                        mMojiSetRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                    //add moji set
+                                    final Set mojiset = ds.getValue(Set.class);
+                                    mUserListRef.child(Constants.MOJI).child(ds.getKey())
+                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                    for(DataSnapshot ds: dataSnapshot.getChildren()){
+                                                        mMojiList.add(ds.getValue(Moji.class));
+                                                    }
+                                                    Log.d(TAG, mMojiList.toString());
+                                                    MojiSet newSet = new MojiSet(mojiset.getId(), mojiset.getName(), mojiset.getDatetime()
+                                                            , mojiset.getType(), mMojiList);
+//                                                    String tmp = toMojiStr(mMojiList);
+//                                                    toArrayList(tmp);
+                                                    db.mojiSetDao().insertMojiSet(newSet);
+                                                    db.mojiSetDao().loadMojiSet();
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                }
+                                            });
+                                }
+                                mKanjiSetRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        for(DataSnapshot ds : dataSnapshot.getChildren()){
+                                            //add kanji set
+                                            final Set kanjiset = ds.getValue(Set.class);
+                                            mUserListRef.child(Constants.KANJI).child(ds.getKey())
+                                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                                            for(DataSnapshot ds: dataSnapshot.getChildren()){
+                                                                mKanjiList.add(ds.getValue(Kanji.class));
+                                                            }
+                                                            KanjiSet newSet = new KanjiSet(kanjiset.getId(), kanjiset.getName()
+                                                                    , kanjiset.getDatetime(), kanjiset.getType(), mKanjiList);
+                                                            db.kanjiSetDao().insertKanjiSet(newSet);
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(DatabaseError databaseError) {
+
+                                                        }
+                                                    });
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                        publishProgress();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            setProfileInfo();
+        }
+    }
+//    public String toMojiStr(ArrayList<Moji> list){
+//        Gson gsonBuilder = new GsonBuilder().create();
+//        // Convert Java ArrayList into JSON
+//        String jsonString = gsonBuilder.toJson(list);
+//        return jsonString;
+//    }
+//    public ArrayList<Moji> toArrayList(String string){
+//        ArrayList<Moji> list = new ArrayList<>();
+//        try {
+//            JSONArray jsonArray = new JSONArray(string);
+//            for(int i=0; i<jsonArray.length(); i++) {
+//                Moji word = new Moji();
+//                word.setId(jsonArray.getJSONObject(i).getString("id"));
+//                word.setCachDocHira(jsonArray.getJSONObject(i).getString("cachDocHira"));
+//                word.setAmHan(jsonArray.getJSONObject(i).getString("amHan"));
+//                word.setTuTiengNhat(jsonArray.getJSONObject(i).getString("tuTiengNhat"));
+//                word.setNghiaTiengViet(jsonArray.getJSONObject(i).getString("nghiaTiengViet"));
+//                list.add(word);
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return list;
+//    }
 }

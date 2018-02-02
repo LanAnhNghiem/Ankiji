@@ -29,4 +29,5 @@ public class Constants {
     public static final String DATABASE_NAME = "ankiji-data";
     public static final String KANJI = "1";
     public static final String MOJI = "0";
+    public static final String INDEX = "index";
 }

@@ -48,7 +48,7 @@
         android:id="@+id/txt_vocab"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="New words (1)"
+        android:text="Từ vựng (0)"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_add"

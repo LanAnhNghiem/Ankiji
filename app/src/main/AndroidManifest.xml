@@ -63,6 +63,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".testdata.TestDataActivity"></activity>
         <activity android:name=".chart.ChartActivity"></activity>
+        <activity android:name=".create_data.CreateVocabActivity"></activity>
     </application>
 
 </manifest>

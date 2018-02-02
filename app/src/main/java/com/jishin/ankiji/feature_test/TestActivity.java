@@ -87,7 +87,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             String fragmentTag = intent.getStringExtra(Constants.DATA_TYPE);
             if(fragmentTag.equals("KANJI")){
                 isKanji = true;
-                kanjiList = (ArrayList<Kanji>) intent.getSerializableExtra(Constants.SET_BY_USER);
+                kanjiList = (ArrayList<Kanji>) intent.getSerializableExtra(Constants.USER_LIST_NODE);
 
             }else{
                 isKanji = false;

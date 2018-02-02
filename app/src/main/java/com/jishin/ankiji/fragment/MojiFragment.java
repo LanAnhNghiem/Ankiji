@@ -38,13 +38,12 @@ import com.jishin.ankiji.chart.ChartActivity;
 import com.jishin.ankiji.edit.EditVocabActivity;
 import com.jishin.ankiji.explores.TopicMojiActivity;
 import com.jishin.ankiji.feature_test.TestActivity;
-import com.jishin.ankiji.interfaces.LoadMojiListener;
 import com.jishin.ankiji.interfaces.RemoveDataCommunicator;
 import com.jishin.ankiji.learn.LearnActivity;
 import com.jishin.ankiji.model.DataTypeEnum;
 import com.jishin.ankiji.model.Moji;
 import com.jishin.ankiji.model.MojiSet;
-import com.jishin.ankiji.userlist.CreateVocabActivity;
+import com.jishin.ankiji.create_data.CreateVocabActivity;
 import com.jishin.ankiji.utilities.AppDatabase;
 import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
@@ -56,7 +55,7 @@ import java.util.List;
  * Created by trungnguyeen on 12/27/17.
  */
 
-public class MojiFragment extends Fragment implements RemoveDataCommunicator, LoadMojiListener {
+public class MojiFragment extends Fragment implements RemoveDataCommunicator{
 
     private static final String TAG = MojiFragment.class.getSimpleName();
     private RecyclerView rvRecentlyList;
@@ -98,10 +97,8 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
     private void initAppData(){
         db = Room.databaseBuilder(getContext(),
                 AppDatabase.class, Constants.DATABASE_NAME).allowMainThreadQueries().build();
-
     }
     private void initParam() {
-        //mLocalData.init(getContext(),mUserID, mData, this);
         if(!mData.getUserID().isEmpty()){
             mMojiSetRef = mData.getDatabase()
                     .child(Constants.MOJI_SET_NODE)
@@ -147,7 +144,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
             @Override
             public void onClick(View v) {
                 LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-                final View dialogView = layoutInflater.inflate(R.layout.dialog_create_list, null);
+                final View dialogView = layoutInflater.inflate(R.layout.dialog_create_set, null);
                 final TextView txtTitle = dialogView.findViewById(R.id.txtTitle);
                 final EditText edtSetName = dialogView.findViewById(R.id.edtSetName);
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -212,7 +209,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
                 switch (classIndex) {
                     case 0:
                         Intent intent = new Intent(getContext(), LearnActivity.class);
-                        intent.putExtra(Constants.SET_BY_USER, setID);
+                        intent.putExtra(Constants.INDEX, classIndex);
                         intent.putExtra(Constants.DATA_TYPE, DataTypeEnum.Moji);
                         intent.putExtra(Constants.USER_ID, mUserID);
                         startActivity(intent);
@@ -276,10 +273,6 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
         mItemsAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void loadData() {
-//        loadLocalData();
-    }
     //Load moji set
     public class LoadMojiSetTask extends AsyncTask<Void, Void, Void> {
         @Override
@@ -314,7 +307,7 @@ public class MojiFragment extends Fragment implements RemoveDataCommunicator, Lo
             super.onProgressUpdate(values);
             if(mMojiList.size() >= 5){
                 Intent intentTest = new Intent(getContext(), TestActivity.class);
-                intentTest.putExtra(Constants.SET_BY_USER, mMojiList);
+                intentTest.putExtra(Constants.USER_LIST_NODE, mMojiList);
                 intentTest.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
                 if (user != null) {
                     intentTest.putExtra(Constants.USER_ID, user.getUid());

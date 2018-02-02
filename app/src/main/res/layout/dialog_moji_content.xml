@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Thẻ số 1/1"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:padding="20dp"
+        android:background="@color/colorPrimaryDark"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tilTu"/>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilTu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/txtTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tilAmHan">
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/edtTu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Từ vựng (front-side)"
+            android:textColorHint="@color/light_gray"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"/>
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilAmHan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tilTu"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/edtAmHan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Âm Hán (back-side)"
+            android:textColorHint="@color/light_gray"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"/>
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilHira"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tilAmHan"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/edtHira"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Hiragana (back-side)"
+            android:textColorHint="@color/light_gray"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"/>
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilNghia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tilHira"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/edtNghia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nghĩa (back-side)"
+            android:textColorHint="@color/light_gray"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"/>
+    </android.support.design.widget.TextInputLayout>
+
+</android.support.constraint.ConstraintLayout>

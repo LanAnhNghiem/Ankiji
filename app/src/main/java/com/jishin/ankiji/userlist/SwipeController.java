@@ -1,25 +1,18 @@
 package com.jishin.ankiji.userlist;
 
 
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper.Callback;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
-import static android.support.v7.widget.helper.ItemTouchHelper.*;
-
-import com.bumptech.glide.load.engine.Resource;
-import com.jishin.ankiji.R;
-import com.jishin.ankiji.utilities.Constants;
+import static android.support.v7.widget.helper.ItemTouchHelper.ACTION_STATE_SWIPE;
+import static android.support.v7.widget.helper.ItemTouchHelper.LEFT;
+import static android.support.v7.widget.helper.ItemTouchHelper.RIGHT;
 
 /**
  * Created by lana on 18/01/2018.
@@ -151,8 +144,8 @@ public class SwipeController extends Callback {
     }
 
     private void drawButtons(Canvas c, RecyclerView.ViewHolder viewHolder) {
-        float buttonWidthWithoutPadding = buttonWidth - 20;
-        float corners = 20;
+        float buttonWidthWithoutPadding = buttonWidth;
+        float corners = 0;
 
         View itemView = viewHolder.itemView;
         Paint p = new Paint();

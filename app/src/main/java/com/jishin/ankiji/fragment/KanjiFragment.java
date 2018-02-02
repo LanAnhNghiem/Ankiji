@@ -43,7 +43,7 @@ import com.jishin.ankiji.learn.LearnActivity;
 import com.jishin.ankiji.model.DataTypeEnum;
 import com.jishin.ankiji.model.Kanji;
 import com.jishin.ankiji.model.KanjiSet;
-import com.jishin.ankiji.userlist.CreateVocabActivity;
+import com.jishin.ankiji.create_data.CreateVocabActivity;
 import com.jishin.ankiji.utilities.AppDatabase;
 import com.jishin.ankiji.utilities.Constants;
 import com.jishin.ankiji.utilities.DatabaseService;
@@ -149,7 +149,7 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
             @Override
             public void onClick(View v) {
                 LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-                final View dialogView = layoutInflater.inflate(R.layout.dialog_create_list, null);
+                final View dialogView = layoutInflater.inflate(R.layout.dialog_create_set, null);
                 final TextView txtTitle = dialogView.findViewById(R.id.txtTitle);
                 final EditText edtSetName = dialogView.findViewById(R.id.edtSetName);
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -212,7 +212,7 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
                 switch (classIndex) {
                     case 0:
                         Intent intent = new Intent(getContext(), LearnActivity.class);
-                        intent.putExtra(Constants.SET_BY_USER, setID);
+                        intent.putExtra(Constants.INDEX, classIndex);
                         intent.putExtra(Constants.DATA_TYPE,  DataTypeEnum.Kanji);
                         intent.putExtra(Constants.USER_ID, mUserID);
                         startActivity(intent);
@@ -310,7 +310,7 @@ public class KanjiFragment extends Fragment implements RemoveDataCommunicator{
             super.onProgressUpdate(values);
             if(mKanjiList.size() >= 5){
                 Intent intentTest = new Intent(getContext(), TestActivity.class);
-                intentTest.putExtra(Constants.SET_BY_USER, index);
+                intentTest.putExtra(Constants.USER_LIST_NODE, mKanjiList);
                 intentTest.putExtra(Constants.DATA_TYPE, FRAGMENT_TAG);
                 if (user != null) {
                     intentTest.putExtra(Constants.USER_ID, user.getUid());
